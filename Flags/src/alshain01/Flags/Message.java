@@ -1,0 +1,41 @@
+package alshain01.Flags;
+
+import org.bukkit.ChatColor;
+
+/**
+ * Class for retrieving localized messages.
+ * 
+ * @author Alshain01
+ */
+public enum Message {
+	// Errors
+	NoConsoleError,	InvalidFlagError, InvalidTrustError, NoFlagFound,
+	SetTrustError, RemoveTrustError, RemoveAllFlagsError, SetMultipleFlagsError, AddBundleError,
+	FlagPermError,	AreaPermError, WorldPermError, NoAreaError, EraseBundleError, BundlePermError,
+	SubdivisionError, NoSystemError, PlayerFlagError,
+	// Commands
+	SetFlag, GetFlag, RemoveFlag, InheritedFlag,
+	SetTrust, GetTrust, RemoveTrust,
+	GetAllFlags, RemoveAllFlags,
+	GetBundle, SetBundle, RemoveBundle, UpdateBundle, EraseBundle, 
+	SetInherited,
+	// Areas
+	Default, World, GriefPrevention, WorldGuard, Residence, InfinitePlots,
+	// Help
+	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError, GroupHelpDescription, GroupHelpInfo,
+	// General Translations
+	Flag, Bundle, ValueColorTrue, ValueColorFalse, Index;
+	
+	/**
+	 * @return A localized message for the enumeration.
+	 */
+	public final String get() {
+		String message = Flags.instance.messageStore.getConfig().getString("Message." + this.toString());
+		Flags.instance.Debug(message);
+		if (message == null) {
+			Flags.instance.getLogger().warning("ERROR: Invalid message.yml Message for " + this.toString());
+			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
+		}
+		return ChatColor.translateAlternateColorCodes('&', message);
+	}
+}
