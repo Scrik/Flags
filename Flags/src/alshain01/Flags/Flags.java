@@ -14,6 +14,7 @@ import alshain01.Flags.data.DataStore;
 import alshain01.Flags.data.YamlDataStore;
 import alshain01.Flags.events.BorderPatrol;
 import alshain01.Flags.importer.GPFImport;
+import alshain01.Flags.metrics.MetricsManager;
 
 /**
  * Flags
@@ -76,6 +77,10 @@ public class Flags extends JavaPlugin{
 		// Load Border Patrol
 		if (this.getConfig().getBoolean("Flags.BorderPatrol.Enable")) {
 			this.getServer().getPluginManager().registerEvents(new BorderPatrol(), instance);
+		}
+		
+		if(!DEBUG) {
+			MetricsManager.StartMetrics();
 		}
 		
 		this.getLogger().info("Flags Has Been Enabled.");
