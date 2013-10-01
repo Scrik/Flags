@@ -1,0 +1,118 @@
+name: Flags
+version: 1.1.0-B2
+description: Allows you to set flags to alter game behavior.
+author: Alshain01
+website: http://dev.bukkit.org/bukkit-plugins/flags/
+main: alshain01.Flags.Flags
+softdepend: [GriefPrevention, WorldGuard, Residence, InfinitePlots, GriefPreventionFlags]
+commands:
+  flag:
+    description: Allows you to perform actions on flags.
+    permission: flags.flag
+    usage: /flag <get|set|remove|trust|distrust|view|message|present|erase|inherit|help>
+  
+  bundle:
+    description: Allows you to perform actions on bundles.
+    permission: flags.bundle
+    usage: /flag <set|remove|add|delete|erase|help>
+permissions:
+# Wildcards (note that flag types, bundle types, and bypass are handled in the plugin)
+  flags.*:
+    description: Allows access to all permissions in the plugin.
+    default: op
+    children:
+      flags.flag.*: true
+      flags.bundle.*: true
+  
+  flags.flag.*:
+    description: Allows access to the flag command and all flag command actions.
+    default: op
+    children:
+      flags.flag.set.others: true
+      flags.flag.set.admin: true
+      flags.flag.set.world: true
+      flags.flag.set.default: true
+  
+  flags.bundle.*:
+    description: Allows access to the bundle command and all bundle command actions.
+    default: op
+    children:
+      flags.bundle.set.others: true
+      flags.bundle.set.admin: true
+      flags.bundle.set.world: true
+      flags.bundle.set.default: true
+      flags.bundle.edit: true
+  
+# Flag command actions
+  flags.flag:
+    descriptions: Allows access to the flag command and all get/view/present/help/count actions.
+    default: true
+
+  flags.bundle:
+    description: Allows access to the bundle command and get/help action.
+    default: true
+  
+  flags.flag.set:
+    description: Allows user to set or remove flags, messages, and trust in their own areas.
+    default: op
+    children:
+      flags.flag: true
+  
+  flags.flag.set.others:
+    description: Allows user to set or remove flags, messages, and trust at areas owned by others.
+    default: op
+    children:
+      flags.flag.set: true
+  
+  flags.flag.set.admin:
+    description: Allows user to set or remove flags, messages, and trust at admin areas.
+    default: op
+    children:
+      flags.flag.set: true
+  
+  flags.flag.set.world:
+    description: Allows user to set or remove flags, messages, and trust for worlds.
+    default: op
+    children:
+      flags.flag.set: true
+  
+  flags.flag.set.default:
+    description: Allows user to set or remove flags, messages, and trust for the area default.
+    default: op
+    children:
+      flags.flag.set: true
+
+# Bundle command actions
+  flags.bundle.set:
+    description: Allows user to set or remove bundles in their own areas.
+    default: op
+    children:
+      flags.bundle: true
+  
+  flags.bundle.set.others:
+    description: Allows user to set or remove bundles at areas owned by others.
+    default: op
+    children:
+      flags.bundle.set: true
+
+  flags.bundle.set.admin:
+    description: Allows user to set or remove bundles at admin areas.
+    default: op
+    children:
+      flags.bundle.set: true
+  
+  flags.bundle.set.world:
+    description: Allows user to set or remove bundles for worlds.
+    default: op
+    children:
+      flags.bundle.set: true
+  
+  flags.bundle.set.default:
+    description: Allows user to set or remove bundles for the area default.
+    default: op
+    children:
+      flags.bundle.set: true
+  
+  flags.bundle.set.edit:
+    description: Allows user to set or remove bundles for the area default.
+    default: op

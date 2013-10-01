@@ -1,0 +1,25 @@
+Flags:
+  # This sets the search order for land allocation systems
+  #
+  # If you have only one system installed, you do not need to change this.
+  # Searching takes no significant time so it doesn't matter.
+  # 
+  # If you have more than one system installed, change the order so the system
+  # that you wish Flags to use appears first.
+  #
+  # DO NOT ALTER THE NAMES
+  #
+  # If no system is discovered, you will be limited to world flags only.
+  AreaPlugins: [GriefPrevention, WorldGuard, Residence]
+  # Disable this to improve performance
+  # However, any flag module using it will not
+  # receive notice that a player is changing areas.
+  #
+  # Divisors:
+  # Decrease these to make the border crossing based events react faster.
+  # Increase them to reduce event execution time.  It may help reduce lag on busy servers.
+  # Setting these to 1 will process every event.  Do not set lower than 1, use only whole numbers.
+  BorderPatrol:
+    Enable: true
+    EventDivisor: 10
+    TimeDivisor: 500
