@@ -15,6 +15,7 @@ public class YamlDataStore implements DataStore {
 	private static CustomYML def;
 	private static CustomYML world;
 	private static CustomYML bundle;
+	private static CustomYML price;
 	
 	private CustomYML getYml(String path) {
 		String[] pathList = path.split("\\.");
@@ -22,6 +23,7 @@ public class YamlDataStore implements DataStore {
 		if (pathList[0].equalsIgnoreCase("world")) { return world; }
 		else if (pathList[0].equalsIgnoreCase("default")) { return def; }
 		else if (pathList[0].equalsIgnoreCase("bundle")) { return bundle; }
+		else if (pathList[0].equalsIgnoreCase("price")) { return price; }
 		else { return data; }
 	}
 
@@ -30,7 +32,9 @@ public class YamlDataStore implements DataStore {
 		world = new CustomYML(plugin, "world.yml");
 		bundle = new CustomYML(plugin, "bundle.yml");
 		def = new CustomYML(plugin, "default.yml");
+		price = new CustomYML(plugin, "price.yml");
 		
+		price.saveDefaultConfig();
 		bundle.saveDefaultConfig();
 	}
 	
@@ -40,6 +44,7 @@ public class YamlDataStore implements DataStore {
 		def.reload();
 		world.reload();
 		bundle.reload();
+		price.reload();
 		return true;
 	}
 	
@@ -100,6 +105,12 @@ public class YamlDataStore implements DataStore {
 	}
 
 	@Override
+	public boolean isSet(String path) {
+		if(getYml(path).getConfig().getString(path) != null) { return true; }
+		return false;
+	}
+	
+	@Override
 	public String read(String path) {
 		return getYml(path).getConfig().getString(path);
 	}
@@ -107,6 +118,11 @@ public class YamlDataStore implements DataStore {
 	@Override
 	public int readInt(String path) {
 		return getYml(path).getConfig().getInt(path);
+	}
+	
+	@Override
+	public double readDouble(String path) {
+		return getYml(path).getConfig().getDouble(path);
 	}
 
 	@Override

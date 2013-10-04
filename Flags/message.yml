@@ -18,6 +18,10 @@ Message:
   Residence: 'Residence'
   InfinitePlots: 'Plot'
   
+  # Other Translations
+  Message: 'Message'
+  Error: '&cAn error occured - {Error}'
+  
   # Error Messages
   NoConsoleError: '&cThis command cannot be performed from the console.'
   SetTrustError: '&cFailed to set trust for one or more players.'
@@ -53,6 +57,13 @@ Message:
   RemoveBundle: '&bReturned all {AreaType} flags in the bundle &e{Bundle} &bto the inherited setting.'
   UpdateBundle: '&bThe bundle &e{Bundle} &bwas updated.'
   EraseBundle: '&bThe bundle &e{Bundle} &bwas erased.'
+  
+  #Economy MEssages
+  SetPrice: '&bSet the {PurchaseType} price for &e{Flag} &bto &a{Price}&b.'
+  GetPrice: '&bThe price for the {PurchaseType} &e{Flag} &bis &a{Price}&b.'
+  LowFunds: '&cThe {PurchaseType} &e{Flag} &ccosts &a{Price}&c. You do not have enough funds.'
+  Withdraw: '&a{Price} &bhas been withdrawn from your account.'
+  Deposit: '&a{Price} &bhas been deposited to your account.'
   
   # Help Messages
   HelpHeader: '&6---------&f {Type}: {Group} ({Page}/{TotalPages})&6--------------------'

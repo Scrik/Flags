@@ -102,7 +102,8 @@ public class Default extends Area {
 	}
 
 	@Override
-	public String getMessage(Flag flag) {
+	public String getMessage(Flag flag, boolean parse) {
+		// We are ignore parse here.  We just want to override it.
 		String message = Flags.instance.dataStore.read(getDataPath() + "." + flag.getName() + messageFooter);
 	 	
 		if (message == null) {

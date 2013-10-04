@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -97,15 +98,20 @@ public class World extends Area {
 	}
 
 	@Override
-	public String getMessage(Flag flag) {
+	public String getMessage(Flag flag, boolean parse) {
 		String message = Flags.instance.dataStore.read(dataHeader + getSystemID() + "." + flag.getName() + messageFooter);
 	 	
 		if (message == null) {
 			message = flag.getDefaultWorldMessage();
 		}
-		return message
-				.replaceAll("//{AreaType//}", getAreaType().toLowerCase())
-				.replaceAll("//{World//}", this.world.getName());
+		
+		if (parse) {
+			message = message
+					.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
+					.replaceAll("\\{World\\}", this.world.getName());
+			message = ChatColor.translateAlternateColorCodes('&', message);
+		}
+		return message;
 	}
 
 	// ******************************

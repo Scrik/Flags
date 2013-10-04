@@ -24,7 +24,9 @@ public enum Message {
 	// Help
 	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError, GroupHelpDescription, GroupHelpInfo,
 	// General Translations
-	Flag, Bundle, ValueColorTrue, ValueColorFalse, Index;
+	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error,
+	// Economy
+	SetPrice, GetPrice, LowFunds, Withdraw, Deposit;
 	
 	/**
 	 * @return A localized message for the enumeration.

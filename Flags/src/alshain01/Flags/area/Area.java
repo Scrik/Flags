@@ -143,21 +143,37 @@ public abstract class Area implements Comparable<Area> {
 	
 	/**
 	 * Retrieves the message associated with a player flag.
+	 * Translates the color codes and populates instances of {AreaType} and {Owner}
 	 * 
 	 * @param flag The flag to retrieve the message for.
 	 * @return The message associated with the flag.
 	 */
 	public String getMessage(Flag flag) {
+		return getMessage(flag, true);
+	}
+	
+	/**
+	 * Retrieves the message associated with a player flag.
+	 * 
+	 * @param flag The flag to retrieve the message for.
+	 * @param parse True if you wish to populate instances of {AreaType}, {Owner}, and {World} and translate color codes
+	 * @return The message associated with the flag.
+	 */
+	public String getMessage(Flag flag, boolean parse) {
 		if(!isArea()){ return null; }
 		String message = Flags.instance.dataStore.read(getDataPath() + "." + flag.getName() + messageFooter);
 	 	   
 		if (message == null) {
 			message = new Default(getWorld()).getMessage(flag);
 		}
-		message = message
-				.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
-				.replaceAll("\\{Owner\\}", getOwners().toArray()[0].toString());
-		return ChatColor.translateAlternateColorCodes('&', message);
+		
+		if (parse) {
+			message = message
+					.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
+					.replaceAll("\\{Owner\\}", getOwners().toArray()[0].toString());
+			message = ChatColor.translateAlternateColorCodes('&', message);
+		}
+		return message;
 	}
 	
 	/**

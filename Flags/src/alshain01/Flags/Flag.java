@@ -1,6 +1,5 @@
 package alshain01.Flags;	
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class Flag {
@@ -44,11 +43,16 @@ public class Flag {
 		return name;
 	}
 	
+	@Override
+	public String toString() {
+		return "N:" + name + "-V:" + def + "-P:" + player + "-G:" + plugin + "-D:" + description + "-A:" + area + "-W:" + world;
+	}
+	
 	/**
 	 * @return The default area message for this flag.
 	 */
 	public String getDefaultAreaMessage() {
-		return ChatColor.translateAlternateColorCodes('&', area);
+		return area;
 	}
 	
 	/**
@@ -62,7 +66,7 @@ public class Flag {
 	 * @return The default world message for this flag.
 	 */
 	public String getDefaultWorldMessage() {
-		return ChatColor.translateAlternateColorCodes('&', world);
+		return world;
 	}
 	
 	/**

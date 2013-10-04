@@ -13,7 +13,7 @@ import alshain01.Flags.Message;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-public class GriefPreventionClaim78 extends Area implements Subdivision, Removable, Siege {
+public class GriefPreventionClaim78 extends Area implements Subdivision, Removable, Siege, Administrator {
 	protected final static String dataHeader = "GriefPreventionData.";
 	protected Claim claim;
 	
@@ -192,5 +192,13 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	public boolean isUnderSiege() {
 		if (claim == null || claim.siegeData == null) { return false; }
 		return true;
+	}
+
+	// ******************************
+	// Admin Interface
+	// ******************************
+	@Override
+	public boolean isAdminArea() {
+		return claim.isAdminClaim();
 	}
 }

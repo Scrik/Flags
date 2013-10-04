@@ -14,9 +14,13 @@ public interface DataStore {
 	
 	public void write(String path, List<String> list);
 	
+	public boolean isSet(String path);
+	
 	public String read(String path);
 	
 	public int readInt(String path);
+	
+	public double readDouble(String path);
 	
 	public List<String> readList(String path);
 	

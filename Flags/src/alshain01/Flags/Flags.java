@@ -2,8 +2,11 @@ package alshain01.Flags;
 
 import java.util.List;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.*;
 
@@ -12,6 +15,7 @@ import alshain01.Flags.commands.Command;
 import alshain01.Flags.data.CustomYML;
 import alshain01.Flags.data.DataStore;
 import alshain01.Flags.data.YamlDataStore;
+import alshain01.Flags.economy.EconomyListener;
 import alshain01.Flags.events.BorderPatrol;
 import alshain01.Flags.importer.GPFImport;
 import alshain01.Flags.metrics.MetricsManager;
@@ -25,9 +29,10 @@ public class Flags extends JavaPlugin{
 	public static Flags instance;
 	public DataStore dataStore;
 	protected CustomYML messageStore;
-		
+	public Economy economy = null;
+	
 	private Registrar flagRegistrar = new Registrar();
-	private final Boolean DEBUG = false;
+	private final Boolean DEBUG = true;
 	protected LandSystem currentSystem = LandSystem.NONE;
 	
 	/**
@@ -69,6 +74,11 @@ public class Flags extends JavaPlugin{
 		// Check for older database and import as necessary.
 		if(currentSystem == LandSystem.GRIEF_PREVENTION && !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
+		}
+		
+		// Enable Vault support
+		if(setupEconomy()) {
+			this.getServer().getPluginManager().registerEvents(new EconomyListener(), instance);
 		}
 		
 		// Load Mr. Clean
@@ -156,6 +166,24 @@ public class Flags extends JavaPlugin{
 			this.getLogger().info("DEBUG: " + message);
 		}
 	}
+	
+	/*
+	 * Register with the Vault economy plugin.
+	 * 
+	 * @return True if the economy was successfully configured. 
+	 */
+    private boolean setupEconomy()
+    {
+    	if (!Flags.instance.getServer().getPluginManager().isPluginEnabled("Vault")) { return false; }
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+        		.getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+        	economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
+    }
+	
 	
 	/*
 	 * Acquires the land management plugin.

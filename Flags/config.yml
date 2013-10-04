@@ -10,6 +10,7 @@ Flags:
   # DO NOT ALTER THE NAMES
   #
   # If no system is discovered, you will be limited to world flags only.
+  #
   AreaPlugins: [GriefPrevention, WorldGuard, Residence]
   # Disable this to improve performance
   # However, any flag module using it will not
@@ -23,3 +24,19 @@ Flags:
     Enable: true
     EventDivisor: 10
     TimeDivisor: 500
+  #
+  #Economy System
+  #
+  # PLUGIN: Player will be charged when the new flag value differs from default provided by the flag module or plugin.
+  # DEFAULT: Player will be charged when the new flag value differs from operator defined default value.
+  # ALWAYS: Player is always charged for setting the flag value.
+  #
+  BaseValue: PLUGIN
+  # Refund allows the player to gain back the cost of the flag if the value is set
+  # to the PLUGIN or DEFAULT value.  If BaseFlagValue is ALWAYS, refunds will only
+  # be given if the flag is removed.
+  # WARNING: Players will always be refunded the current price, 
+  #          even if they bought it at a different price.
+  Refund:
+    Flag: true
+    Message: false

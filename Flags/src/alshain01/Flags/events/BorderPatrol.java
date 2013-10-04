@@ -43,7 +43,7 @@ public class BorderPatrol implements Listener {
 	}
 
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	private void onPlayerJoin(PlayerJoinEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			// Remove any garbage entries that may have been left behind
 			// Probably won't happen, but just in case.
@@ -52,7 +52,7 @@ public class BorderPatrol implements Listener {
 	}
 	
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	private void onPlayerQuit(PlayerQuitEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			// Remove the last location to keep memory usage low.
 			moveStore.remove(event.getPlayer().getName());
@@ -60,7 +60,7 @@ public class BorderPatrol implements Listener {
 	}
 
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerMove(PlayerMoveEvent e) {
+	private void onPlayerMove(PlayerMoveEvent e) {
 		// Divide the number of events to prevent heavy event timing
 		if (eventCalls++ > eventsDivisor) {
 			eventCalls = 0;

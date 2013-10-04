@@ -12,7 +12,7 @@ import alshain01.Flags.Message;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-public class GriefPreventionClaim77 extends Area implements Removable, Siege {
+public class GriefPreventionClaim77 extends Area implements Removable, Siege, Administrator {
 	private final static String dataHeader = "GriefPreventionData.";
 	private Claim claim;
 	
@@ -130,6 +130,14 @@ public class GriefPreventionClaim77 extends Area implements Removable, Siege {
 		if (claim == null) { return false; }
 		if (claim.siegeData == null) { return false; }
 		return true;
+	}
+
+	// ******************************
+	// Admin Interface
+	// ******************************
+	@Override
+	public boolean isAdminArea() {
+		return claim.isAdminClaim();
 	}
 }
 

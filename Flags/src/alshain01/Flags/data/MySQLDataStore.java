@@ -212,4 +212,16 @@ public class MySQLDataStore implements SQLDataStore {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public double readDouble(String path) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isSet(String path) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

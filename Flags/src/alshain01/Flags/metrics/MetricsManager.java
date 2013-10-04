@@ -12,17 +12,35 @@ public class MetricsManager {
 		try {
 		    Metrics metrics = new Metrics(Flags.instance);
 	
-		    // Construct a graph, which can be immediately used and considered as valid
-		    Graph claimGraph = metrics.createGraph("Land System");
+		    // Land System Graph
+		    Graph systemGraph = metrics.createGraph("Land System");
 		    for(Director.LandSystem system : Director.LandSystem.values()){
 		    	if(Director.getSystem() == system) {
-			    	claimGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
+			    	systemGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 			            @Override
 			            public int getValue() {
 		            		return 1;
 			            }
 			    	});
 		    	}
+		    }
+		    
+		    // Economy Graph
+		    Graph econGraph = metrics.createGraph("Economy Enabled");
+		    if(Flags.instance.economy == null) {	    	
+		    	econGraph.addPlotter(new Metrics.Plotter("No") {
+		    		@Override
+		            public int getValue() {
+	            		return 1;
+		            }
+		    	});
+		    } else {
+		    	econGraph.addPlotter(new Metrics.Plotter("Yes") {
+		            @Override
+		            public int getValue() {
+		            	return 1;
+			        }
+			    });
 		    }
 		    		    
 		    metrics.start();

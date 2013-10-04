@@ -55,8 +55,17 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	
 	/** 
 	 * @return The CommandSender associated with the event. Null if no sender involved (caused by plug-in).
+	 * @deprecated Ambiguous name.  Use {@link #getSender()} instead.
 	 */
+	@Deprecated
 	public CommandSender getPlayer() {
+		return getSender();
+	}
+	
+	/** 
+	 * @return The CommandSender associated with the event. Null if no sender involved (caused by plug-in).
+	 */
+	public CommandSender getSender() {
 		return sender;
 	}
 
