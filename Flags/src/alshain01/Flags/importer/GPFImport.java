@@ -20,6 +20,8 @@ public final class GPFImport {
 	private static ImportYML world = null;
 	private static ImportYML data = null;
 	
+	private GPFImport(){}
+	
 	public static void importGPF() {
 		if(dataExists() && getVersion().equals("1.6.0")) {
 			Flags.instance.getLogger().info("Importing GriefPreventionFlags Database");
@@ -117,7 +119,7 @@ public final class GPFImport {
 		}
 	}
 	
-	public static List<String> readList(ImportYML data, String path) {
+	private static List<String> readList(ImportYML data, String path) {
 		List<?> listData = data.getCustomConfig().getList(path);
 		if(listData == null) { return null; }
 		

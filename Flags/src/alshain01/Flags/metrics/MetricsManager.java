@@ -7,6 +7,7 @@ import alshain01.Flags.Flags;
 import alshain01.Flags.metrics.Metrics.Graph;
 
 public class MetricsManager {
+	private MetricsManager(){}
 	
 	public static void StartMetrics() {
 		try {

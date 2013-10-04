@@ -30,6 +30,8 @@ import alshain01.Flags.area.WorldGuardRegion;
  * @author Alshain01
  */
 public final class Director {
+	private Director(){}
+	
 	public static enum LandSystem {
 		NONE(null, null), 
 		GRIEF_PREVENTION("GriefPrevention", "Grief Prevention"),
@@ -46,7 +48,9 @@ public final class Director {
 		}
 		
 		/**
-		 * @return The case sensitive plug.yml name for the enumerated value
+		 * Retrieves the plug-in name as indicated in it's plugin.yml
+		 * 
+		 * @return The case sensitive plugin.yml name for the enumerated value
 		 */
 		@Override
 		public String toString() {
@@ -54,6 +58,8 @@ public final class Director {
 		}
 		
 		/**
+		 * Retrieves a user friendly string, including spaces, for the plug-in.
+		 * 
 		 * @return The user friendly name of the plugin
 		 */
 		public String getDisplayName() {
@@ -61,7 +67,9 @@ public final class Director {
 		}
 		
 		/**
-		 * @return The enumeration associated with the provided plugin.yml name. (Case sensitive)
+		 * Retrieves the enumeration that matches the case sensitive plugin.yml name.
+		 * 
+		 * @return The enumeration. LandSystem.NONE if no matches found.
 		 */
 		public final static LandSystem getByName(String name) {
 			for(LandSystem p : LandSystem.values()) {
@@ -100,6 +108,8 @@ public final class Director {
 	}
 	
 	/**
+	 * Retrieves the current land system in use by Flags.
+	 * 
 	 * @return The current Land Management System in use by Flags.
 	 */
 	public final static LandSystem getSystem() {
@@ -219,6 +229,16 @@ public final class Director {
 		return Flags.instance.dataStore.readKeys(area);
 	}
 	
+	
+	/**
+	 * @deprecated Use getSystemAreaType()
+	 * @return The user friendly name.
+	 */
+	@Deprecated
+	public final static String getAreaType() {
+		return getSystemAreaType();
+	}
+	
 	/**
 	 * Returns a user friendly name of the area type of the configured system, capitalized.
 	 * For use when the name is required even though an area does not exist (such as error messages).
@@ -226,7 +246,7 @@ public final class Director {
 	 * 
 	 * @return The user friendly name.
 	 */
-	public final static String getAreaType() {
+	public final static String getSystemAreaType() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Message.GriefPrevention.get(); }
 		if(getSystem() == LandSystem.WORLDGUARD) { return Message.WorldGuard.get(); }
 		if(getSystem() == LandSystem.RESIDENCE) { return Message.Residence.get(); }

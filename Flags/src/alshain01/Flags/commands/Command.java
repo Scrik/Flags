@@ -15,6 +15,8 @@ import alshain01.Flags.Director.LandSystem;
  * @author Alshain01
  */
 public abstract class Command {
+	private Command(){}
+	
 	/**
 	 * Executes the flag command, returning its success 
 	 * 

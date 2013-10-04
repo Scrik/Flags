@@ -13,10 +13,9 @@ import alshain01.Flags.area.World;
 /**
  * Top level class for command based functions
  * 
- * @author john01dav
  * @author Alshain01
  */
-public abstract class Common {
+abstract class Common {
 	protected static String getValue(boolean value) {
         return (value) ? Message.ValueColorTrue.get() : Message.ValueColorFalse.get();
 	}
@@ -89,7 +88,7 @@ public abstract class Common {
 			Area area = Director.getAreaAt(((Player)sender).getLocation());
 			if(area instanceof World) {
 				sender.sendMessage(Message.NoAreaError.get()
-						.replaceAll("\\{AreaType\\}", Director.getAreaType().toLowerCase()));
+						.replaceAll("\\{AreaType\\}", Director.getSystemAreaType().toLowerCase()));
 				area = null;
 			}
 			return area;

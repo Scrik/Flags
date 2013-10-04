@@ -88,13 +88,18 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the plots are the same, 3 if they are not.
+	 * 
+	 * @return The value of the comparison.
+	 */	
 	@Override
 	public int compareTo(Area a) {
 		if(a instanceof InfinitePlotsPlot && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
 			return 0;
 		}
 
-		return 1;
+		return 3;
 	}
 	
 	// ******************************

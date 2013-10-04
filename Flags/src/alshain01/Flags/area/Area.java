@@ -24,27 +24,38 @@ public abstract class Area implements Comparable<Area> {
 	protected abstract String getDataPath();
 	
 	/**
+	 * Retrieve the land system's ID for this area.
+	 * 
 	 * @return the area's ID in the format provided by the land management system.
 	 */
 	public abstract String getSystemID();
 	
 	/**
+	 * Retrieve the friendly name of the area type.
+	 * 
 	 * @return the area's type as a user friendly name.
 	 */
 	public abstract String getAreaType();
 	
 	/**
+	 * Retrieve a set of owners for the area.  On many systems, there will only be one.
+	 * 
 	 * @return the player name of the area owner.
 	 */
 	public abstract Set<String> getOwners();
 	
 	/**
+	 * Retrieve the world for the area.
+	 * 
 	 * @return the world associated with the area.
 	 */
 	public abstract org.bukkit.World getWorld();
 
 	/**
-	 * @return true if the area exists (is not null).
+	 * Retrieve whether or not the area exists on the server.
+	 * Null Areas return false.
+	 * 
+	 * @return true if the area exists.
 	 */
 	public abstract boolean isArea();
 	

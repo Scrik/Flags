@@ -16,7 +16,7 @@ import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
 
-public abstract class FlagCmd extends Common {
+abstract class FlagCmd extends Common {
 	protected static boolean get(CommandSender sender, char location, String flagName) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(Message.NoConsoleError.get());

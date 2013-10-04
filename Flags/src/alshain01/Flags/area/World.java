@@ -117,11 +117,16 @@ public class World extends Area {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * 
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
 		if(a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
 			return 0;
 		}
-		return 1;
+		return 3;
 	}
 }

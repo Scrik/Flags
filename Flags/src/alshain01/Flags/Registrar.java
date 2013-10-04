@@ -51,6 +51,8 @@ public class Registrar {
 	}
 	
 	/**
+	 * Informs whether or not a flag name has been registered.
+	 * 
 	 * @param flag The flag name
 	 * @return True if the flag name has been registered
 	 */
@@ -59,6 +61,8 @@ public class Registrar {
 	}
 	
 	/**
+	 * Retrieves a flag based on it's case sensitive name.
+	 * 
 	 * @param flag The flag to retrieve.
 	 * @return The flag requested or null if it does not exist.
 	 */
@@ -86,6 +90,8 @@ public class Registrar {
 	}
 	
 	/**
+	 * Retrieves a collection of all registered flags.
+	 * 
 	 * @return A collection of all the flags registered.
 	 */
 	public Collection<Flag> getFlags() {
@@ -93,6 +99,8 @@ public class Registrar {
 	}
 
 	/**
+	 * Retrieves a set of all registered flag names.
+	 * 
 	 * @return A list of names of all the flags registered.
 	 */
 	public Set<String> getFlagNames() {

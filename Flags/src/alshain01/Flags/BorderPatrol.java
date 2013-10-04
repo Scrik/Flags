@@ -1,4 +1,4 @@
-package alshain01.Flags.events;
+package alshain01.Flags;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,16 +14,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import alshain01.Flags.Director;
-import alshain01.Flags.Flags;
 import alshain01.Flags.area.Area;
+import alshain01.Flags.events.PlayerChangedAreaEvent;
 
 /**
  * Listener for handling Player Movement
  * 
  * @author Alshain01
  */
-public class BorderPatrol implements Listener {
+class BorderPatrol implements Listener {
 	private static final int eventsDivisor = Flags.instance.getConfig().getInt("Flags.BorderPatrol.EventDivisor");
 	private static final int timeDivisor = Flags.instance.getConfig().getInt("Flags.BorderPatrol.TimeDivisor");
 	private int eventCalls = 0;

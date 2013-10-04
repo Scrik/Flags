@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.*;
  * 
  * @author bukkit.org
  */
-public class ImportYML {
+class ImportYML {
 	//private static JavaPlugin plugin;
 	private String dataFile;
 	private FileConfiguration customConfig = null;

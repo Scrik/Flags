@@ -11,7 +11,7 @@ import alshain01.Flags.Flag;
 import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 
-public abstract class BundleCmd extends Common {
+abstract class BundleCmd extends Common {
 	protected static boolean areaPermitted(Area area, Player player) {
 		// Check that the player can set a bundle at this location
 		if (!area.hasBundlePermission(player)) {

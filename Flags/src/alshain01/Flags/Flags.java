@@ -16,7 +16,6 @@ import alshain01.Flags.data.CustomYML;
 import alshain01.Flags.data.DataStore;
 import alshain01.Flags.data.YamlDataStore;
 import alshain01.Flags.economy.EconomyListener;
-import alshain01.Flags.events.BorderPatrol;
 import alshain01.Flags.importer.GPFImport;
 import alshain01.Flags.metrics.MetricsManager;
 

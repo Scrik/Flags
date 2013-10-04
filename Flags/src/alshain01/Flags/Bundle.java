@@ -8,6 +8,8 @@ import java.util.Set;
  * @author Alshain01
  */
 public final class Bundle {
+	private Bundle(){}
+	
 	/**
 	 * Retrieves a bundle from the data store.
 	 * 
@@ -19,6 +21,8 @@ public final class Bundle {
 	}
 	
 	/**
+	 * Retrieves a set of bundle names created on the server.
+	 * 
 	 * @return A set of bundles names configured on the server.
 	 */
 	public final static Set<String> getBundleNames() {

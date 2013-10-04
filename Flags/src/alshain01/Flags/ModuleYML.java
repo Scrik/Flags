@@ -15,6 +15,8 @@ public class ModuleYML {
 	private FileConfiguration fileConfig = null;
 
 	/**
+	 * Create an instance of ModuleYML
+	 * 
 	 * @param plugin The plugin that contains the yml file as a resource
 	 * @param dataFile The file name
 	 */
@@ -36,6 +38,8 @@ public class ModuleYML {
     }
 
 	/**
+	 * Retrieves the file configuration for the module data.
+	 * 
 	 * @return  the custom file configuration.
 	 */
 	public FileConfiguration getModuleData() {

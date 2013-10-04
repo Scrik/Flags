@@ -2,6 +2,11 @@ package alshain01.Flags;
 
 import org.bukkit.entity.Player;
 
+/**
+ * Represents a flag registered with the plug-in.
+ * 
+ * @author Alshain01
+ */
 public class Flag {
 	private boolean def;
 	private String name;
@@ -23,6 +28,8 @@ public class Flag {
 	}
 
 	/**
+	 * Retrieves whether or not the flag is a player flag. (Supports messaging and trust)
+	 * 
 	 * @return True if this flag is a player flag.
 	 */
 	public boolean isPlayerFlag() {
@@ -30,32 +37,45 @@ public class Flag {
 	}
 
 	/**
-	 * @return The default value of this flag.
+	 * Retrieves the plug-in default value of the flag.
+	 * 
+	 * @return The default value.
 	 */
 	public boolean getDefault() {
 		return def;
 	}
 
 	/**
-	 * @return The name of this flag.
+	 * Retrieves the name of the flag.
+	 * 
+	 * @return The name.
 	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Retrieves a string representation of the flag meta.
+	 * 
+	 * @return The flag as a string
+	 */
 	@Override
 	public String toString() {
-		return "N:" + name + "-V:" + def + "-P:" + player + "-G:" + plugin + "-D:" + description + "-A:" + area + "-W:" + world;
+		return "N=" + name + ",V=" + def + ",P=" + player + ",G=" + plugin + ",D=" + description + ",A=" + area + ",W=" + world;
 	}
 	
 	/**
-	 * @return The default area message for this flag.
+	 * Retrieves the default area message of the flag.
+	 * 
+	 * @return The default area message.
 	 */
 	public String getDefaultAreaMessage() {
 		return area;
 	}
 	
 	/**
+	 * Retrieves the group the flag is assigned to.
+	 * 
 	 * @return The group this flag is assigned to.
 	 */
 	public String getGroup() {
@@ -63,20 +83,26 @@ public class Flag {
 	}
 	
 	/**
-	 * @return The default world message for this flag.
+	 * Retrieves the default world message of the flag
+	 * 
+	 * @return The default world message.
 	 */
 	public String getDefaultWorldMessage() {
 		return world;
 	}
 	
 	/**
-	 * @return The flag's description.
+	 * Retrieves the flag's description
+	 * 
+	 * @return The description.
 	 */
 	public String getDescription() {
 		return description;
 	}
 	
 	/**
+	 * Retrieves the flagtype permission string.
+	 * 
 	 * @return The permission string (flags.flagtype.flagname)
 	 */
 	public String getPermission() {
@@ -84,7 +110,9 @@ public class Flag {
 	}
 	
 	/**
-	 * @return True if the provided player has permission to modify this flag.
+	 * Retrieves whether or not the provided player has permission to modify this flag.
+	 * 
+	 * @return True if the provided player has permission.
 	 */
     public final boolean hasPermission(Player player) {
 		if (player.isOp() 
@@ -97,6 +125,8 @@ public class Flag {
     }
 	
     /**
+     * Retrieves the bypass permission string.
+     * 
      * @return The bypass permission string (flags.bypass.flagname)
 	 */
 	public String getBypassPermission() {
@@ -104,6 +134,8 @@ public class Flag {
 	}
 	
 	/**
+	 * Retrieves whether or not the provided player has bypass permission for this flag.
+	 * 
 	 * @return True if the provided player has permission to ignore the effects of this flag.
 	 */
     public final boolean hasBypassPermission(Player player) {

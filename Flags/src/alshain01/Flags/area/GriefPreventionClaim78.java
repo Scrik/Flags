@@ -116,19 +116,44 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the claims are the same
+	 * -1 if the claim is a subdivision of the provided claim.
+	 * 1 if the claim is a parent of the provided claim.
+	 * 2 if they are "sister" subdivisions.
+	 * 3 if they are completely unrelated.
+	 * 
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof GriefPreventionClaim78 && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
-			return 0;
-		}
-
-		// Return a -1 if this is a subdivision of the provided area
-		if(a instanceof Subdivision && isSubdivision() 
-				&& getSystemID().equalsIgnoreCase(a.getSystemID())) {
-			return -1;
-		}
+		if(!(a instanceof GriefPreventionClaim78)) { return 3; }
 		
-		return 1;
+		if (a.getSystemID().equals(this.getSystemID())) {
+			// They are related somehow.  We need to figure out how.
+			// (We can safely assume instance of subdivision because of the first line)
+			
+			if(((Subdivision)a).getSystemSubID() == null && getSystemSubID() != null) {
+				//a is the parent
+				return -1;
+			}
+			
+			if(((Subdivision)a).getSystemSubID() != null && getSystemSubID() == null) {
+				//this is the parent
+				return 1;
+			}
+			
+			if(((Subdivision)a).getSystemSubID() != null && getSystemSubID() != null) {
+				//neither are the parent, but the parent ID is the same
+				return 2;
+			}
+			
+			if((((Subdivision)a).getSystemSubID() == null && getSystemSubID() == null) || ((Subdivision)a).getSystemSubID().equals(getSystemSubID())) {
+				// They are the same claim
+				return 0;
+			}
+		}
+		return 3;
 	}
 	
 	// ******************************

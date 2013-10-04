@@ -12,7 +12,9 @@ import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.events.TrustChangedEvent;
 
-public class Trust {
+final class Trust {
+	private Trust(){}
+	
 	protected final static boolean setTrust (Area area, Flag flag, String trustee, CommandSender sender, String path) {
 		// Set the trust
 		Set<String> trustList = Flags.instance.dataStore.readSet(path);
