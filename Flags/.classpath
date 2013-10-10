@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="../../bukkit-1.6.2-R1.0.jar"/>
-	<classpathentry kind="lib" path="../../GriefPrevention-173.jar"/>
-	<classpathentry kind="lib" path="../../InfinitePlots.jar"/>
-	<classpathentry kind="lib" path="../../Residence.jar"/>
-	<classpathentry kind="lib" path="../../WorldEdit.jar"/>
-	<classpathentry kind="lib" path="../../WorldGuard.jar"/>
-	<classpathentry kind="lib" path="../../Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/bukkit-1.6.2-R1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/GriefPrevention-173.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/InfinitePlots.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Residence.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
