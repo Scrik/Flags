@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
 */
 
-package alshain01.Flags.economy;
+package alshain01.Flags;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -31,22 +31,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import alshain01.Flags.Flag;
-import alshain01.Flags.Flags;
-import alshain01.Flags.Message;
 import alshain01.Flags.area.Administrator;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.World;
+import alshain01.Flags.economy.BaseValue;
 import alshain01.Flags.economy.PurchaseType;
+import alshain01.Flags.economy.TransactionType;
 import alshain01.Flags.events.FlagChangedEvent;
 import alshain01.Flags.events.MessageChangedEvent;
 
 /**
- * Event Handler for GriefPreventionFlags
+ * Economy manager for Flags
  * 
  * @author Alshain01
  */
-public class EconomyListener implements Listener {
+class EconomyListener implements Listener {
 	/*
 	 * @param transaction The type of the transaction
 	 * @param type The type of charge (Flag or Message)
