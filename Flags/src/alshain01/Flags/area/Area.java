@@ -153,18 +153,30 @@ public abstract class Area implements Comparable<Area> {
 	}
 	
 	/**
-	 * Retrieves the message associated with a player flag.
+	 * Gets the message associated with a player flag.
 	 * Translates the color codes and populates instances of {AreaType} and {Owner}
 	 * 
 	 * @param flag The flag to retrieve the message for.
 	 * @return The message associated with the flag.
 	 */
-	public String getMessage(Flag flag) {
+	public final String getMessage(Flag flag) {
 		return getMessage(flag, true);
+	}
+
+	/**
+	 * Gets the message associated with a player flag and parses
+	 * {AreaType}, {Owner}, {World}, and {Player}
+	 * 
+	 * @param flag The flag to retrieve the message for.
+	 * @param player The player name to insert into the messsage.
+	 * @return The message associated with the flag.
+	 */
+	public final String getMessage(Flag flag, String player) {
+		return getMessage(flag, true).replaceAll("\\{Player\\}", player);
 	}
 	
 	/**
-	 * Retrieves the message associated with a player flag.
+	 * Gets the message associated with a player flag.
 	 * 
 	 * @param flag The flag to retrieve the message for.
 	 * @param parse True if you wish to populate instances of {AreaType}, {Owner}, and {World} and translate color codes
@@ -185,18 +197,6 @@ public abstract class Area implements Comparable<Area> {
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
-	}
-	
-	/**
-	 * Retrieves the message associated with a player flag and parses
-	 * {AreaType}, {Owner}, {World}, and {Player}
-	 * 
-	 * @param flag The flag to retrieve the message for.
-	 * @param player The player name to insert into the messsage.
-	 * @return The message associated with the flag.
-	 */
-	public String getMessage(Flag flag, String player) {
-		return getMessage(flag, true).replaceAll("\\{Player\\}", player);
 	}
 	
 	/**

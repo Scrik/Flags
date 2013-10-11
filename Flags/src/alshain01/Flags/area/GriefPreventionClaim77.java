@@ -108,7 +108,7 @@ public class GriefPreventionClaim77 extends Area implements Removable, Siege, Ad
 	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof GriefPreventionClaim77 && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
+		if(a instanceof GriefPreventionClaim77 && a.getSystemID().equals(this.getSystemID())) {
 			return 0;
 		}
 

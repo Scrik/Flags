@@ -110,7 +110,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 			return -1;
 		}		
 		
-		return 1;
+		return 3;
 	}
 	
 	// ******************************

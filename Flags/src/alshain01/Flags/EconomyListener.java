@@ -46,13 +46,6 @@ import alshain01.Flags.events.MessageChangedEvent;
  * @author Alshain01
  */
 class EconomyListener implements Listener {
-	/*
-	 * @param transaction The type of the transaction
-	 * @param type The type of charge (Flag or Message)
-	 * @param flag The flag
-	 * @param player The player
-	 * @return True if the event should be cancelled due to insufficient funds or error.
-	 */
 	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
 		// Get the YAML data path of the price.
 		String pricePath = "Price." + product.toString() + "." + flag.getName();

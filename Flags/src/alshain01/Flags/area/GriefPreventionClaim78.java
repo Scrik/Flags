@@ -133,22 +133,22 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 			// They are related somehow.  We need to figure out how.
 			// (We can safely assume instance of subdivision because of the first line)
 			
-			if(((Subdivision)a).getSystemSubID() == null && getSystemSubID() != null) {
+			if(((Subdivision)a).getSystemSubID() == null && this.getSystemSubID() != null) {
 				//a is the parent
 				return -1;
 			}
 			
-			if(((Subdivision)a).getSystemSubID() != null && getSystemSubID() == null) {
+			if(((Subdivision)a).getSystemSubID() != null && this.getSystemSubID() == null) {
 				//this is the parent
 				return 1;
 			}
 			
-			if(((Subdivision)a).getSystemSubID() != null && getSystemSubID() != null) {
+			if(((Subdivision)a).getSystemSubID() != null && this.getSystemSubID() != null) {
 				//neither are the parent, but the parent ID is the same
 				return 2;
 			}
 			
-			if((((Subdivision)a).getSystemSubID() == null && getSystemSubID() == null) || ((Subdivision)a).getSystemSubID().equals(getSystemSubID())) {
+			if((((Subdivision)a).getSystemSubID() == null && this.getSystemSubID() == null) || ((Subdivision)a).getSystemSubID().equals(getSystemSubID())) {
 				// They are the same claim
 				return 0;
 			}
