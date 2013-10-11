@@ -40,6 +40,8 @@ public class Flags extends JavaPlugin{
 	public void onEnable(){
 		instance = this;
 
+		Update updateCheck = new Update(65024);
+		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
         
