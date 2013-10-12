@@ -40,14 +40,16 @@ public class Flags extends JavaPlugin{
 	public void onEnable(){
 		instance = this;
 		
-		if(this.getConfig().getString("Flags.Update").equals("CHECK")) {
-			new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
-		} else if (this.getConfig().getString("Flags.Update").equals("DOWNLOAD")) {
-			new Updater(this, 65024, this.getFile(), Updater.UpdateType.DEFAULT, true);
-		}
-		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
+		
+		if(!DEBUG) {
+			if(this.getConfig().getString("Flags.Update").equals("CHECK")) {
+				new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
+			} else if (this.getConfig().getString("Flags.Update").equals("DOWNLOAD")) {
+				new Updater(this, 65024, this.getFile(), Updater.UpdateType.DEFAULT, true);
+			}
+		}
         
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
