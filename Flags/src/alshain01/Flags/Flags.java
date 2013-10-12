@@ -39,8 +39,12 @@ public class Flags extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		instance = this;
-
-		Update updateCheck = new Update(65024);
+		
+		if(this.getConfig().getString("Flags.Update").equals("CHECK")) {
+			new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
+		} else if (this.getConfig().getString("Flags.Update").equals("DOWNLOAD")) {
+			new Updater(this, 65024, this.getFile(), Updater.UpdateType.DEFAULT, true);
+		}
 		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
