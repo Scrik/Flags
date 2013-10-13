@@ -44,11 +44,9 @@ public class Flags extends JavaPlugin{
 		this.saveDefaultConfig();
 		
 		if(!DEBUG) {
-			if(this.getConfig().getString("Flags.Update").equals("CHECK")) {
+			if(this.getConfig().getBoolean("Flags.CheckForUpdates")) {
 				new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
-			} else if (this.getConfig().getString("Flags.Update").equals("DOWNLOAD")) {
-				new Updater(this, 65024, this.getFile(), Updater.UpdateType.DEFAULT, true);
-			}
+			} 
 		}
         
 		// Create the specific implementation of DataStore

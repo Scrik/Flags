@@ -40,8 +40,5 @@ Flags:
   Refund:
     Flag: true
     Message: false
-  # This sets the configuration for automatic updates and update checking. The options are as follows...
-  # DOWNLOAD: Checks for updates and automatically installs them
-  # CHECK: Checks for updates and notifies you of their existance
-  # NONE: Disables update checking
-  Update: CHECK
+  # Notify the console when updates are available
+  CheckForUpdates: true
