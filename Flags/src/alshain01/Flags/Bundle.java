@@ -16,7 +16,7 @@ public final class Bundle {
 	 * @param bundle The bundle name to retrieve
 	 * @return A list containing the bundle.  Null if it doesn't exist.
 	 */
-	public final static Set<String> getBundle(String bundle) {
+	public static Set<String> getBundle(String bundle) {
 		return Flags.instance.dataStore.readSet("Bundle." + bundle.toLowerCase());
 	}
 	
@@ -25,7 +25,7 @@ public final class Bundle {
 	 * 
 	 * @return A set of bundles names configured on the server.
 	 */
-	public final static Set<String> getBundleNames() {
+	public static Set<String> getBundleNames() {
 		return Flags.instance.dataStore.readKeys("Bundle");
 	}
 	
@@ -35,7 +35,7 @@ public final class Bundle {
 	 * @param bundle A string bundle name.
 	 * @return True if the string is a valid bundle name.
 	 */
-	public final static boolean isBundle(String bundle) {
+	public static boolean isBundle(String bundle) {
 		return (getBundleNames().contains(bundle.toLowerCase())); 
 	}
 	
@@ -45,7 +45,7 @@ public final class Bundle {
 	 * @param name The bundle name
 	 * @param flags A list of flags in the bundle. (does not verify validity)
 	 */
-	public final static void writeBundle(String name, Set<String> flags) {
+	public static void writeBundle(String name, Set<String> flags) {
 		Flags.instance.dataStore.write("Bundle." + name, flags);
 	}
 }

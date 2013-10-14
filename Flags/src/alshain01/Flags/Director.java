@@ -32,7 +32,7 @@ import alshain01.Flags.area.WorldGuardRegion;
 public final class Director {
 	private Director(){}
 	
-	public static enum LandSystem {
+	public enum LandSystem {
 		NONE(null, null), 
 		GRIEF_PREVENTION("GriefPrevention", "Grief Prevention"),
 		WORLDGUARD("WorldGuard", "WorldGuard"),
@@ -71,7 +71,7 @@ public final class Director {
 		 * 
 		 * @return The enumeration. LandSystem.NONE if no matches found.
 		 */
-		public final static LandSystem getByName(String name) {
+		public static LandSystem getByName(String name) {
 			for(LandSystem p : LandSystem.values()) {
 				if(name.equals(p.pluginName)) { return p; }
 			}
@@ -112,7 +112,7 @@ public final class Director {
 	 * 
 	 * @return The current Land Management System in use by Flags.
 	 */
-	public final static LandSystem getSystem() {
+	public static LandSystem getSystem() {
 		return Flags.instance.currentSystem;
 	}
 
@@ -122,7 +122,7 @@ public final class Director {
 	 * @param location The location to request an area.
 	 * @return An Area from the configured system or the world if no area is defined.
 	 */
-	public final static Area getAreaAt(Location location) {
+	public static Area getAreaAt(Location location) {
 		Area area = null;
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
@@ -155,7 +155,7 @@ public final class Director {
 	 * @param name The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system selection.
 	 */
-	public final static Area getArea(String name) {
+	public static Area getArea(String name) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion()) >= 7.8) {
@@ -186,7 +186,7 @@ public final class Director {
 	 * 
 	 * @return A list containing all the area names.
 	 */
-	public final static Set<String> getAreaNames() {
+	public static Set<String> getAreaNames() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.instance.dataStore.readKeys("GriefPreventionData"); }
 		
 		if(getSystem() == LandSystem.WORLDGUARD) {
@@ -225,7 +225,7 @@ public final class Director {
 	 * @param area The system specific area name.
 	 * @return a list of all flags for the provided area.
 	 */
-	public final static Set<String> getAreaFlags(String area) {
+	public static Set<String> getAreaFlags(String area) {
 		return Flags.instance.dataStore.readKeys(area);
 	}
 	
@@ -235,7 +235,7 @@ public final class Director {
 	 * @return The user friendly name.
 	 */
 	@Deprecated
-	public final static String getAreaType() {
+	public static String getAreaType() {
 		return getSystemAreaType();
 	}
 	
@@ -246,7 +246,7 @@ public final class Director {
 	 * 
 	 * @return The user friendly name.
 	 */
-	public final static String getSystemAreaType() {
+	public static String getSystemAreaType() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Message.GriefPrevention.get(); }
 		if(getSystem() == LandSystem.WORLDGUARD) { return Message.WorldGuard.get(); }
 		if(getSystem() == LandSystem.RESIDENCE) { return Message.Residence.get(); }
@@ -265,7 +265,7 @@ public final class Director {
 	 * @return True if in pvp combat, false is not or if system is unsupported.
 	 */
 	
-	public final static boolean inPvpCombat(Player player) {
+	public static boolean inPvpCombat(Player player) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 		}

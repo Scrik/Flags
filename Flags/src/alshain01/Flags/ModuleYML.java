@@ -9,9 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author bukkit.org
  * @author Alshain01
  */
-public class ModuleYML {
-	private static JavaPlugin plugin;
-	private String fileName;
+public final class ModuleYML {
+	private final JavaPlugin plugin;
+	private final String fileName;
 	private FileConfiguration fileConfig = null;
 
 	/**
@@ -21,7 +21,7 @@ public class ModuleYML {
 	 * @param dataFile The file name
 	 */
 	public ModuleYML(JavaPlugin plugin, String dataFile){
-		ModuleYML.plugin = plugin;
+		this.plugin = plugin;
 		this.fileName = dataFile;
 	}
 

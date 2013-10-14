@@ -45,7 +45,7 @@ import alshain01.Flags.events.MessageChangedEvent;
  * 
  * @author Alshain01
  */
-class EconomyListener implements Listener {
+final class EconomyListener implements Listener {
 	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
 		// Get the YAML data path of the price.
 		String pricePath = "Price." + product.toString() + "." + flag.getName();

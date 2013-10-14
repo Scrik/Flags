@@ -1,5 +1,6 @@
 package alshain01.Flags.area;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.events.FlagChangedEvent;
 import alshain01.Flags.events.MessageChangedEvent;
+import alshain01.Flags.events.TrustChangedEvent;
 
 public abstract class Area implements Comparable<Area> {
 	protected final static String valueFooter = ".Value";
@@ -146,10 +148,37 @@ public abstract class Area implements Comparable<Area> {
 	 * @return True if successful.
 	 */
 	public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
+		final String path = getDataPath() + "." + flag.getName() + trustFooter;
+		Set<String> trustList = Flags.instance.dataStore.readSet(path);
+		
+		// Set player to trusted.
     	if (trusted) {
-    		return Trust.setTrust(this, flag, trustee, sender, getDataPath() + "." + flag.getName() + trustFooter);
+    		if (trustList == null) {
+    			trustList = new HashSet<String>(Arrays.asList(trustee.toLowerCase()));
+    		} else {
+    			if (trustList.contains(trustee.toLowerCase())) { return false; } // Player was already in the list!
+    			trustList.add(trustee.toLowerCase());
+    		}
+    		
+    		TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
+    		Bukkit.getServer().getPluginManager().callEvent(event);
+    		if (event.isCancelled()) { return false; }
+       
+    		//Set the list
+    		Flags.instance.dataStore.write(path, trustList);
+    		return true;
     	}
-    	return Trust.removeTrust(this, flag, trustee, sender, getDataPath() + "." + flag.getName() + trustFooter);
+    	
+    	// Remove player from trusted.
+ 	   if (trustList == null || !trustList.contains(trustee.toLowerCase())) { return false; }
+	   
+ 	   TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
+ 	   Bukkit.getServer().getPluginManager().callEvent(event);
+ 	   if (event.isCancelled()) { return false; }
+ 	   
+ 	   trustList.remove(trustee.toLowerCase());
+ 	   Flags.instance.dataStore.write(path, trustList);
+ 	   return true;
 	}
 	
 	/**

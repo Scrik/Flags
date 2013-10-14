@@ -9,11 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import alshain01.Flags.Flag;
 
 public class Registrar {
-	ConcurrentHashMap<String, Flag> flagStore;
+	ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();;
 	
-	protected Registrar() {
-		this.flagStore = new ConcurrentHashMap<String, Flag>();
-	}
+	protected Registrar() { }
 	
 	/**
 	 * Registers a non-player flag
