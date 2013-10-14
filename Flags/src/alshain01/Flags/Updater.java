@@ -14,7 +14,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -61,9 +60,8 @@ public class Updater {
     private static final String QUERY = "/servermods/files?projectIds="; // Path to GET
     private static final String HOST = "https://api.curseforge.com"; // Slugs will be appended to this to get to the project's RSS feed
 
-    private static final String[] NO_UPDATE_TAG = { "-DEV", "-PRE", "-SNAPSHOT" }; // If the version number contains one of these, don't update.
+    private static final String[] NO_UPDATE_TAG = { "-ALPHA", "-BETA" }; // If the version number contains one of these, don't update.
     private static final int BYTE_SIZE = 1024; // Used for downloading files
-    private YamlConfiguration config; // Config file
     private String updateFolder;// The folder that downloads will be placed in
     private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS; // Used for determining the outcome of the update process
 
@@ -136,7 +134,7 @@ public class Updater {
 * @param type Specify the type of update this will be. See {@link UpdateType}
 * @param announce True if the program should announce the progress of new updates in console
 */
-    public Updater(Plugin plugin, int id, File file, UpdateType type, boolean announce) {
+    public Updater(Plugin plugin, int id, File file, UpdateType type, String key, boolean announce) {
         this.plugin = plugin;
         this.type = type;
         this.announce = announce;
@@ -144,49 +142,9 @@ public class Updater {
         this.id = id;
         this.updateFolder = plugin.getServer().getUpdateFolder();
 
-        final File pluginFile = plugin.getDataFolder().getParentFile();
-        final File updaterFile = new File(pluginFile, "Updater");
-        final File updaterConfigFile = new File(updaterFile, "config.yml");
-
-        if (!updaterFile.exists()) {
-            updaterFile.mkdir();
-        }
-        if (!updaterConfigFile.exists()) {
-            try {
-                updaterConfigFile.createNewFile();
-            } catch (final IOException e) {
-                plugin.getLogger().severe("The updater could not create a configuration in " + updaterFile.getAbsolutePath());
-                e.printStackTrace();
-            }
-        }
-        this.config = YamlConfiguration.loadConfiguration(updaterConfigFile);
-
-        this.config.options().header("This configuration file affects all plugins using the Updater system (version 2+ - http://forums.bukkit.org/threads/96681/ )" + '\n'
-                + "If you wish to use your API key, read http://wiki.bukkit.org/ServerMods_API and place it below." + '\n'
-                + "Some updating systems will not adhere to the disabled value, but these may be turned off in their plugin's configuration.");
-        this.config.addDefault("api-key", "PUT_API_KEY_HERE");
-        this.config.addDefault("disable", false);
-
-        if (this.config.get("api-key", null) == null) {
-            this.config.options().copyDefaults(true);
-            try {
-                this.config.save(updaterConfigFile);
-            } catch (final IOException e) {
-                plugin.getLogger().severe("The updater could not save the configuration in " + updaterFile.getAbsolutePath());
-                e.printStackTrace();
-            }
-        }
-
-        if (this.config.getBoolean("disable")) {
-            this.result = UpdateResult.DISABLED;
-            return;
-        }
-
-        String key = this.config.getString("api-key");
-        if (key.equalsIgnoreCase("PUT_API_KEY_HERE") || key.equals("")) {
+        if (key.equalsIgnoreCase("null") || key.equals("")) {
             key = null;
         }
-
         this.apiKey = key;
 
         try {

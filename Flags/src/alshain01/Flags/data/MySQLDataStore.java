@@ -101,7 +101,7 @@ public class MySQLDataStore implements SQLDataStore {
 			executeStatement("CREATE TABLE IF NOT EXISTS world (world VARCHAR(50), flag VARCHAR(25), default BOOL, world BOOL);");
 			executeStatement("CREATE TABLE IF NOT EXISTS data (id BIGINT, subid BIGINT, flag VARCHAR(25), value BOOL);");
 			executeStatement("CREATE TABLE IF NOT EXISTS flag (flag VARCHAR(25), name VARCHAR(25), description VARCHAR(255), message VARCHAR(255), worldmessage VARCHAR(255));");
-			executeStatement("CREATE TABLE IF NOT EXISTS cluster (name VARCHAR(25), flag VARCHAR(25));");
+			executeStatement("CREATE TABLE IF NOT EXISTS bundle (name VARCHAR(25), flag VARCHAR(25));");
 			executeStatement("CREATE TABLE IF NOT EXISTS messages (name VARCHAR(25), message VARCHAR(255));");
 			return true;
 	}

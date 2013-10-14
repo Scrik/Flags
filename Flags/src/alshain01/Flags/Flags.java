@@ -32,6 +32,7 @@ public class Flags extends JavaPlugin{
 	private Registrar flagRegistrar = new Registrar();
 	private final Boolean DEBUG = true;
 	protected LandSystem currentSystem = LandSystem.NONE;
+	protected static Updater updater = null;
 	
 	/**
 	 * Called when this plug-in is enabled
@@ -43,10 +44,13 @@ public class Flags extends JavaPlugin{
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
 		
-		if(!DEBUG) {
-			if(this.getConfig().getBoolean("Flags.CheckForUpdates")) {
-				new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
-			} 
+		if(this.getConfig().getBoolean("Flags.Update.Check")) {
+			String key = this.getConfig().getString("Flags.Update.ServerModsAPIKey");
+			if(this.getConfig().getBoolean("Flags.Update.Download")) {
+				updater = new Updater(this, 65024, this.getFile(), Updater.UpdateType.DEFAULT, key, true);
+			} else {
+				updater = new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
+			}
 		}
         
 		// Create the specific implementation of DataStore
