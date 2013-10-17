@@ -67,7 +67,20 @@ public abstract class Area implements Comparable<Area> {
 	 * @param player The player to check.
 	 * @return true if the player has permissions.
 	 */
-	public abstract boolean hasPermission(Player player);
+	public boolean hasPermission(Player player) {
+		if (getOwners().contains(player.getName())) {
+			if (player.hasPermission("flags.flag.set")) { return true; }
+			return false;
+		}
+		
+		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
+			if (player.hasPermission("flags.flag.set.admin")) {	return true; }
+			return false;
+		}
+		
+		if (player.hasPermission("flags.flag.set.others")) { return true; }
+		return false;
+	}
 	
 	/**
 	 * Gets the players permission to set bundles at this location
@@ -75,7 +88,20 @@ public abstract class Area implements Comparable<Area> {
 	 * @param player The player to check.
 	 * @return true if the player has permissions.
 	 */
-	public abstract boolean hasBundlePermission(Player player);
+	public boolean hasBundlePermission(Player player) {
+		if (getOwners().contains(player.getName())) {
+			if (player.hasPermission("flags.bundle.set")) {	return true; }
+			return false;
+		}
+		
+		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
+			if (player.hasPermission("flags.bundle.set.admin")) { return true; }
+			return false;
+		}
+		
+		if (player.hasPermission("flags.bundle.set.others")) { return true;	}
+		return false;
+	}
 	
 	/**
 	 * Returns the value of the flag for this area.

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
@@ -71,28 +70,6 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	@Override
 	public boolean isArea() {
 		return (residence != null);
-	}
-	
-	@Override
-	public boolean hasPermission(Player player) {
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.flag.set")) { return true; }
-			return false;
-		}
-		
-		if (player.hasPermission("flags.flag.set.others")) { return true; }
-		return false;
-	}
-
-	@Override
-	public boolean hasBundlePermission(Player player) {
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.bundle.set")) { return true; }
-			return false;
-		}
-		
-		if (player.hasPermission("flags.bundle.set.others")) { return true; }
-		return false;
 	}
 	
 	// ******************************

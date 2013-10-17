@@ -20,15 +20,17 @@ public class Registrar {
 	 * @param description A brief description of the flag
 	 * @param def The flag's default state
 	 * @param group The group the flag belongs in. 
-	 * @return True if the flag was successfully registered.
+	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public boolean register(String name, String description, boolean def, String group) {
+	public Flag register(String name, String description, boolean def, String group) {
 		if(!flagStore.containsKey(name)) {
-			flagStore.put(name, new Flag(name, description, def, group, false, null, null));
-			return true;
+			Flag flag = new Flag(name, description, def, group, false, null, null);
+			flagStore.put(name, flag);
+			return flag;
 		}
-		return false;
+		return null;
 	}
+	
 	/**
 	 * Registers a player flag
 	 * 
@@ -38,14 +40,15 @@ public class Registrar {
 	 * @param group The group the flag belongs in. 
 	 * @param areaMessage The default message for areas.
 	 * @param worldMessage The default message for worlds.
-	 * @return True if the flag was successfully registered.
+	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public boolean register(String name, String description, boolean def, String group, String areaMessage, String worldMessage) {
+	public Flag register(String name, String description, boolean def, String group, String areaMessage, String worldMessage) {
 		if(!flagStore.containsKey(name)) {
-			flagStore.put(name, new Flag(name, description, def, group, true, areaMessage, worldMessage));
-			return true;
+			Flag flag = new Flag(name, description, def, group, true, areaMessage, worldMessage);
+			flagStore.put(name, flag);
+			return flag;
 		}
-		return false;
+		return null;
 	}
 	
 	/**

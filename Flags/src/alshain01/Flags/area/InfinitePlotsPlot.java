@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
@@ -60,28 +59,6 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	@Override
 	public boolean isArea() {
 		if(plot != null) { return true; }
-		return false;
-	}
-
-	@Override
-	public boolean hasPermission(Player player) {
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.flag.set")) { return true; }
-			return false;
-		}
-		
-		if (player.hasPermission("flags.flag.set.others")) { return true; }
-		return false;
-	}
-
-	@Override
-	public boolean hasBundlePermission(Player player) {
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.bundle.set")) {	return true; }
-			return false;
-		}
-		
-		if (player.hasPermission("flags.bundle.set.others")) { return true;	}
 		return false;
 	}
 	
