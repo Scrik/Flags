@@ -361,6 +361,10 @@ public abstract class Area implements Comparable<Area> {
 		return true;
 	}
 	
+	/*
+	 * Check to make sure the player can afford the item.
+	 * If false, the player is automatically notified.
+	 */
 	private static boolean isFundingAvailable(PurchaseType product, Flag flag, Player player) {
 		double price = flag.getPrice(product);
 		
@@ -374,6 +378,9 @@ public abstract class Area implements Comparable<Area> {
 		return true;
 	}
 	
+	/*
+	 * Makes the final purchase transaction.
+	 */
 	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
 		double price = flag.getPrice(product);
 		
