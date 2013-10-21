@@ -44,8 +44,11 @@ import alshain01.Flags.events.MessageChangedEvent;
  * Economy manager for Flags
  * 
  * @author Alshain01
+ * @deprecated No longer used.
  */
+@Deprecated
 final class EconomyListener implements Listener {
+	@Deprecated
 	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
 		// Get the YAML data path of the price.
 		String pricePath = "Price." + product.toString() + "." + flag.getName();
@@ -92,6 +95,7 @@ final class EconomyListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@Deprecated
 	private static void onFlagChanged(FlagChangedEvent e) {
 		// Don't charge for admin area, world or default areas & if there is no player, we can't do anything
 		if (e.getArea() instanceof Default || e.getArea() instanceof World) { return; }
@@ -142,6 +146,7 @@ final class EconomyListener implements Listener {
 	 * @param e The event data set.
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@Deprecated
 	private static void onMessageChanged(MessageChangedEvent e) {
 		// Don't charge for admin area, world or default areas & if there is no player, we can't do anything
 		if (e.getArea() instanceof Default || e.getArea() instanceof World) { return; }

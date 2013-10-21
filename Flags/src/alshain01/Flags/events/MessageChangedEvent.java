@@ -9,8 +9,6 @@ import alshain01.Flags.Flag;
 import alshain01.Flags.area.Area;
 /** 
  * Event for that occurs when a message is set, changed or removed.
- * This event may occur if a message is changed to the same 
- * string that is currently set or if there is nothing to remove. 
  * 
  * @author Alshain01
  */

@@ -86,7 +86,7 @@ public class Flags extends JavaPlugin{
 		
 		// Enable Vault support
 		if(setupEconomy()) {
-			this.getServer().getPluginManager().registerEvents(new EconomyListener(), instance);
+			//this.getServer().getPluginManager().registerEvents(new EconomyListener(), instance);
 		}
 		
 		// Load Mr. Clean

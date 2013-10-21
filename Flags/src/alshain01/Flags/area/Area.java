@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,6 +13,10 @@ import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
+import alshain01.Flags.Message;
+import alshain01.Flags.economy.BaseValue;
+import alshain01.Flags.economy.PurchaseType;
+import alshain01.Flags.economy.TransactionType;
 import alshain01.Flags.events.FlagChangedEvent;
 import alshain01.Flags.events.MessageChangedEvent;
 import alshain01.Flags.events.TrustChangedEvent;
@@ -68,6 +74,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return true if the player has permissions.
 	 */
 	public boolean hasPermission(Player player) {
+		if(!isArea()) { return false; }
+		
 		if (getOwners().contains(player.getName())) {
 			if (player.hasPermission("flags.flag.set")) { return true; }
 			return false;
@@ -89,6 +97,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return true if the player has permissions.
 	 */
 	public boolean hasBundlePermission(Player player) {
+		if(!isArea()) { return false; }
+		
 		if (getOwners().contains(player.getName())) {
 			if (player.hasPermission("flags.bundle.set")) {	return true; }
 			return false;
@@ -111,6 +121,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The value of the flag or the inherited value of the flag from defaults if not defined.
 	 */
 	public Boolean getValue(Flag flag, boolean absolute) {
+		if(!isArea()) { return false; }
+		
     	Boolean value = null;
     	if(isArea()) { 
 	    	String valueString = Flags.instance.dataStore.read(getDataPath() + "." + flag.getName() + valueFooter);
@@ -136,11 +148,49 @@ public abstract class Area implements Comparable<Area> {
 	 * @return False if the event was canceled.
 	 */
 	public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
+		if(!isArea()) { return false; }
+		
+		TransactionType transaction = null;
+		
+        // Check to see if this is a purchase or deposit
+        if(Flags.instance.economy != null					// No economy 
+        		&& flag.getPrice(PurchaseType.Flag) != 0	// No defined price
+        		&& !(this instanceof World)					// No charge for world flags
+        		&& !(this instanceof Default)				// No charge for defaults
+        		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
+        {
+    		if (BaseValue.ALWAYS.isSet()
+    				|| (BaseValue.PLUGIN.isSet() && getValue(flag, true) != flag.getDefault()) 
+    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation()).getValue(flag, true)))
+    	    { 
+        		// Is the flag being deleted?			
+        		if(value == null) {
+        			// Check whether or not to refund the account for removing the flag
+        			if (PurchaseType.Flag.isRefundable()) {
+        				transaction = TransactionType.Deposit;
+        			}
+        		} else {
+    	    		// Check whether or not to charge the account
+        			if(!isFundingAvailable(PurchaseType.Flag, flag, (Player)sender)) { return false; }
+        			transaction = TransactionType.Withdraw;
+        		}
+    	    } else {
+        		// Check whether or not to refund the account for setting the flag value
+        		if (PurchaseType.Flag.isRefundable() && !BaseValue.ALWAYS.isSet()) {
+        			transaction = TransactionType.Deposit;
+        		}
+    	    }
+        }
+        
     	FlagChangedEvent event = new FlagChangedEvent(this, flag, sender, value);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) { return false; }
-
-
+        
+        // Delay making the transaction in case the event is cancelled.
+        if(transaction != null) {
+        	makeTransaction(transaction, PurchaseType.Flag, flag, (Player)sender);
+        }
+        
         if(value == null) {
         	// Remove the flag
         	Flags.instance.dataStore.write(getDataPath() + "." + flag.getName() + valueFooter, (String)null);
@@ -158,6 +208,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The list of players
 	 */
 	public Set<String> getTrustList(Flag flag) {
+		if(!isArea()) { return null; }
+		
     	Set<String> trustedPlayers = Flags.instance.dataStore.readSet(getDataPath() + "." + flag.getName() + trustFooter);
     	if(trustedPlayers == null) { trustedPlayers = new HashSet<String>(); }
     	trustedPlayers.addAll(getOwners());
@@ -174,6 +226,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return True if successful.
 	 */
 	public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
+		if(!isArea()) { return false; }
+		
 		final String path = getDataPath() + "." + flag.getName() + trustFooter;
 		Set<String> trustList = Flags.instance.dataStore.readSet(path);
 		
@@ -265,11 +319,83 @@ public abstract class Area implements Comparable<Area> {
 	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
 		if(!isArea()) { return false; }
 	 	
+		TransactionType transaction = null;
+		
+        // Check to see if this is a purchase or deposit
+        if(Flags.instance.economy != null					// No economy 
+        		&& flag.getPrice(PurchaseType.Message) != 0	// No defined price
+        		&& !(this instanceof World)					// No charge for world flags
+        		&& !(this instanceof Default)				// No charge for defaults
+        		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
+        {
+
+    		// Check to make sure we aren't removing the message
+        	if(message != null) {
+    			// Check to make sure the message isn't identical to what we have
+    			// (if they are just correcting caps, don't charge, I hate discouraging bad spelling & grammar)
+    			if(!(getMessage(flag, false).equalsIgnoreCase(message))) { 
+    				if(!isFundingAvailable(PurchaseType.Message, flag, (Player)sender)) { return false;	}
+    				transaction = TransactionType.Withdraw;
+    			}
+        	} else {
+        		// Check whether or not to refund the account
+        		if(PurchaseType.Message.isRefundable()) {
+        			// Make sure the message we are refunding isn't identical to the default message
+        			if (!(getMessage(flag, false).equals(flag.getDefaultAreaMessage()))) {
+    					transaction = TransactionType.Deposit;
+        			}
+        		}
+        	}
+        }
+
 		MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) { return false; }
-	 	   
+
+        // Delay making the transaction in case the event is cancelled.
+		if(transaction != null) {
+			makeTransaction(transaction, PurchaseType.Message, flag, (Player)sender);
+		}
+		
 		Flags.instance.dataStore.write(getDataPath() + "." + flag.getName() + messageFooter, message.replaceAll("§", "&"));
+		return true;
+	}
+	
+	private static boolean isFundingAvailable(PurchaseType product, Flag flag, Player player) {
+		double price = flag.getPrice(product);
+		
+		if (price > Flags.instance.economy.getBalance(player.getName())) {
+			player.sendMessage(Message.LowFunds.get()
+					.replaceAll("\\{PurchaseType\\}", product.getLocal().toLowerCase())
+					.replaceAll("\\{Price\\}", Flags.instance.economy.format(price))
+					.replaceAll("\\{Flag\\}", flag.getName()));
+			return false;
+		}
+		return true;
+	}
+	
+	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
+		double price = flag.getPrice(product);
+		
+		EconomyResponse r;
+		if (transaction == TransactionType.Withdraw) {
+			// Withdrawal
+			r = Flags.instance.economy.withdrawPlayer(player.getName(), price);
+		} else {
+			// Deposit
+			r = Flags.instance.economy.depositPlayer(player.getName(), price);
+		}
+		
+		if (r.transactionSuccess()) {
+			player.sendMessage(transaction.getLocal()
+					.replaceAll("\\{Price\\}", Flags.instance.economy.format(price)));
+			return false;
+		}
+		
+		// Something went wrong if we made it this far.
+		Flags.instance.getLogger().severe(String.format("An error occured: %s", r.errorMessage));
+		player.sendMessage(Message.Error.get()
+				.replaceAll("\\{Error\\}", r.errorMessage));
 		return true;
 	}
 }

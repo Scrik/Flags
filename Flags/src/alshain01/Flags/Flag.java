@@ -2,6 +2,8 @@ package alshain01.Flags;
 
 import org.bukkit.entity.Player;
 
+import alshain01.Flags.economy.PurchaseType;
+
 /**
  * Represents a flag registered with the plug-in.
  * 
@@ -146,5 +148,10 @@ public class Flag {
 			return true;
 		}
 		return false;
+    }
+    
+    public final double getPrice(PurchaseType type) {
+    	if(!Flags.instance.dataStore.isSet("Price." + type.toString() + "." + name)) { return 0; }
+    	return Flags.instance.dataStore.readDouble("Price." + type.toString() + "." + name);
     }
 }
