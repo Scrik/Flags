@@ -224,4 +224,10 @@ public class MySQLDataStore implements SQLDataStore {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void write(String path, double value) {
+		// TODO Auto-generated method stub
+		
+	}
 }

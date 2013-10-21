@@ -154,4 +154,8 @@ public class Flag {
     	if(!Flags.instance.dataStore.isSet("Price." + type.toString() + "." + name)) { return 0; }
     	return Flags.instance.dataStore.readDouble("Price." + type.toString() + "." + name);
     }
+    
+    public final void setPrice(PurchaseType type, double price) {
+    	Flags.instance.dataStore.write("Price." + type.toString() + "." + name, price);
+    }
 }
