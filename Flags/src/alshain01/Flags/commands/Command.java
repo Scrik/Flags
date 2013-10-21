@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import alshain01.Flags.Director;
 import alshain01.Flags.Message;
 import alshain01.Flags.Director.LandSystem;
+import alshain01.Flags.economy.PurchaseType;
 
 /**
  * Command handler for Flags
@@ -48,7 +49,7 @@ public abstract class Command {
 			return true;
 		}
 
-		if (args.length > 2) { flag = args[2]; } // Flag name can be omitted for some commands
+		if (args.length > 2) { flag = args[2]; } // Flag name can be omitted for some commands (also used for price)
 
 		// Actions: Get, Remove, Count, Distrust (2 args minimum)
 		if (action == 'g') {
@@ -87,6 +88,17 @@ public abstract class Command {
 		} else if (action == 'v') {
 			if(!FlagCmd.viewTrust(sender, location, flag)) { return getHelp(sender, command, action); }
 			return true;
+		} else if (action == 'c') {
+			PurchaseType t = null;
+			if(location == 'f') { t = PurchaseType.Flag; }
+			else if (location == 'm') { t = PurchaseType.Message; }
+			else { return getHelp(sender, command, action); }
+			
+			if(args.length > 3) {
+				if(!FlagCmd.setPrice(sender, t, flag, args[3])) { return getHelp(sender, command, action); }
+			} else {
+				if(!FlagCmd.getPrice(sender, t, flag)) { return getHelp(sender, command, action); }
+			}
 		}
 		
 		if (args.length < 4) { return getHelp(sender, command, action); }
@@ -309,6 +321,10 @@ public abstract class Command {
 			if (action == 'i') {
 				sender.sendMessage("/flag Inherit [true|false]");
 				return true;
+			}
+			
+			if (action == 'c') {
+				sender.sendMessage("/flag Charge <flag|message> <flag> [price]");
 			}
 		}
 		

@@ -15,6 +15,7 @@ import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
+import alshain01.Flags.economy.PurchaseType;
 
 abstract class FlagCmd extends Common {
 	protected static boolean get(CommandSender sender, char location, String flagName) {
@@ -533,5 +534,42 @@ abstract class FlagCmd extends Common {
 		sender.sendMessage(Message.SetInherited.get()
 				.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
 		return true;		
+	}
+	
+	protected static boolean getPrice(CommandSender sender, PurchaseType type, String flagName) {
+		Flag flag = getFlag(sender, flagName, true);
+		if(flag == null) { return true; }
+		
+		String price;
+		if(Flags.instance.economy != null) {
+			price = Flags.instance.economy.format(flag.getPrice(type));
+		} else {
+			price = String.valueOf(flag.getPrice(type));
+		}
+		
+		sender.sendMessage(Message.GetPrice.get()
+				.replaceAll("\\{PurchaseType\\}", type.getLocal().toLowerCase())
+				.replaceAll("\\{Flag\\}", flag.getName())
+				.replaceAll("\\{Price\\}", price));
+		return true;
+	}
+	
+	protected static boolean setPrice(CommandSender sender, PurchaseType type, String flagName, String price) {
+		Flag flag = getFlag(sender, flagName, true);
+		if(flag == null) { return true; }
+		
+		double p;
+		try {
+			p = Double.valueOf(price);
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+		
+		flag.setPrice(type, p);
+		sender.sendMessage(Message.SetPrice.get()
+				.replaceAll("\\{PurchaseType\\}", type.getLocal().toLowerCase())
+				.replaceAll("\\{Flag\\}", flag.getName())
+				.replaceAll("\\{Price\\}", price));
+		return true;
 	}
 }

@@ -12,7 +12,11 @@ public interface DataStore {
 	
 	public void write(String path, String value);
 	
+	public void write(String path, double value);
+	
 	public void write(String path, List<String> list);
+	
+	public void write(String path, Set<String> set);
 	
 	public boolean isSet(String path);
 	
@@ -25,8 +29,6 @@ public interface DataStore {
 	public List<String> readList(String path);
 	
 	public Set<String> readSet(String path);
-	
-	public void write(String path, Set<String> set);
 	
 	public Set<String> readKeys(String path);
 	
