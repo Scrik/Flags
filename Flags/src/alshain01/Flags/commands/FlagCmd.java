@@ -161,113 +161,110 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean help (CommandSender sender, int page, String group) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
-		Registrar registrar = Flags.instance.getRegistrar();
-		List<String> groupNames = new ArrayList<String>();
-		List<String> allowedFlagNames = new ArrayList<String>();
-		Set<String> flagNames = Flags.instance.getRegistrar().getFlagNames();
-
-		// First we need to filter out the flags and groups to show to the particular user.
-		for (String f : flagNames) {
-			Flag flag = registrar.getFlag(f);
-			// Add flags for the requested group only
-			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
-				// Only show flags that can be used.
-				if(flag.hasPermission((Player)sender)){
-					allowedFlagNames.add(flag.getName());
-					// Add the group, but only once and only if a group hasn't been requested
-					if(group == null && !groupNames.contains(flag.getGroup())) {
-						groupNames.add(flag.getGroup()); // Add the flags group.
-					}
-				}
-			}
-		}
-		
-		// No flags were found, there should always be flags.
-		List<String> combinedHelp = new ArrayList<String>();
-		if(allowedFlagNames.size() == 0) { 
-			sender.sendMessage(Message.NoFlagFound.get()
-					.replaceAll("{Type}", Message.Flag.get().toLowerCase()));
-			return true;
-		}
-		Collections.sort(allowedFlagNames);
-		combinedHelp.addAll(allowedFlagNames);
-		
-		// Show them alphabetically and group them together for easier coding
-		if(groupNames.size() > 0) {
-			Collections.sort(groupNames);
-			combinedHelp.addAll(groupNames);
-		}
-		
-		//Get total pages
-		//1 header per page
-		//9 flags per page, except on the first which has a usage line and 8 flags
-		int total = ((combinedHelp.size() + 1) / 9);
-		
-		
-		// Add the last page, if the last page is not full (less than 9 flags)
-		if ((combinedHelp.size() + 1) % 9 != 0) { total++; }
-		
-		//Check the page number requested
-        if (page < 1 || page > total) { page = 1; }
+    protected static boolean help (CommandSender sender, int page, String group) {
+    	if (!(sender instanceof Player)) {
+    		sender.sendMessage(Message.NoConsoleError.get());
+    	}
         
-		String indexType = Message.Index.get();
-		if(group != null) {
-			indexType = registrar.getFlag(combinedHelp.get(0)).getGroup();
-		}
-		
-		sender.sendMessage(Message.HelpHeader.get()
-				.replaceAll("\\{Group\\}", indexType)
-				.replaceAll("\\{Page\\}", String.valueOf(page))
-				.replaceAll("\\{TotalPages\\}", String.valueOf(total))
-				.replaceAll("\\{Type\\}", Message.Flag.get()));
-		
-		// Setup for only displaying 10 lines at a time (including the header)
-		int linecount = 0;
-		
-		// Usage line.
-		if (page == 1) {
-			if(group == null) {
-				sender.sendMessage(Message.HelpInfo.get()
-						.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-				linecount++;
-			} else {
-				sender.sendMessage(Message.GroupHelpInfo.get()
-						.replaceAll("\\{Type\\}", registrar.getFlag(combinedHelp.get(0)).getGroup()));
-			}
-		}
-		
-		// Find the start position in the array of names
-		int position = ((page - 1) * 9) - 1;
-		if(position < 0) { position = 0; }
-		
+    	Registrar registrar = Flags.instance.getRegistrar();
+    	List<String> groupNames = new ArrayList<String>();
+    	List<String> allowedFlagNames = new ArrayList<String>();
+        Set<String> flagNames = Flags.instance.getRegistrar().getFlagNames();
 
-		
-		// Output the results
-		while (position < combinedHelp.size()) {
-			if(groupNames.contains(combinedHelp.get(position))) {
-				sender.sendMessage(Message.HelpTopic.get()
-						.replaceAll("\\{Topic\\}", combinedHelp.get(position))
-						.replaceAll("\\{Description\\}", Message.GroupHelpDescription.get().replaceAll("{Group}", combinedHelp.get(position))));
-			} else {
-				sender.sendMessage(Message.HelpTopic.get()
-						.replaceAll("{Topic}", combinedHelp.get(position))
-						.replaceAll("{Description}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
-			}
-			
-			if(++linecount == 9) {
-				return true;
-			}
-			position++;
-		}
-		return true;
-	}
-	
+        // First we need to filter out the flags and groups to show to the particular user.
+        for (String f : flagNames) {
+        	Flag flag = registrar.getFlag(f);
+        	// Add flags for the requested group only
+        	if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
+        		// Only show flags that can be used.
+        		if(flag.hasPermission((Player)sender)){
+        			allowedFlagNames.add(flag.getName());
+        			// Add the group, but only once and only if a group hasn't been requested
+        			if(group == null && !groupNames.contains(flag.getGroup())) {
+        				groupNames.add(flag.getGroup()); // Add the flags group.
+        			}
+        		}
+        	}
+        }
+        
+        // No flags were found, there should always be flags.
+        if(allowedFlagNames.size() == 0) {
+        	sender.sendMessage(Message.NoFlagFound.get()
+        			.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+        	return true;
+        }
+        
+        List<String> combinedHelp = new ArrayList<String>();
+        
+        // Show them alphabetically and group them together for easier coding
+        if(groupNames.size() > 0) {
+        	Collections.sort(groupNames);
+        	combinedHelp.addAll(groupNames);
+        }
+        
+        Collections.sort(allowedFlagNames);
+        combinedHelp.addAll(allowedFlagNames);
+        
+        //Get total pages
+        //1 header per page
+        //9 flags per page, except on the first which has a usage line and 8 flags
+        int total = ((combinedHelp.size() + 1) / 9);
+        
+        // Add the last page, if the last page is not full (less than 9 flags)
+        if ((combinedHelp.size() + 1) % 9 != 0) { total++; }
+        
+        //Check the page number requested
+        if (page < 1 || page > total) { page = 1; }
 
+        String indexType = Message.Index.get();
+        if(group != null) {
+        	indexType = registrar.getFlag(combinedHelp.get(0)).getGroup();
+        }
+        
+        sender.sendMessage(Message.HelpHeader.get()
+        		.replaceAll("\\{Group\\}", indexType)
+        		.replaceAll("\\{Page\\}", String.valueOf(page))
+        		.replaceAll("\\{TotalPages\\}", String.valueOf(total))
+        		.replaceAll("\\{Type\\}", Message.Flag.get()));
+        
+        // Setup for only displaying 10 lines at a time (including the header)
+        int linecount = 0;
+        
+        // Usage line.
+        if (page == 1) {
+        	if(group == null) {
+        		sender.sendMessage(Message.HelpInfo.get()
+        				.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+        		linecount++;
+        	} else {
+        		sender.sendMessage(Message.GroupHelpInfo.get()
+        				.replaceAll("\\{Type\\}", registrar.getFlag(combinedHelp.get(0)).getGroup()));
+        	}
+        }
+        
+        // Find the start position in the array of names
+        int position = ((page - 1) * 9) - 1;
+        if(position < 0) { position = 0; }
+        
+        // Output the results
+        while (position < combinedHelp.size()) {
+        	if(groupNames.contains(combinedHelp.get(position))) {
+        		sender.sendMessage(Message.HelpTopic.get()
+        				.replaceAll("\\{Topic\\}", combinedHelp.get(position))
+        				.replaceAll("\\{Description\\}", Message.GroupHelpDescription.get().replaceAll("\\{Group\\}", combinedHelp.get(position))));
+        	} else {
+        		sender.sendMessage(Message.HelpTopic.get()
+        				.replaceAll("\\{Topic\\}", combinedHelp.get(position))
+        				.replaceAll("\\{Description\\}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
+        	}
+
+        	if(++linecount == 9) {
+        		return true;
+        	}
+        	position++;
+        }
+        return true;
+    }
 	
 	protected static boolean viewTrust(CommandSender sender, char location, String flagName) {
 		if (!(sender instanceof Player)) {
