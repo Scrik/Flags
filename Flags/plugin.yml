@@ -1,5 +1,5 @@
 name: Flags
-version: 1.1.0-B2
+version: 1.2.0-ALPHA
 description: Allows you to set flags to alter game behavior.
 author: Alshain01
 website: http://dev.bukkit.org/bukkit-plugins/flags/
@@ -23,6 +23,7 @@ permissions:
     children:
       flags.flag.*: true
       flags.bundle.*: true
+      flags.admin.notifyupdate: true
   
   flags.flag.*:
     description: Allows access to the flag command and all flag command actions.
@@ -115,4 +116,8 @@ permissions:
   
   flags.bundle.set.edit:
     description: Allows user to set or remove bundles for the area default.
+    default: op
+  
+  flags.admin.notifyupdate:
+    description: Notifies players when Flags needs updating.
     default: op

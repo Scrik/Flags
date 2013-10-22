@@ -5,12 +5,17 @@ import java.util.List;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import alshain01.Flags.Director.LandSystem;
+import alshain01.Flags.Updater.UpdateResult;
 import alshain01.Flags.commands.Command;
 import alshain01.Flags.data.CustomYML;
 import alshain01.Flags.data.DataStore;
@@ -51,7 +56,11 @@ public class Flags extends JavaPlugin{
 			} else {
 				updater = new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 			}
+			if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+				Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_RED + "An update is available for Flags. Please visit http://dev.bukkit.org/bukkit-plugins/flags/ to update.");
+			}
 		}
+		this.getServer().getPluginManager().registerEvents(new UpdateListener(), instance);
         
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
@@ -97,7 +106,7 @@ public class Flags extends JavaPlugin{
 			this.getServer().getPluginManager().registerEvents(new BorderPatrol(), instance);
 		}
 		
-		if(!DEBUG) {
+		if(!DEBUG && checkAPI("1.3.2")) {
 			MetricsManager.StartMetrics();
 		}
 		
@@ -205,5 +214,14 @@ public class Flags extends JavaPlugin{
 			}
 		}
 		return LandSystem.NONE;				
+	}
+	
+	private class UpdateListener implements Listener {
+		@EventHandler(ignoreCancelled = true)
+		private void onPlayerJoin(PlayerJoinEvent e) {
+			if(e.getPlayer().hasPermission("flags.admin.notifyupdate") && updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+					e.getPlayer().sendMessage(ChatColor.DARK_RED + "An update is available for Flags. Please visit http://dev.bukkit.org/bukkit-plugins/flags/ to update.");
+			}
+		}
 	}
 }

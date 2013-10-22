@@ -142,7 +142,7 @@ class Updater {
         this.id = id;
         this.updateFolder = plugin.getServer().getUpdateFolder();
 
-        if (key.equalsIgnoreCase("null") || key.equals("")) {
+        if (key == null || key.equalsIgnoreCase("null") || key.equals("")) {
             key = null;
         }
         this.apiKey = key;
