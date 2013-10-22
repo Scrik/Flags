@@ -79,12 +79,12 @@ abstract class Common {
 		return (Player) sender;
 	}
 	
-	protected static Area getArea(CommandSender sender, char location) {
-		if (location == 'd') {
+	protected static Area getArea(CommandSender sender, CommandLocation location) {
+		if (location == CommandLocation.DEFAULT) {
 			return new Default(((Player)sender).getWorld());
-		} else if (location == 'w') {
+		} else if (location == CommandLocation.WORLD) {
 			return new World(((Player)sender).getWorld());
-		} else if (location == 'a') {
+		} else if (location == CommandLocation.AREA) {
 			Area area = Director.getAreaAt(((Player)sender).getLocation());
 			if(area instanceof World) {
 				sender.sendMessage(Message.NoAreaError.get()

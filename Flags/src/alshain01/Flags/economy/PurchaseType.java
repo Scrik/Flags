@@ -32,7 +32,22 @@ import alshain01.Flags.Flags;
  * @author Alshain01
  */
 public enum PurchaseType {
-	Flag, Message;
+	Flag('f'), Message('m');
+	
+	char alias;
+	
+	PurchaseType(char alias) {
+		this.alias = alias;
+	}
+	
+	public static PurchaseType get(String name) {
+		for(PurchaseType p : PurchaseType.values()) {
+			if(name.toLowerCase().equals(p.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(p.alias))) {
+				return p;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * @return The localized name of the purchase type

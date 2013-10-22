@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import alshain01.Flags.Director;
+import alshain01.Flags.Flag;
+import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.Director.LandSystem;
 import alshain01.Flags.economy.PurchaseType;
@@ -15,7 +18,7 @@ import alshain01.Flags.economy.PurchaseType;
  * 
  * @author Alshain01
  */
-public abstract class Command {
+public class Command {
 	private Command(){}
 	
 	/**
@@ -26,85 +29,83 @@ public abstract class Command {
 	 * @return		 true if a valid command, otherwise false
 	 */
 	public static boolean onFlagCommand(CommandSender sender, String[] args) {
-		final String command = "flag";
-		// Action must always be present
 		if (args.length < 1) { return false; }
-		char action = args[0].toLowerCase().charAt(0);
+		final FCommandType command = FCommandType.get(args[0]);
 
-		// Actions: Help (1 arg minimum)
-		if (action == 'h') {
-			if(!FlagCmd.help(sender, getPage(args), getGroup(args))) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'i') {
-			if(!FlagCmd.inherit(sender, getValue(args, 1))) { return getHelp(sender, command, action); }
-			return true;
-		}
-		
-		String flag = null;
-		if (args.length < 2) { return getHelp(sender, command, action); }
-		char location = args[1].toLowerCase().charAt(0);
-		
-		if (Director.getSystem() == LandSystem.NONE && (location == 'a' || location == 'd')) {
-			sender.sendMessage(Message.NoSystemError.get());
+		if(command == null) { return false;	}
+
+		// Check argument length (-1 means infinite optional args)
+		if(args.length < command.requiredArgs
+				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
+			sender.sendMessage(command.getHelp());
 			return true;
 		}
 
-		if (args.length > 2) { flag = args[2]; } // Flag name can be omitted for some commands (also used for price)
-
-		// Actions: Get, Remove, Count, Distrust (2 args minimum)
-		if (action == 'g') {
-			if(!FlagCmd.get(sender, location, flag)) { return getHelp(sender, command, action);	}
+		// Check the command location for those that apply
+		CommandLocation location = null;
+		if(command.requiresLocation) {
+			location = CommandLocation.get(args[1]);
+			if(location == null) {
+				sender.sendMessage(command.getHelp());
+				return true;
+			}
+			
+			// Make sure we can set flags at that location
+			if (Director.getSystem() == LandSystem.NONE && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+				sender.sendMessage(Message.NoSystemError.get());
+				return true;
+			}
+		}
+		
+		// Location based commands require the player to be in the world
+		// Inherit is a special case, doesn't require a location but assumes one exists
+		if((location != null || command == FCommandType.INHERIT) && !(sender instanceof Player)) {
+			sender.sendMessage(Message.NoConsoleError.get());
 			return true;
-		} else if (action == 'r') {
-	    	if(!FlagCmd.remove(sender, location, flag)) { return getHelp(sender, command, action); }
-	    	return true;
-	    } else if (action == 'd') {
+		}
+
+		// Get the flag if required.
+		Flag flag = null;
+		if(command.requiresFlag != null) {
+			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
+				flag = Flags.instance.getRegistrar().getFlag(args[2]);
+				if(flag == null) {
+					sender.sendMessage(Message.InvalidFlagError.get()
+							.replaceAll("\\{RequestedName\\}", args[2])
+							.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+				}
+			}
+		}
+
+		// Process the command
+		boolean success = false;
+		if(command == FCommandType.HELP) {
+			success = FlagCmd.help(sender, getPage(args), getGroup(args));
+		} else if(command == FCommandType.INHERIT) {
+			success = FlagCmd.inherit((Player)sender, getValue(args, 1));
+		} else if(command == FCommandType.GET) {
+			success = FlagCmd.get((Player)sender, location, flag);
+		} else if(command == FCommandType.SET) {
+			success = FlagCmd.set((Player)sender, location, flag, getValue(args, 3));
+		} else if (command == FCommandType.REMOVE) {
+			success = FlagCmd.remove((Player)sender, location, flag);
+		} else if (command == FCommandType.VIEWTRUST) {
+			success = FlagCmd.viewTrust((Player)sender, location, flag);
+		} else if (command == FCommandType.TRUST) {
+			// List of players for trust
+			Set<String> players = getPlayers(args);
+			
+			success = FlagCmd.trust((Player)sender, location, flag, players);
+		} else if (command == FCommandType.DISTRUST) {
 			// List of players for trust
 			Set<String> players = new HashSet<String>();
 			if(args.length > 3) { players = getPlayers(args); } // Players can be omitted to distrust all
 	    	
-			if(!FlagCmd.distrust(sender, location, flag, players)) { return getHelp(sender, command, action); }
+			success = FlagCmd.distrust((Player)sender, location, flag, players);
 			return true;
-	    }
-	    
-		if (args.length < 3) { return getHelp(sender, command, action); }
-	    
-		// Actions: Set, Trust, ViewTrust, PresentMessage, EraseMessage (3 args minimum)
-		if(action == 's') {
-			if(!FlagCmd.set(sender, location, flag, getValue(args, 3))) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 't') {
-			// List of players for trust
-			Set<String> players = getPlayers(args);
-
-			if(!FlagCmd.trust(sender, location, flag, players)) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'p') {
-			if(!FlagCmd.presentMessage(sender, location, flag)) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'e') {
-			if(!FlagCmd.erase(sender, location, flag)) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'v') {
-			if(!FlagCmd.viewTrust(sender, location, flag)) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'c') {
-			PurchaseType t = null;
-			if(location == 'f') { t = PurchaseType.Flag; }
-			else if (location == 'm') { t = PurchaseType.Message; }
-			else { return getHelp(sender, command, action); }
-			
-			if(args.length > 3) {
-				if(!FlagCmd.setPrice(sender, t, flag, args[3])) { return getHelp(sender, command, action); }
-			} else {
-				if(!FlagCmd.getPrice(sender, t, flag)) { return getHelp(sender, command, action); }
-			}
-		}
-		
-		if (args.length < 4) { return getHelp(sender, command, action); }
-		
-		// Actions: Message (4 args minimum)
-		else if(action == 'm') {
+		} else if (command == FCommandType.PRESENTMESSAGE) {
+			success = FlagCmd.presentMessage((Player)sender, location, flag);
+		} else if (command == FCommandType.MESSAGE) {
 	  		// Build the message from the remaining arguments
 			StringBuilder message = new StringBuilder();
 			for (int x = 3; x < args.length; x++) {
@@ -113,11 +114,25 @@ public abstract class Command {
 					message.append(" ");
 				}
 			}
-			if(!FlagCmd.message(sender, location, flag, message.toString())) { return getHelp(sender, command, action); }
-			return true;
+			
+			success = FlagCmd.message((Player)sender, location, flag, message.toString());
+		} else if (command == FCommandType.ERASEMESSAGE) {
+			success = FlagCmd.erase((Player)sender, location, flag);
+		} else if (command == FCommandType.CHARGE) {
+			final PurchaseType t = PurchaseType.get(args[1]);
+			if (t == null) { 
+				success = false; 
+			} else {
+				if(args.length > 3) {
+					success = FlagCmd.setPrice(sender, t, flag, args[3]);
+				} else {
+					success = FlagCmd.getPrice(sender, t, flag);
+				}
+			}
 		}
 		
-		return false;
+		if(!success) { sender.sendMessage(command.getHelp()); }
+		return true;
 	}
 	
 	/**
@@ -128,64 +143,84 @@ public abstract class Command {
 	 * @return		 true if a valid command, otherwise false
 	 */
 	public static boolean onBundleCommand(CommandSender sender, String[] args) {
-		final String command = "bundle";
-		// Action must always be present
 		if (args.length < 1) { return false; }
-		char action = args[0].toLowerCase().charAt(0);
+		final BCommandType command = BCommandType.get(args[0]);
+
+		if(command == null) { return false;	}
 		
-		// Actions: Help (1 arg minimum)
-		if (action == 'h') {
-			if(!BundleCmd.help(sender, getPage(args))) { return getHelp(sender, command, action); }
+		// Check argument length (-1 means infinite optional args)
+		if(args.length < command.requiredArgs
+				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
+			sender.sendMessage(command.getHelp());
 			return true;
+		}
+
+		// Check the command location for those that apply
+		CommandLocation location = null;
+		if(command.requiresLocation) {
+			location = CommandLocation.get(args[1]);
+			if(location == null) {
+				sender.sendMessage(command.getHelp());
+				return true;
+			}
+			
+			// Location based commands require the player to be in the world
+			if(!(sender instanceof Player)) {
+				sender.sendMessage(Message.NoConsoleError.get());
+				return true;
+			}
+			
+			// Make sure we can set flags at that location
+			if (Director.getSystem() == LandSystem.NONE && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+				sender.sendMessage(Message.NoSystemError.get());
+				return true;
+			}
 		}
 		
 		String bundle = null;
-		if (args.length < 2) { return getHelp(sender, command, action); }
-		char location = args[1].toLowerCase().charAt(0);
-		
-		if (Director.getSystem() == LandSystem.NONE && (action == 'g' || action == 's' || action == 'r') && (location == 'a' || location == 'd')) {
-			sender.sendMessage(Message.NoSystemError.get());
-			return true;
-		}
-		if (args.length > 2) { bundle = args[2]; } // Bundle name can be omitted for some commands
-		
-		// Actions: Remove, Erase (2 args minimum)
-		if (action == 'g') {
-			if(!BundleCmd.get(sender, location, bundle)) { return getHelp(sender, command, action); }
-			return true;
-		} else if (action == 'e') {
-			if(!BundleCmd.erase(sender, args[1])) { return getHelp(sender, command, action); };
-			return true;
+		if(command.requiresBundle) {
+			if(command.requiresLocation) {
+				bundle = args[2];
+			} else {
+				bundle = args[1];
+			}
 		}
 		
-		if (args.length < 3) { return getHelp(sender, command, action); }
-		
-		// Actions: Set, Add, Delete (3 args minimum)
-		// Build the flag list from the remaining arguments
-		Set<String> flags = new HashSet<String>();
-		for (int x = 2; x < args.length; x++) {
-			flags.add(args[x]);
-		}
+		// Process the command
+		boolean success = false;
+		if(command == BCommandType.HELP) {
+			success = BundleCmd.help(sender, getPage(args));
+		} else if(command == BCommandType.GET) {
+			success = BundleCmd.get((Player)sender, location, bundle);
+		} else if(command == BCommandType.SET) {
+			Boolean value = getValue(args, 3);
+			if(value == null) {
+				success = false;
+			} else {
+				success = BundleCmd.set((Player)sender, location, bundle, getValue(args, 3));
+			}
+		} else if (command == BCommandType.REMOVE) {
+			success = BundleCmd.remove((Player)sender, location, bundle);
+		} else if(command == BCommandType.ADD) {
+			Set<String> flags = new HashSet<String>();
+			for (int x = 2; x < args.length; x++) {
+				flags.add(args[x]);
+			}
 			
-		if (action == 'a') {
-			if(!BundleCmd.add(sender, args[1], flags)) { return getHelp(sender, command, action); };
-			return true;
-		} else if (action == 'd') {
-			if(!BundleCmd.delete(sender, args[1], flags)) { return getHelp(sender, command, action); };
-			return true;
-		} else if (action == 'r') {
-			if(!BundleCmd.remove(sender, location, bundle)) { return getHelp(sender, command, action); };
-			return true;
-		} 
+			success = BundleCmd.add((Player)sender, bundle, flags);
+		} else if(command == BCommandType.DELETE) {
+			Set<String> flags = new HashSet<String>();
+			for (int x = 2; x < args.length; x++) {
+				flags.add(args[x]);
+			}
+			
+			success = BundleCmd.delete(sender, bundle, flags);
+		} else if (command == BCommandType.ERASE) {
+			success = BundleCmd.erase(sender, bundle);
+		}
 		
-		if (args.length < 4) { return getHelp(sender, command, action); }
-		
-		if(action == 's') {
-			if(!BundleCmd.set(sender, location, bundle, getValue(args, 3))) { return getHelp(sender, command, action); };
-			return true;
-		}		
-
-		return false;
+		if(!success) { sender.sendMessage(command.getHelp()); }
+		return true;
 	}
 	
 	/**
@@ -240,12 +275,11 @@ public abstract class Command {
 	}
 	
 	/**
-	 * Returns a true, false, or null value from argument 4
+	 * Returns a true, false, or null value from the argument
 	 * 
 	 * @param args
 	 * @return
 	 */
-	
 	private static Boolean getValue(String[] args, int argument) {
 		if (args.length > argument) {
 			if(args[argument].toLowerCase().charAt(0) == 't') {
@@ -255,117 +289,5 @@ public abstract class Command {
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns a help message for a failed command if possible 
-	 * 
-	 * @param sender  Source of the command
-	 * @param command The name of the command.
-	 * @param action  The command action.
-	 * @return		  true if a help message was sent, otherwise false
-	 */
-	private static boolean getHelp(CommandSender sender, String command, char action) {
-		// Flag only actions
-		if (command.equalsIgnoreCase("flag")) {
-			if (action == 's') {
-				sender.sendMessage("/flag Set <area|world|default> <flag> [true|false]");
-				return true;
-			}
-			
-			if (action == 'g') {
-				sender.sendMessage("/flag Get <area|world|default> [flag]");
-				return true;
-			}
-			
-			if (action == 'r') {
-				sender.sendMessage("/flag Remove <area|world|default> [flag]");
-				return true;
-			}
-			
-			if (action == 'h') {
-				sender.sendMessage("/flag Help [group] [page]");
-				return true;
-			}
-			
-			if (action == 't') {
-				sender.sendMessage("/flag Trust <area|world|default> <player> [player]...");
-				return true;
-			}
-			
-			if (action == 'd') {
-				sender.sendMessage("/flag Distrust <area|world|default> [player] [player]...");
-				return true;
-			}
-			
-			if (action == 'v') {
-				sender.sendMessage("/flag ViewTrust <area|world|default> <flag>");
-				return true;
-			}
-			
-			if (action == 'm') {
-				sender.sendMessage("/flag Message <area|world|default> <flag> <message>");
-				return true;
-			}
-			
-			if (action == 'p') {
-				sender.sendMessage("/flag PresentMessage <area|world|default> <flag>");
-				return true;
-			}
-			
-			if (action == 'e') {
-				sender.sendMessage("/flag EraseMessage <area|world|default> <flag>");
-				return true;
-			}
-			
-			if (action == 'i') {
-				sender.sendMessage("/flag Inherit [true|false]");
-				return true;
-			}
-			
-			if (action == 'c') {
-				sender.sendMessage("/flag Charge <flag|message> <flag> [price]");
-			}
-		}
-		
-		// Bundle only actions
-		if (command.equalsIgnoreCase("bundle")) {
-			if (action == 's') {
-				sender.sendMessage("/bundle Set <area|world|default> <bundle> <true|false>");
-				return true;
-			}
-			
-			if (action == 'g') {
-				sender.sendMessage("/bundle Get <area|world|default> <bundle>");
-				return true;
-			}
-			
-			if (action == 'r') {
-				sender.sendMessage("/bundle Remove <area|world|default> <bundle>");
-				return true;
-			}
-
-			if (action == 'h') {
-				sender.sendMessage("/bundle Help [page]");
-				return true;
-			}
-			
-			if (action == 'a') {
-				sender.sendMessage("/bundle Add <bundle> <flag> [flag]...");
-				return true;
-			}
-		
-			if (action == 'd') {
-				sender.sendMessage("/bundle Delete <bundle> <flag> [flag]...");
-				return true;
-			}
-			
-			if (action == 'e') {
-				sender.sendMessage("/bundle Erase <bundle>");
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

@@ -31,7 +31,7 @@ abstract class BundleCmd extends Common {
 		return false;
 	}
 	
-	protected static boolean get(CommandSender sender, char location, String bundleName) {
+	protected static boolean get(CommandSender sender, CommandLocation location, String bundleName) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(Message.NoConsoleError.get());
 			return true;
@@ -63,7 +63,7 @@ abstract class BundleCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean set(CommandSender sender, char location, String bundleName, Boolean value) {
+	protected static boolean set(CommandSender sender, CommandLocation location, String bundleName, Boolean value) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(Message.NoConsoleError.get());
 			return true;
@@ -119,7 +119,7 @@ abstract class BundleCmd extends Common {
         return true;
 	}
 	
-	protected static boolean remove(CommandSender sender, char location, String bundleName) {
+	protected static boolean remove(CommandSender sender, CommandLocation location, String bundleName) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(Message.NoConsoleError.get());
 		}
