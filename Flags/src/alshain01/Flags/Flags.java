@@ -106,7 +106,7 @@ public class Flags extends JavaPlugin{
 			this.getServer().getPluginManager().registerEvents(new BorderPatrol(), instance);
 		}
 		
-		if(!DEBUG) {
+		if(!DEBUG && checkAPI("1.3.2")) {
 			MetricsManager.StartMetrics();
 		}
 		
