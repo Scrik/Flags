@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import alshain01.Flags.Bundle;
 import alshain01.Flags.Flag;
+import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 
@@ -51,7 +52,7 @@ abstract class BundleCmd extends Common {
 		}
 
 		for (String f : bundle) {
-        	Flag flag = getFlag(sender, f, false);
+        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
         	if (flag != null) {
         		sender.sendMessage(Message.GetBundle.get()
         				.replaceAll("\\{Bundle\\}", f)
@@ -87,7 +88,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
+		if (!player.hasPermission("flags.bundletype.*") && !player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
 			sender.sendMessage(Message.FlagPermError.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			return true;
@@ -97,7 +98,7 @@ abstract class BundleCmd extends Common {
 
 		// Set the flags
         for (String f : bundle) {
-        	Flag flag = getFlag(sender, f, false);
+        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
         	if (flag != null) {
         		if(!area.setValue(flag, value, player)) {
         			success = false;
@@ -142,7 +143,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
+		if (!player.hasPermission("flags.bundletype.*") && !player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
 			sender.sendMessage(Message.FlagPermError.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			return true;
@@ -152,7 +153,7 @@ abstract class BundleCmd extends Common {
 		
 		// Removing all flags
 		for (String f : bundle) {
-        	Flag flag = getFlag(sender, f, false);
+        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
         	if (flag != null) {
         		if (!area.setValue(flag, null, player)) {
         			success = false;
@@ -182,7 +183,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		for (String f : flags) {
-        	Flag flag = getFlag(sender, f, false);
+        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
         		return true;
@@ -209,7 +210,7 @@ abstract class BundleCmd extends Common {
 		
 		boolean success = true;
 		for (String f : flags) {
-        	Flag flag = getFlag(sender, f, false);
+        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
         	if (flag != null) {
         		if (!bundle.remove(f)) {
         			success = false;

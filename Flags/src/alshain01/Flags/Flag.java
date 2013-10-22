@@ -117,9 +117,7 @@ public class Flag {
 	 * @return True if the provided player has permission.
 	 */
     public final boolean hasPermission(Player player) {
-		if (player.isOp() 
-				|| player.hasPermission("flags.*") 
-				|| player.hasPermission("flags.flagtype.*")
+		if (player.hasPermission("flags.flagtype.*")
 				|| player.hasPermission(getPermission())) {
 			return true;
 		}
@@ -141,9 +139,7 @@ public class Flag {
 	 * @return True if the provided player has permission to ignore the effects of this flag.
 	 */
     public final boolean hasBypassPermission(Player player) {
-		if (player.isOp()
-				|| player.hasPermission("flags.*") 
-				|| player.hasPermission("flags.bypass.*")
+		if (player.hasPermission("flags.bypass.*")
 				|| player.hasPermission(getBypassPermission())) {
 			return true;
 		}

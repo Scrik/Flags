@@ -23,6 +23,9 @@ permissions:
     children:
       flags.flag.*: true
       flags.bundle.*: true
+      flags.flagtype.*: true
+      flags.bundletype.*: true
+      flags.bypass.*: true
       flags.admin.notifyupdate: true
   
   flags.flag.*:
@@ -43,16 +46,24 @@ permissions:
       flags.bundle.set.world: true
       flags.bundle.set.default: true
       flags.bundle.edit: true
+      
+  flags.flagtype.*:
+    description: Allows ability to set all flag types.
+    default: op
+
+  flags.bundletype.*:
+    description: Allows ability to set all flag types.
+    default: op
+
+  flags.bypass.*:
+    description: Allows ability to bypass all player flag effects.
+    default: op
   
 # Flag command actions
   flags.flag:
     descriptions: Allows access to the flag command and all get/view/present/help/count actions.
     default: true
 
-  flags.bundle:
-    description: Allows access to the bundle command and get/help action.
-    default: true
-  
   flags.flag.set:
     description: Allows user to set or remove flags, messages, and trust in their own areas.
     default: op
@@ -84,6 +95,10 @@ permissions:
       flags.flag.set: true
 
 # Bundle command actions
+  flags.bundle:
+    description: Allows access to the bundle command and get/help action.
+    default: true
+
   flags.bundle.set:
     description: Allows user to set or remove bundles in their own areas.
     default: op

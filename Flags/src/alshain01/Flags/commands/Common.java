@@ -4,7 +4,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flag;
-import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.Director;
 import alshain01.Flags.area.Area;
@@ -25,12 +24,7 @@ abstract class Common {
 	}
 	
 	protected static boolean flagPermitted(Flag flag, Player player) {
-		if (player.isOp()
-				|| player.hasPermission("flags.*") 
-				|| player.hasPermission("flags.bypass.*")
-				|| player.hasPermission(flag.getBypassPermission())) {
-			return true;
-		}
+		if(flag.hasPermission(player)) { return true; }
 		player.sendMessage(Message.FlagPermError.get()
 				.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
 		return false;
@@ -52,31 +46,6 @@ abstract class Common {
 			return false;
 		}
 		return true;
-	}
-	
-	protected static Flag getFlag(CommandSender sender, String flagname, boolean notify) {
-		Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(flagname);
-		if (flag == null) {
-			if(notify) {
-				sender.sendMessage(Message.InvalidFlagError.get()
-						.replaceAll("\\{RequestedName\\}", flagname)
-						.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-			}
-			return null;
-		}
-		return flag;
-	}
-	
-	protected static Flag getFlag(CommandSender sender, String flagname) {
-		return getFlag(sender, flagname, true);
-	}
-	
-	protected static Player getPlayer(CommandSender sender) {
-		if (!(sender instanceof Player)) { 
-			sender.sendMessage(Message.NoConsoleError.get());
-			return null; 
-		}
-		return (Player) sender;
 	}
 	
 	protected static Area getArea(CommandSender sender, CommandLocation location) {

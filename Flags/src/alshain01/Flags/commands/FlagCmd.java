@@ -87,6 +87,8 @@ abstract class FlagCmd extends Common {
 		// Acquire the area
 		Area area = getArea(player, location);
 		if(area == null) { return false; }
+		
+		// Check permissions
 		if (!areaPermitted(area, player)) { return true; }
 		
 		// Removing single flag type
@@ -126,10 +128,6 @@ abstract class FlagCmd extends Common {
 	}
 	
 	protected static boolean help (CommandSender sender, int page, String group) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
 		Registrar registrar = Flags.instance.getRegistrar();
 		List<String> groupNames = new ArrayList<String>();
 		List<String> allowedFlagNames = new ArrayList<String>();
@@ -230,8 +228,6 @@ abstract class FlagCmd extends Common {
 		}
 		return true;
 	}
-	
-
 	
 	protected static boolean viewTrust(Player player, CommandLocation location, Flag flag) {
 		// Acquire the flag
