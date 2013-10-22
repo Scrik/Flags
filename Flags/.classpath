@@ -5,7 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/InfinitePlots.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Residence.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Vault.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldGuard.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/GriefPrevention-173.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/bukkit-1.6.2-R1.0.jar">
@@ -13,5 +12,7 @@
 			<attribute name="javadoc_location" value="http://jd.bukkit.org/rb/apidocs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/mcore.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

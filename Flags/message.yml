@@ -17,6 +17,7 @@ Message:
   WorldGuard: 'Region'
   Residence: 'Residence'
   InfinitePlots: 'Plot'
+  Factions: 'Territory'
   
   # Other Translations
   Message: 'Message'

@@ -20,7 +20,7 @@ public enum Message {
 	GetBundle, SetBundle, RemoveBundle, UpdateBundle, EraseBundle, 
 	SetInherited,
 	// Areas
-	Default, World, GriefPrevention, WorldGuard, Residence, InfinitePlots,
+	Default, World, GriefPrevention, WorldGuard, Residence, InfinitePlots, Factions,
 	// Help
 	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError, GroupHelpDescription, GroupHelpInfo,
 	// General Translations

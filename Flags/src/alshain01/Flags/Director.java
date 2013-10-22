@@ -37,7 +37,8 @@ public final class Director {
 		GRIEF_PREVENTION("GriefPrevention", "Grief Prevention"),
 		WORLDGUARD("WorldGuard", "WorldGuard"),
 		RESIDENCE("Residence", "Residence"),
-		INFINITEPLOTS("InfinitePlots","InfinitePlots");
+		INFINITEPLOTS("InfinitePlots","InfinitePlots"),
+		FACTIONS("Factions", "Factions");
 		
 		private String pluginName = null;
 		private String displayName = null;
