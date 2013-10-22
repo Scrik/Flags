@@ -160,8 +160,8 @@ public abstract class Area implements Comparable<Area> {
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
         {
     		if (BaseValue.ALWAYS.isSet()
-    				|| (BaseValue.PLUGIN.isSet() && getValue(flag, true) != flag.getDefault()) 
-    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation()).getValue(flag, true)))
+    				|| (BaseValue.PLUGIN.isSet() && getValue(flag, true) != null && getValue(flag, true) != flag.getDefault()) 
+    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != null && getValue(flag, true) != new Default(((Player)sender).getLocation()).getValue(flag, true)))
     	    { 
         		// Is the flag being deleted?			
         		if(value == null) {
