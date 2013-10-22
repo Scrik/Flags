@@ -299,42 +299,32 @@ abstract class FlagCmd extends Common {
 			}
 		}
 		if (success) {
-			sender.sendMessage(Message.SetTrust.get()
+			player.sendMessage(Message.SetTrust.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName()));
 		} else {
-			sender.sendMessage(Message.SetTrustError.get());
+			player.sendMessage(Message.SetTrustError.get());
 		}
 		return true;
 	}
 	
-	protected static boolean distrust(CommandSender sender, char location, String flagName, Set<String> playerList) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
+	protected static boolean distrust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+		if (!flagPermitted(flag, player)) { return true; }
+		
+		if(!flag.isPlayerFlag()) {
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
+			return true;
 		}
 		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
-		if (!areaPermitted(area, (Player)sender)) { return true; }
-
-		// Acquire the flag
-		Flag flag = null;
-		if(flagName != null) {
-			flag = getFlag(sender, flagName, true);
-			if (flag == null || !flagPermitted(flag, (Player)sender)) { return true; }
-			if(!flag.isPlayerFlag()) {
-				sender.sendMessage(Message.PlayerFlagError.get()
-						.replaceAll("\\{Flag\\}", flagName));
-				return true;
-			}
-		}
-
-		
+		if (!areaPermitted(area, player)) { return true; }
 		
 		Set<String> trustList = area.getTrustList(flag);
 		if(trustList == null) {
-			sender.sendMessage(Message.InvalidTrustError.get()
+			player.sendMessage(Message.InvalidTrustError.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
@@ -344,121 +334,90 @@ abstract class FlagCmd extends Common {
 		// Remove all players
 		if (playerList.size() == 0) {
 			for (String p : trustList) {
-				if (!area.setTrust(flag, p, false, (Player)sender)) {
+				if (!area.setTrust(flag, p, false, player)) {
 					success = false;
 				}
 			}
 		} else {
 			// Remove 1 or more players
-			for (String player : playerList) {
-				if (!area.setTrust(flag, player, false, (Player)sender)) {
+			for (String p : playerList) {
+				if (!area.setTrust(flag, p, false, player)) {
 					success = false;
 				}
 			}
 		}
 
 		if (success) {
-			sender.sendMessage(Message.RemoveTrust.get()
+			player.sendMessage(Message.RemoveTrust.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName()));
 		} else {
-			sender.sendMessage(Message.RemoveTrustError.get());
+			player.sendMessage(Message.RemoveTrustError.get());
 		}
 		
 		return true;
 	}
 
-	protected static boolean presentMessage(CommandSender sender, char location, String flagName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-	
+	protected static boolean presentMessage(Player player, CommandLocation location, Flag flag) {
 		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
 		if(!flag.isPlayerFlag()) {
-			sender.sendMessage(Message.PlayerFlagError.get()
-					.replaceAll("\\{Flag\\}", flagName));
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
 		}
 		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 		
 		// Send the message
-		sender.sendMessage(area.getMessage(flag)
-				.replaceAll("\\{Player\\}", ((Player)sender).getName()));
+		player.sendMessage(area.getMessage(flag, player.getName()));
 		return true;
 	}
 
-	protected static boolean message(CommandSender sender, char location, String flagName, String message) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
-		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
-		
+	protected static boolean message(Player player, CommandLocation location, Flag flag, String message) {
 		if(!flag.isPlayerFlag()) {
-			sender.sendMessage(Message.PlayerFlagError.get()
-					.replaceAll("\\{Flag\\}", flagName));
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
 		}
-		
-		// Acquire the player
-		Player player = (Player)sender;
 		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 		
 		// Check that the player can set the flag type at this location
 		if (!allPermitted(flag, area, player)) { return true; }
 		
 		if(area.setMessage(flag, message, player)) {;
-			player.sendMessage(area.getMessage(flag)
-					.replaceAll("\\{Player\\}", player.getName()));
+			player.sendMessage(area.getMessage(flag, player.getName()));
 		}
 		return true;
 	}
 
-	protected static boolean erase(CommandSender sender, char location, String flagName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
-		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
-		
+	protected static boolean erase(Player player, CommandLocation location, Flag flag) {
 		if(!flag.isPlayerFlag()) {
-			sender.sendMessage(Message.PlayerFlagError.get()
-					.replaceAll("\\{Flag\\}", flagName));
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
 		}
 		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 		
 		// Check that the player can set the flag type at this location
-		if (!allPermitted(flag, area, (Player)sender)) { return true; }
+		if (!allPermitted(flag, area, player)) { return true; }
 		
-		if (area.setMessage(flag, null, sender)) {;
-			sender.sendMessage(area.getMessage(flag)
-					.replaceAll("\\{Player\\}", ((Player)sender).getName()));
+		if (area.setMessage(flag, null, player)) {;
+			player.sendMessage(area.getMessage(flag, player.getName()));
 		}
 		return true;
 	}
 	
 	protected static boolean inherit(Player player, Boolean value) {
 		// Acquire the area
-		Area area = getArea(player, 'a');
+		Area area = getArea(player, CommandLocation.AREA);
 		if(area == null) { return true; }
 		
 		if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
@@ -477,9 +436,7 @@ abstract class FlagCmd extends Common {
 		return true;		
 	}
 	
-	protected static boolean getPrice(CommandSender sender, PurchaseType type, String flagName) {
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
+	protected static boolean getPrice(CommandSender sender, PurchaseType type, Flag flag) {
 		
 		String price;
 		if(Flags.instance.economy != null) {
@@ -495,9 +452,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean setPrice(CommandSender sender, PurchaseType type, String flagName, String price) {
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
+	protected static boolean setPrice(CommandSender sender, PurchaseType type, Flag flag, String price) {
 		
 		double p;
 		try {
