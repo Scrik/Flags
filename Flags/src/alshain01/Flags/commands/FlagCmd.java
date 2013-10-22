@@ -18,25 +18,13 @@ import alshain01.Flags.area.Subdivision;
 import alshain01.Flags.economy.PurchaseType;
 
 abstract class FlagCmd extends Common {
-	protected static boolean get(CommandSender sender, char location, String flagName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
+	protected static boolean get(Player player, CommandLocation location, Flag flag) {
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 
-		// Acquire the flag
-		Flag flag = null;
-		if(flagName != null) {
-			flag = getFlag(sender, flagName, true);
-			if(flag == null) { return true; }
-		} 
-		
-		if (!(flag == null)) {
-			sender.sendMessage(Message.GetFlag.get()
+		if (flag != null) {
+			player.sendMessage(Message.GetFlag.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName())
 					.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false)).toLowerCase()));
@@ -47,7 +35,7 @@ abstract class FlagCmd extends Common {
 		StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));
 		boolean first = true; // Governs whether we insert a comma or not (true means no)
-		Area defaultArea = new Default(((Player)sender).getWorld());
+		Area defaultArea = new Default(player.getWorld());
 		
 		for (Flag f : Flags.instance.getRegistrar().getFlags()) {
 			// Get the flag's value
@@ -67,28 +55,18 @@ abstract class FlagCmd extends Common {
 			}
 		}
 		message.append(".");
-		sender.sendMessage(message.toString());
+		player.sendMessage(message.toString());
 
 		return true;
 	}
 	
-	protected static boolean set(CommandSender sender, char location, String flagName, Boolean value) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
-		// Acquire the player
-		Player player = (Player)sender;
-		
+	protected static boolean set(Player player, CommandLocation location, Flag flag, Boolean value) {
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 		
-		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		
 		// Check permissions
-		if (flag == null || !allPermitted(flag, area, player)) { return true; } 
+		if (!allPermitted(flag, area, player)) { return true; } 
 		
 		// Acquire the value (maybe)
 		if(value == null) {
@@ -96,7 +74,7 @@ abstract class FlagCmd extends Common {
 		}
 		
         // Set the flag
-    	if(area.setValue(flag, value, sender)) {
+    	if(area.setValue(flag, value, player)) {
     			player.sendMessage(Message.SetFlag.get()
     					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
     					.replaceAll("\\{Flag\\}", flag.getName())
@@ -105,32 +83,18 @@ abstract class FlagCmd extends Common {
         return true;
 	}
 	
-	protected static boolean remove(CommandSender sender, char location, String flagName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
-		// Acquire the player
-		Player player = (Player)sender;
-		
+	protected static boolean remove(Player player, CommandLocation location, Flag flag) {
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 		if (!areaPermitted(area, player)) { return true; }
-		
-		// Acquire the flag
-		Flag flag = null;
-		if(flagName != null) {
-			flag = getFlag(sender, flagName, true);
-			if (flag == null || !flagPermitted(flag, player)) { return true; }
-		}
 		
 		// Removing single flag type
 		if (flag != null) {
 			// Check that the player can set the flag type at this location
 			if (!flagPermitted(flag, player)) { return true; }
 			
-			if(area.setValue(flag, null, sender)) {
+			if(area.setValue(flag, null, player)) {
 				player.sendMessage(Message.RemoveFlag.get()
 						.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 						.replaceAll("\\{Flag\\}", flag.getName()));
@@ -153,10 +117,10 @@ abstract class FlagCmd extends Common {
 		}
 		
 		if (success) {
-			sender.sendMessage(Message.RemoveAllFlags.get()
+			player.sendMessage(Message.RemoveAllFlags.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));
 		} else {
-			sender.sendMessage(Message.RemoveAllFlagsError.get());
+			player.sendMessage(Message.RemoveAllFlagsError.get());
 		}
 		return true;
 	}
@@ -252,11 +216,11 @@ abstract class FlagCmd extends Common {
 			if(groupNames.contains(combinedHelp.get(position))) {
 				sender.sendMessage(Message.HelpTopic.get()
 						.replaceAll("\\{Topic\\}", combinedHelp.get(position))
-						.replaceAll("\\{Description\\}", Message.GroupHelpDescription.get().replaceAll("{Group}", combinedHelp.get(position))));
+						.replaceAll("\\{Description\\}", Message.GroupHelpDescription.get().replaceAll("\\{Group\\}", combinedHelp.get(position))));
 			} else {
 				sender.sendMessage(Message.HelpTopic.get()
-						.replaceAll("{Topic}", combinedHelp.get(position))
-						.replaceAll("{Description}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
+						.replaceAll("\\{Topic\\}", combinedHelp.get(position))
+						.replaceAll("\\{Description\\}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
 			}
 			
 			if(++linecount == 9) {
@@ -269,31 +233,22 @@ abstract class FlagCmd extends Common {
 	
 
 	
-	protected static boolean viewTrust(CommandSender sender, char location, String flagName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
+	protected static boolean viewTrust(Player player, CommandLocation location, Flag flag) {
 		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		if(flag == null) { return true; }
 		if(!flag.isPlayerFlag()) {
-			sender.sendMessage(Message.PlayerFlagError.get()
-					.replaceAll("\\{Flag\\}", flagName));
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
 		}
 		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 
-
-		
 		// Acquire the current trust list
 		Set<String> trustList = area.getTrustList(flag);
 		if(trustList.size() == 0) {
-			sender.sendMessage(Message.InvalidTrustError.get()
+			player.sendMessage(Message.InvalidTrustError.get()
 					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
@@ -316,39 +271,30 @@ abstract class FlagCmd extends Common {
 		}
 	
 		message.append(".");
-		sender.sendMessage(message.toString());
+		player.sendMessage(message.toString());
 
 		return true;
 	}
 	
-	protected static boolean trust(CommandSender sender, char location, String flagName, Set<String> playerList) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
+	protected static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
 		if(playerList.size() == 0) { return false; }
 		
-		// Acquire the flag
-		Flag flag = getFlag(sender, flagName, true);
-		
-
-		
 		// Acquire the area
-		Area area = getArea(sender, location);
+		Area area = getArea(player, location);
 		if(area == null) { return false; }
 
 		// Check that the player can set the flag type at this location
-		if (flag == null || !allPermitted(flag, area, (Player)sender)) { return true; }
+		if (!allPermitted(flag, area, player)) { return true; }
 		
 		if(!flag.isPlayerFlag()) {
-			sender.sendMessage(Message.PlayerFlagError.get()
-					.replaceAll("\\{Flag\\}", flagName));
+			player.sendMessage(Message.PlayerFlagError.get()
+					.replaceAll("\\{Flag\\}", flag.getName()));
 			return true;
 		}
 		
 		boolean success = true;
-		for(String player : playerList) {
-			if(!area.setTrust(flag, player, true, (Player)sender)) {
+		for(String p : playerList) {
+			if(!area.setTrust(flag, p, true, player)) {
 				success = false;
 			}
 		}
