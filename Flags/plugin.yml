@@ -4,7 +4,7 @@ description: Allows you to set flags to alter game behavior.
 author: Alshain01
 website: http://dev.bukkit.org/bukkit-plugins/flags/
 main: alshain01.Flags.Flags
-softdepend: [GriefPrevention, WorldGuard, Residence, InfinitePlots, GriefPreventionFlags, Vault]
+softdepend: [GriefPrevention, WorldGuard, Residence, InfinitePlots, Factions, Vault, GriefPreventionFlags]
 commands:
   flag:
     description: Allows you to perform actions on flags.

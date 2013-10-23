@@ -24,8 +24,10 @@ public class InfinitePlotsPlot extends Area implements Removable {
 		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
 	}
 	
-	public InfinitePlotsPlot(String playerName, String plotName) {
-		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotByName(playerName, plotName);
+	public InfinitePlotsPlot(String plotLocation) {
+		String[] plotLocData = plotLocation.split(":");
+		this.plot = InfinitePlots.getInstance().getPlotManager()
+				.getPlotAt(new PlotLocation(plotLocData[0], Integer.valueOf(plotLocData[1]), Integer.valueOf(plotLocData[2])));
 	}
 	
 	// ******************************
@@ -38,7 +40,8 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public String getSystemID() {
-		return plot.getAdmin() + "." + plot.getName();
+		PlotLocation loc = plot.getLocation();
+		return plot.getAdmin() + "." + loc.getWorldName() + ":" + loc.getX() + ":" + loc.getZ();
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public boolean isArea() {
-		if(plot != null) { return true; }
+		if(plot != null && plot.getAdmin() != null) { return true; }
 		return false;
 	}
 	

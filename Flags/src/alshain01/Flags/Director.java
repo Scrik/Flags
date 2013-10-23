@@ -142,7 +142,7 @@ public final class Director {
 			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 				area = new GriefPreventionClaim78(location);
-			} else if(Float.valueOf(plugin.getDescription().getVersion()) == 7.7) {
+			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
 				area = new GriefPreventionClaim77(location);
 			} else {
 				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
@@ -193,22 +193,22 @@ public final class Director {
 		} else if(getSystem() == LandSystem.RESIDENCE) { 
 			return new ResidenceClaimedResidence(name);
 		} else if(getSystem() == LandSystem.INFINITEPLOTS) { 
-			String[] path = name.split("\\.");
-			return new InfinitePlotsPlot(path[0], path[1]);
+			return new InfinitePlotsPlot(name);
 		} else if(getSystem() == LandSystem.FACTIONS) { 
 			String[] path = name.split("\\.");
-			return new InfinitePlotsPlot(path[0], path[1]);
+			return new FactionsTerritory(path[0], path[1]);
 		}
 		return null;
 	}
 	
 	/**
-	 * Returns a list of system specific area names
+	 * Returns a list of system specific area names stored in the database
 	 * 
 	 * @return A list containing all the area names.
 	 */
 	public static Set<String> getAreaNames() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.instance.dataStore.readKeys("GriefPreventionData"); }
+		if(getSystem() == LandSystem.RESIDENCE) { return Flags.instance.dataStore.readKeys("ResidenceData"); }
 		
 		if(getSystem() == LandSystem.WORLDGUARD) {
 			Set<String> worlds = Flags.instance.dataStore.readKeys("WorldGuardData");
@@ -222,8 +222,6 @@ public final class Director {
 			
 			return areas;
 		}
-		
-		if(getSystem() == LandSystem.RESIDENCE) { return Flags.instance.dataStore.readKeys("ResidenceData"); }
 		
 		if(getSystem() == LandSystem.INFINITEPLOTS) {
 			Set<String> players = Flags.instance.dataStore.readKeys("InfinitePlotsData");
