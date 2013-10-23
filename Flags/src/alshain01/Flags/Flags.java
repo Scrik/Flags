@@ -56,8 +56,11 @@ public class Flags extends JavaPlugin{
 			} else {
 				updater = new Updater(this, 65024, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 			}
+			
 			if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 				Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_RED + "An update is available for Flags. Please visit http://dev.bukkit.org/bukkit-plugins/flags/ to update.");
+			} else if(updater.getResult() == UpdateResult.SUCCESS) {
+				Bukkit.getServer().reload();
 			}
 		}
 		this.getServer().getPluginManager().registerEvents(new UpdateListener(), instance);

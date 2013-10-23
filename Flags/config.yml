@@ -1,6 +1,5 @@
 Flags:
-  # This sets the search order for land allocation systems
-  #
+  # This sets the search order for land allocation systems  
   # If you have only one system installed, you do not need to change this.
   #
   # If you have more than one system installed, change the order so the system
@@ -10,7 +9,7 @@ Flags:
   #
   # If no system is discovered, you will be limited to world flags only.
   #
-  AreaPlugins: [GriefPrevention, WorldGuard, Residence]
+  AreaPlugins: [GriefPrevention, Factions, Residence, WorldGuard, InfinitePlots]
   #
   # Disable this to improve performance. However, any flag module using it will not
   # receive notice that a player is changing areas.
@@ -30,7 +29,7 @@ Flags:
   # ALWAYS: Player is always charged for setting the flag value.
   #
   # Refund allows the player to gain back the cost of the flag if the value is set
-  # to the PLUGIN or DEFAULT value.  If BaseFlagValue is ALWAYS, refunds will only
+  # to the PLUGIN or DEFAULT value.  If BaseValue is ALWAYS, refunds will only
   # be given if the flag is removed.
   # WARNING: Players will always be refunded the current price, 
   #          even if they bought it at a different price.
@@ -42,7 +41,8 @@ Flags:
       Message: false
   #
   # Check for updates and notify the console or download and install (Check must be true to auto update)
-  # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  DO NOT SHARE WITH ANYONE!
+  # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
+  # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
   #
   Update:
     Check: true

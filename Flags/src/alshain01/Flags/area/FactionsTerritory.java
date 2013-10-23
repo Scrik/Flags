@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -12,6 +13,7 @@ import alshain01.Flags.Message;
 
 import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.mcore.ps.PS;
 
 public class FactionsTerritory extends Area implements Removable{
@@ -22,12 +24,17 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	// Constructors
 	// ******************************
-	FactionsTerritory (Faction faction, World world) {
+	public FactionsTerritory (Faction faction, World world) {
 		this.faction = faction;
 		this.world = world;
 	}
 	
-	FactionsTerritory (Location location) {
+	public FactionsTerritory (String worldName, String factionID) {
+		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
+		this.world = Bukkit.getServer().getWorld(worldName);
+	}
+	
+	public FactionsTerritory (Location location) {
 		BoardColls.get().getFactionAt(PS.valueOf(location));
 		this.world = location.getWorld();
 	}

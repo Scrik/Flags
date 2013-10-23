@@ -15,8 +15,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
+import com.massivecraft.factions.event.FactionsEventDisband;
 
 import alshain01.Flags.area.Area;
+import alshain01.Flags.area.FactionsTerritory;
 import alshain01.Flags.area.GriefPreventionClaim78;
 import alshain01.Flags.area.GriefPreventionClaim77;
 import alshain01.Flags.area.InfinitePlotsPlot;
@@ -89,6 +91,8 @@ public final class Director {
 			}
 		} else if(getSystem() == LandSystem.RESIDENCE) {
 			pm.registerEvents(new ResidenceCleaner(), Flags.instance);
+		} else if(getSystem() == LandSystem.FACTIONS) {
+			pm.registerEvents(new FactionsCleaner(), Flags.instance);
 		}
 	}
 	
@@ -105,6 +109,15 @@ public final class Director {
 		private void onResidenceDelete(ResidenceDeleteEvent e) {
 			// Cleanup the database, keep the file from growing too large.
 			new ResidenceClaimedResidence(e.getResidence().getName()).remove();
+		}
+	}
+	
+	private static class FactionsCleaner implements Listener {
+		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onFactionDisband(FactionsEventDisband e) {
+			for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
+				new FactionsTerritory(e.getFaction(), w).remove();
+			}
 		}
 	}
 	
@@ -139,6 +152,7 @@ public final class Director {
 		else if(getSystem() == LandSystem.WORLDGUARD) { area = new WorldGuardRegion(location); }
 		else if(getSystem() == LandSystem.RESIDENCE) { area = new ResidenceClaimedResidence(location); }
 		else if(getSystem() == LandSystem.INFINITEPLOTS) { area = new InfinitePlotsPlot(location); }
+		else if(getSystem() == LandSystem.FACTIONS) { area = new FactionsTerritory(location); }
 		
 		if(area == null || !area.isArea()) {
 			area = new World(location);
@@ -152,10 +166,13 @@ public final class Director {
 	 * WorldGuard = worldname.regionname
 	 * Residence = Residence name OR ResidenceName.SubzoneName
 	 * InifitePlots = OwnerName.PlotName
+	 * Factions = worldname.FactionID
 	 * 
 	 * @param name The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system selection.
+	 * @deprecated Functionality is sketchy
 	 */
+	@Deprecated
 	public static Area getArea(String name) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
@@ -176,6 +193,9 @@ public final class Director {
 		} else if(getSystem() == LandSystem.RESIDENCE) { 
 			return new ResidenceClaimedResidence(name);
 		} else if(getSystem() == LandSystem.INFINITEPLOTS) { 
+			String[] path = name.split("\\.");
+			return new InfinitePlotsPlot(path[0], path[1]);
+		} else if(getSystem() == LandSystem.FACTIONS) { 
 			String[] path = name.split("\\.");
 			return new InfinitePlotsPlot(path[0], path[1]);
 		}
@@ -216,6 +236,21 @@ public final class Director {
 			}
 			return areas; 
 		}
+		
+		if(getSystem() == LandSystem.FACTIONS) {
+			Set<String> worlds = Flags.instance.dataStore.readKeys("FactionsData");
+			Set<String> areas = new HashSet<String>();
+			for(String world : worlds) {
+				Set<String>localAreas = Flags.instance.dataStore.readKeys("FactionsData." + world);
+				for(String localArea : localAreas) {
+					if(!areas.contains(localArea)) {
+						areas.add(world + "." + localArea);
+					}
+				}
+			}
+			
+			return areas;
+		}
 
 		return null;
 	}
@@ -252,6 +287,7 @@ public final class Director {
 		if(getSystem() == LandSystem.WORLDGUARD) { return Message.WorldGuard.get(); }
 		if(getSystem() == LandSystem.RESIDENCE) { return Message.Residence.get(); }
 		if(getSystem() == LandSystem.INFINITEPLOTS) { return Message.InfinitePlots.get(); }
+		if(getSystem() == LandSystem.FACTIONS) { return Message.Factions.get(); }
 		// Should never make it here.
 		return Message.World.get();
 	}

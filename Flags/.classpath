@@ -14,5 +14,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Factions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/mcore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldEdit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
