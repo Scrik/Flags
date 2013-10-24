@@ -78,7 +78,7 @@ public class World extends Area {
 	public Boolean getValue(Flag flag, boolean absolute) {
     	Boolean value = null;
     	if(isArea()) { 
-	    	String valueString = Flags.instance.dataStore.read(getDataPath() + "." + flag.getName() + valueFooter);
+	    	String valueString = Flags.dataStore.read(getDataPath() + "." + flag.getName() + valueFooter);
 	    	
 	    	if (valueString != null && valueString.toLowerCase().contains("true")) { 
 	    		value = true;
@@ -93,13 +93,13 @@ public class World extends Area {
 
 	@Override
 	public Set<String> getTrustList(Flag flag) {
-    	Set<String> trustedPlayers = Flags.instance.dataStore.readSet(dataHeader + getSystemID() + "." + flag.getName() + trustFooter);
+    	Set<String> trustedPlayers = Flags.dataStore.readSet(dataHeader + getSystemID() + "." + flag.getName() + trustFooter);
     	return (trustedPlayers != null) ? trustedPlayers : new HashSet<String>();
 	}
 
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
-		String message = Flags.instance.dataStore.read(dataHeader + getSystemID() + "." + flag.getName() + messageFooter);
+		String message = Flags.dataStore.read(dataHeader + getSystemID() + "." + flag.getName() + messageFooter);
 	 	
 		if (message == null) {
 			message = flag.getDefaultWorldMessage();

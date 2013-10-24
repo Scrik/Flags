@@ -33,9 +33,9 @@ public enum TransactionType {
 	Withdraw, Deposit;
 	
 	/**
-	 * @return The localized name of the transaction type.
+	 * @return The localized message of the transaction type.
 	 */
-	public String getLocal() {
+	public String getMessage() {
 		return alshain01.Flags.Message.valueOf(this.toString()).get();
 	}
 }

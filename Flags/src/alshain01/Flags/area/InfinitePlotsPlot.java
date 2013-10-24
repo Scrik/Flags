@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -58,7 +59,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public World getWorld() {
-		return plot.getLocation().getWorld();
+		return Bukkit.getServer().getWorld(plot.getLocation().getWorldName());
 	}
 
 	@Override
@@ -92,6 +93,6 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 */
 	@Override
 	public void remove() {
- 	   Flags.instance.dataStore.write(getDataPath(), (String)null);
+ 	   Flags.dataStore.write(getDataPath(), (String)null);
 	}
 }

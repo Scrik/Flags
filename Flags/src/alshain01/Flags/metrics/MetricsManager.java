@@ -28,7 +28,7 @@ public class MetricsManager {
 		    
 		    // Economy Graph
 		    Graph econGraph = metrics.createGraph("Economy Enabled");
-		    if(Flags.instance.economy == null) {	    	
+		    if(Flags.economy == null) {	    	
 		    	econGraph.addPlotter(new Metrics.Plotter("No") {
 		    		@Override
 		            public int getValue() {

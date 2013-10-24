@@ -95,6 +95,6 @@ public class FactionsTerritory extends Area implements Removable{
 	 */
 	@Override
 	public void remove() {
-		Flags.instance.dataStore.write(getDataPath(), (String)null);
+		Flags.dataStore.write(getDataPath(), (String)null);
 	}
 }

@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/InfinitePlots.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Residence.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldGuard.jar"/>
@@ -15,5 +14,6 @@
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Factions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/mcore.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/InfinitePlots.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

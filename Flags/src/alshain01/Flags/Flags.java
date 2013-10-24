@@ -30,14 +30,16 @@ import alshain01.Flags.metrics.MetricsManager;
  */
 public class Flags extends JavaPlugin{
 	public static Flags instance;
-	public DataStore dataStore;
-	protected CustomYML messageStore;
-	public Economy economy = null;
+	public static Economy economy = null;
+	public static DataStore dataStore;
 	
-	private Registrar flagRegistrar = new Registrar();
-	private final Boolean DEBUG = true;
-	protected LandSystem currentSystem = LandSystem.NONE;
+	protected static CustomYML messageStore;
+	protected static LandSystem currentSystem = LandSystem.NONE;
 	protected static Updater updater = null;
+	
+	private static Registrar flagRegistrar = new Registrar();
+	private static final Boolean DEBUG = true;
+
 	
 	/**
 	 * Called when this plug-in is enabled

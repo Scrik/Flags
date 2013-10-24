@@ -127,7 +127,7 @@ public final class Director {
 	 * @return The current Land Management System in use by Flags.
 	 */
 	public static LandSystem getSystem() {
-		return Flags.instance.currentSystem;
+		return Flags.currentSystem;
 	}
 
 	/**
@@ -146,7 +146,7 @@ public final class Director {
 				area = new GriefPreventionClaim77(location);
 			} else {
 				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
-				Flags.instance.currentSystem = LandSystem.NONE;
+				Flags.currentSystem = LandSystem.NONE;
 			}
 		}
 		else if(getSystem() == LandSystem.WORLDGUARD) { area = new WorldGuardRegion(location); }
@@ -182,7 +182,7 @@ public final class Director {
 				return new GriefPreventionClaim77(ID);
 			} else {
 				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
-				Flags.instance.currentSystem = LandSystem.NONE;
+				Flags.currentSystem = LandSystem.NONE;
 			}
 		} else if(getSystem() == LandSystem.RESIDENCE) { 
 			return new ResidenceClaimedResidence(name);
@@ -205,14 +205,14 @@ public final class Director {
 	 * @return A list containing all the area names.
 	 */
 	public static Set<String> getAreaNames() {
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.instance.dataStore.readKeys("GriefPreventionData"); }
-		if(getSystem() == LandSystem.RESIDENCE) { return Flags.instance.dataStore.readKeys("ResidenceData"); }
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.dataStore.readKeys("GriefPreventionData"); }
+		if(getSystem() == LandSystem.RESIDENCE) { return Flags.dataStore.readKeys("ResidenceData"); }
 		
 		if(getSystem() == LandSystem.WORLDGUARD) {
-			Set<String> worlds = Flags.instance.dataStore.readKeys("WorldGuardData");
+			Set<String> worlds = Flags.dataStore.readKeys("WorldGuardData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.instance.dataStore.readKeys("WorldGuardData." + world);
+				Set<String>localAreas = Flags.dataStore.readKeys("WorldGuardData." + world);
 				for(String localArea : localAreas) {
 					areas.add(world + "." + localArea);
 				}
@@ -222,10 +222,10 @@ public final class Director {
 		}
 		
 		if(getSystem() == LandSystem.INFINITEPLOTS) {
-			Set<String> worlds = Flags.instance.dataStore.readKeys("InfinitePlotsData");
+			Set<String> worlds = Flags.dataStore.readKeys("InfinitePlotsData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.instance.dataStore.readKeys("InfinitePlotsData." + world);
+				Set<String>localAreas = Flags.dataStore.readKeys("InfinitePlotsData." + world);
 				for(String localArea : localAreas) {
 					areas.add(world + "." + localArea);
 				}
@@ -235,10 +235,10 @@ public final class Director {
 		}
 		
 		if(getSystem() == LandSystem.FACTIONS) {
-			Set<String> worlds = Flags.instance.dataStore.readKeys("FactionsData");
+			Set<String> worlds = Flags.dataStore.readKeys("FactionsData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.instance.dataStore.readKeys("FactionsData." + world);
+				Set<String>localAreas = Flags.dataStore.readKeys("FactionsData." + world);
 				for(String localArea : localAreas) {
 					if(!areas.contains(localArea)) {
 						areas.add(world + "." + localArea);
@@ -259,7 +259,7 @@ public final class Director {
 	 * @return a list of all flags for the provided area.
 	 */
 	public static Set<String> getAreaFlags(String area) {
-		return Flags.instance.dataStore.readKeys(area);
+		return Flags.dataStore.readKeys(area);
 	}
 	
 	

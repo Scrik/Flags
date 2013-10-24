@@ -99,7 +99,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 */
 	@Override
 	public void remove() {
-		Flags.instance.dataStore.write(getDataPath(), (String)null);
+		Flags.dataStore.write(getDataPath(), (String)null);
 	}
 
 	// ******************************
@@ -122,7 +122,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	public boolean isInherited() {
 		if(!isSubdivision()) { return false; }
 		
-    	String value = Flags.instance.dataStore.read(getInheritPath());
+    	String value = Flags.dataStore.read(getInheritPath());
     	if (value == null) { return true; }
     	return Boolean.valueOf(value);
 	}
@@ -130,7 +130,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	@Override
 	public boolean setInherited(Boolean value) {
 		if(!isSubdivision()) { return false; }
-		String storedValue = Flags.instance.dataStore.read(getInheritPath());
+		String storedValue = Flags.dataStore.read(getInheritPath());
 		
 		if(value == null) {
 			if (storedValue != null) {
@@ -140,7 +140,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 			}
 		}
 		
-		Flags.instance.dataStore.write(getInheritPath(), String.valueOf(value));
+		Flags.dataStore.write(getInheritPath(), String.valueOf(value));
 		return true;
 	}
 }

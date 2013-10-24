@@ -54,10 +54,10 @@ final class EconomyListener implements Listener {
 		String pricePath = "Price." + product.toString() + "." + flag.getName();
 
 		// Plug-in has not been configured for this flag, so it's assumed free.	
-		if (!Flags.instance.dataStore.isSet(pricePath)) { return false; }
+		if (!Flags.dataStore.isSet(pricePath)) { return false; }
 		
 		// Get the price as a string
-		double price = Flags.instance.dataStore.readDouble(pricePath);
+		double price = Flags.dataStore.readDouble(pricePath);
 		
 		// Plug-in was configured for flag to be free.
 		if (price == (double)0) { return false; } 
@@ -65,24 +65,24 @@ final class EconomyListener implements Listener {
 		EconomyResponse r;
 		if (transaction == TransactionType.Withdraw) {
 			// Check to see if they have the money.
-			if (price > Flags.instance.economy.getBalance(player.getName())) {
+			if (price > Flags.economy.getBalance(player.getName())) {
 				player.sendMessage(Message.LowFunds.get()
 						.replaceAll("\\{PurchaseType\\}", product.getLocal().toLowerCase())
-						.replaceAll("\\{Price\\}", Flags.instance.economy.format(price))
+						.replaceAll("\\{Price\\}", Flags.economy.format(price))
 						.replaceAll("\\{Flag\\}", flag.getName()));
 				return true;
 			}
 		
 			// They have the money, make transaction
-			r = Flags.instance.economy.withdrawPlayer(player.getName(), price);
+			r = Flags.economy.withdrawPlayer(player.getName(), price);
 		} else {
 			// Deposit
-			r = Flags.instance.economy.depositPlayer(player.getName(), price);
+			r = Flags.economy.depositPlayer(player.getName(), price);
 		}
 		
 		if (r.transactionSuccess()) {
-			player.sendMessage(transaction.getLocal()
-					.replaceAll("<1>", Flags.instance.economy.format(price)));
+			player.sendMessage(transaction.getMessage()
+					.replaceAll("<1>", Flags.economy.format(price)));
 			return false;
 		}
 		

@@ -438,8 +438,8 @@ abstract class FlagCmd extends Common {
 	protected static boolean getPrice(CommandSender sender, PurchaseType type, Flag flag) {
 		
 		String price;
-		if(Flags.instance.economy != null) {
-			price = Flags.instance.economy.format(flag.getPrice(type));
+		if(Flags.economy != null) {
+			price = Flags.economy.format(flag.getPrice(type));
 		} else {
 			price = String.valueOf(flag.getPrice(type));
 		}
