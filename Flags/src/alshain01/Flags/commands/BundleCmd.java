@@ -52,7 +52,7 @@ abstract class BundleCmd extends Common {
 		}
 
 		for (String f : bundle) {
-        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
+        	Flag flag = Flags.getRegistrar().getFlag(f);
         	if (flag != null) {
         		sender.sendMessage(Message.GetBundle.get()
         				.replaceAll("\\{Bundle\\}", f)
@@ -98,7 +98,7 @@ abstract class BundleCmd extends Common {
 
 		// Set the flags
         for (String f : bundle) {
-        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
+        	Flag flag = Flags.getRegistrar().getFlag(f);
         	if (flag != null) {
         		if(!area.setValue(flag, value, player)) {
         			success = false;
@@ -153,7 +153,7 @@ abstract class BundleCmd extends Common {
 		
 		// Removing all flags
 		for (String f : bundle) {
-        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
+        	Flag flag = Flags.getRegistrar().getFlag(f);
         	if (flag != null) {
         		if (!area.setValue(flag, null, player)) {
         			success = false;
@@ -183,7 +183,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		for (String f : flags) {
-        	Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(f);
+        	Flag flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
         		return true;
@@ -210,7 +210,7 @@ abstract class BundleCmd extends Common {
 		
 		boolean success = true;
 		for (String f : flags) {
-        	Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(f);
+        	Flag flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag != null) {
         		if (!bundle.remove(flag.getName())) {
         			success = false;

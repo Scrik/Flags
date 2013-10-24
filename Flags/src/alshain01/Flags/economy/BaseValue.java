@@ -38,7 +38,7 @@ public enum BaseValue {
 	 * @return True if the BaseFlagValue is set to this type.
 	 */
 	public boolean isSet() {
-		String message = Flags.instance.getConfig().getString("Flags.Economy.BaseValue");
+		String message = Flags.getInstance().getConfig().getString("Flags.Economy.BaseValue");
 		
 		if (message.equalsIgnoreCase(this.toString())) {
 			return true;

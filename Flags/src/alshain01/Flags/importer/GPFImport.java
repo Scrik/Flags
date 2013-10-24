@@ -24,7 +24,7 @@ public final class GPFImport {
 	
 	public static void importGPF() {
 		if(dataExists() && getVersion().equals("1.6.0")) {
-			Flags.instance.getLogger().info("Importing GriefPreventionFlags Database");
+			Flags.getInstance().getLogger().info("Importing GriefPreventionFlags Database");
 			importData(data, "data");
 			if(world != null) {
 				importData(world, "world");
@@ -81,7 +81,7 @@ public final class GPFImport {
 				// Parse a trust list
 				if(flagName.contains("trust")) {
 					flagName = flagName.replace("trust", "");
-					Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(flagName);
+					Flag flag = Flags.getRegistrar().getFlagIgnoreCase(flagName);
 					if(flag == null) { continue; }
 					
 					List<String> players = readList(data, header + "." + k);
@@ -96,7 +96,7 @@ public final class GPFImport {
 				//Parse a message
 				if(flagName.contains("message")) {
 					flagName = flagName.replace("message", "");
-					Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(flagName);
+					Flag flag = Flags.getRegistrar().getFlagIgnoreCase(flagName);
 					if(flag == null) { continue; }
 
 					String message = data.getCustomConfig().getString(header + "." + k);
@@ -111,7 +111,7 @@ public final class GPFImport {
 					continue;
 				}
 				
-				Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(flagName);
+				Flag flag = Flags.getRegistrar().getFlagIgnoreCase(flagName);
 				if(flag == null) { continue; }
 				boolean value = Boolean.valueOf(data.getCustomConfig().getString(header + "." + k)); 
 				area.setValue(flag, value, null);

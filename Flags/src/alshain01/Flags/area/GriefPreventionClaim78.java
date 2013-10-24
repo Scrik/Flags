@@ -132,7 +132,7 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	 */
 	@Override
 	public void remove() {
-		Flags.dataStore.write(getDataPath(), (String)null);
+		Flags.getDataStore().write(getDataPath(), (String)null);
 	}
 	
 	// ******************************
@@ -155,7 +155,7 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	public boolean isInherited() {
 		if(!isSubdivision()) { return false; }
 
-		String value = Flags.dataStore.read(getInheritPath());
+		String value = Flags.getDataStore().read(getInheritPath());
 		if (value == null) { return true; }
     	return Boolean.valueOf(value);
 	}
@@ -163,7 +163,7 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	@Override
 	public boolean setInherited(Boolean value) {
 		if(!isSubdivision()) { return false; }
-		String storedValue = Flags.dataStore.read(getInheritPath());
+		String storedValue = Flags.getDataStore().read(getInheritPath());
 		
 		if(value == null) {
 			if (storedValue != null) {
@@ -173,7 +173,7 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 			}
 		}
 		
-		Flags.dataStore.write(getInheritPath(), String.valueOf(value));
+		Flags.getDataStore().write(getInheritPath(), String.valueOf(value));
 		return true;
 	}
 	

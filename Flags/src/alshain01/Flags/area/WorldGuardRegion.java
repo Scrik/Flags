@@ -95,6 +95,6 @@ public class WorldGuardRegion extends Area implements Removable {
 	 */
 	@Override
 	public void remove() {
- 	   Flags.dataStore.write(getDataPath(), (String)null);
+ 	   Flags.getDataStore().write(getDataPath(), (String)null);
 	}
 }

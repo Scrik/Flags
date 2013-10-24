@@ -125,7 +125,7 @@ public abstract class Area implements Comparable<Area> {
 		
     	Boolean value = null;
     	if(isArea()) { 
-	    	String valueString = Flags.dataStore.read(getDataPath() + "." + flag.getName() + valueFooter);
+	    	String valueString = Flags.getDataStore().read(getDataPath() + "." + flag.getName() + valueFooter);
 	    	
 	    	if (valueString != null && valueString.toLowerCase().contains("true")) { 
 	    		value = true;
@@ -153,7 +153,7 @@ public abstract class Area implements Comparable<Area> {
 		TransactionType transaction = null;
 		
         // Check to see if this is a purchase or deposit
-        if(Flags.economy != null					// No economy 
+        if(Flags.getEconomy() != null					// No economy 
         		&& flag.getPrice(PurchaseType.Flag) != 0	// No defined price
         		&& !(this instanceof World)					// No charge for world flags
         		&& !(this instanceof Default)				// No charge for defaults
@@ -193,10 +193,10 @@ public abstract class Area implements Comparable<Area> {
         
         if(value == null) {
         	// Remove the flag
-        	Flags.dataStore.write(getDataPath() + "." + flag.getName() + valueFooter, (String)null);
+        	Flags.getDataStore().write(getDataPath() + "." + flag.getName() + valueFooter, (String)null);
         } else {
             // Set the flag
-        	Flags.dataStore.write(getDataPath() + "." + flag.getName() + valueFooter, String.valueOf(value));
+        	Flags.getDataStore().write(getDataPath() + "." + flag.getName() + valueFooter, String.valueOf(value));
         }
         return true;
 	}
@@ -210,7 +210,7 @@ public abstract class Area implements Comparable<Area> {
 	public Set<String> getTrustList(Flag flag) {
 		if(!isArea()) { return null; }
 		
-    	Set<String> trustedPlayers = Flags.dataStore.readSet(getDataPath() + "." + flag.getName() + trustFooter);
+    	Set<String> trustedPlayers = Flags.getDataStore().readSet(getDataPath() + "." + flag.getName() + trustFooter);
     	if(trustedPlayers == null) { trustedPlayers = new HashSet<String>(); }
     	trustedPlayers.addAll(getOwners());
     	return trustedPlayers;
@@ -229,7 +229,7 @@ public abstract class Area implements Comparable<Area> {
 		if(!isArea()) { return false; }
 		
 		final String path = getDataPath() + "." + flag.getName() + trustFooter;
-		Set<String> trustList = Flags.dataStore.readSet(path);
+		Set<String> trustList = Flags.getDataStore().readSet(path);
 		
 		// Set player to trusted.
     	if (trusted) {
@@ -245,7 +245,7 @@ public abstract class Area implements Comparable<Area> {
     		if (event.isCancelled()) { return false; }
        
     		//Set the list
-    		Flags.dataStore.write(path, trustList);
+    		Flags.getDataStore().write(path, trustList);
     		return true;
     	}
     	
@@ -257,7 +257,7 @@ public abstract class Area implements Comparable<Area> {
  	   if (event.isCancelled()) { return false; }
  	   
  	   trustList.remove(trustee.toLowerCase());
- 	   Flags.dataStore.write(path, trustList);
+ 	   Flags.getDataStore().write(path, trustList);
  	   return true;
 	}
 	
@@ -293,7 +293,7 @@ public abstract class Area implements Comparable<Area> {
 	 */
 	public String getMessage(Flag flag, boolean parse) {
 		if(!isArea()){ return null; }
-		String message = Flags.dataStore.read(getDataPath() + "." + flag.getName() + messageFooter);
+		String message = Flags.getDataStore().read(getDataPath() + "." + flag.getName() + messageFooter);
 	 	   
 		if (message == null) {
 			message = new Default(getWorld()).getMessage(flag);
@@ -322,7 +322,7 @@ public abstract class Area implements Comparable<Area> {
 		TransactionType transaction = null;
 		
         // Check to see if this is a purchase or deposit
-        if(Flags.economy != null					// No economy 
+        if(Flags.getEconomy() != null					// No economy 
         		&& flag.getPrice(PurchaseType.Message) != 0	// No defined price
         		&& !(this instanceof World)					// No charge for world flags
         		&& !(this instanceof Default)				// No charge for defaults
@@ -357,7 +357,7 @@ public abstract class Area implements Comparable<Area> {
 			if(!makeTransaction(transaction, PurchaseType.Message, flag, (Player)sender)) { return true; }
 		}
 		if(message != null) { message = message.replaceAll("§", "&"); }
-		Flags.dataStore.write(getDataPath() + "." + flag.getName() + messageFooter, message);
+		Flags.getDataStore().write(getDataPath() + "." + flag.getName() + messageFooter, message);
 		return true;
 	}
 	
@@ -368,10 +368,10 @@ public abstract class Area implements Comparable<Area> {
 	private static boolean isFundingAvailable(PurchaseType product, Flag flag, Player player) {
 		double price = flag.getPrice(product);
 		
-		if (price > Flags.economy.getBalance(player.getName())) {
+		if (price > Flags.getEconomy().getBalance(player.getName())) {
 			player.sendMessage(Message.LowFunds.get()
 					.replaceAll("\\{PurchaseType\\}", product.getLocal().toLowerCase())
-					.replaceAll("\\{Price\\}", Flags.economy.format(price))
+					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
 					.replaceAll("\\{Flag\\}", flag.getName()));
 			return false;
 		}
@@ -387,20 +387,20 @@ public abstract class Area implements Comparable<Area> {
 		EconomyResponse r;
 		if (transaction == TransactionType.Withdraw) {
 			// Withdrawal
-			r = Flags.economy.withdrawPlayer(player.getName(), price);
+			r = Flags.getEconomy().withdrawPlayer(player.getName(), price);
 		} else {
 			// Deposit
-			r = Flags.economy.depositPlayer(player.getName(), price);
+			r = Flags.getEconomy().depositPlayer(player.getName(), price);
 		}
 		
 		if (r.transactionSuccess()) {
 			player.sendMessage(transaction.getMessage()
-					.replaceAll("\\{Price\\}", Flags.economy.format(price)));
+					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price)));
 			return true;
 		}
 		
 		// Something went wrong if we made it this far.
-		Flags.instance.getLogger().severe(String.format("An error occured: %s", r.errorMessage));
+		Flags.getInstance().getLogger().severe(String.format("An error occured: %s", r.errorMessage));
 		player.sendMessage(Message.Error.get()
 				.replaceAll("\\{Error\\}", r.errorMessage));
 		return false;

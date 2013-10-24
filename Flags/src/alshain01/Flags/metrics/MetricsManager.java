@@ -11,7 +11,7 @@ public class MetricsManager {
 	
 	public static void StartMetrics() {
 		try {
-		    Metrics metrics = new Metrics(Flags.instance);
+		    Metrics metrics = new Metrics(Flags.getInstance());
 	
 		    // Land System Graph
 		    Graph systemGraph = metrics.createGraph("Land System");
@@ -28,7 +28,7 @@ public class MetricsManager {
 		    
 		    // Economy Graph
 		    Graph econGraph = metrics.createGraph("Economy Enabled");
-		    if(Flags.economy == null) {	    	
+		    if(Flags.getEconomy() == null) {	    	
 		    	econGraph.addPlotter(new Metrics.Plotter("No") {
 		    		@Override
 		            public int getValue() {
@@ -46,7 +46,7 @@ public class MetricsManager {
 		    		    
 		    metrics.start();
 		} catch (IOException e) {
-		    Flags.instance.getLogger().info(e.getMessage());
+		    Flags.getInstance().getLogger().info(e.getMessage());
 		}
 	}
 }

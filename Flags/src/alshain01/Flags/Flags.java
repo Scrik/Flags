@@ -29,15 +29,14 @@ import alshain01.Flags.metrics.MetricsManager;
  * @author Alshain01
  */
 public class Flags extends JavaPlugin{
-	public static Flags instance;
-	public static Economy economy = null;
-	public static DataStore dataStore;
-	
+	protected static Flags instance;
 	protected static CustomYML messageStore;
 	protected static LandSystem currentSystem = LandSystem.NONE;
 	protected static Updater updater = null;
+	protected static DataStore dataStore;
 	
-	private static Registrar flagRegistrar = new Registrar();
+	private static Economy economy = null;
+	private static final Registrar flagRegistrar = new Registrar();
 	private static final Boolean DEBUG = true;
 
 	
@@ -128,14 +127,42 @@ public class Flags extends JavaPlugin{
 	}
 	
 	/**
+	 * Gets the static instance of Flags.
+	 * 
+	 * @return The vault economy.
+	 */
+	public static Flags getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * Gets the DataStore used by Flags.
+	 * In most cases, plugins should not attempt to access this directly.
+	 * 
+	 * @return The vault economy.
+	 */
+	public static DataStore getDataStore() {
+		return dataStore;
+	}
+	
+	/**
 	 * Gets the registrar for this instance of Flags.
 	 * 
 	 * @return The flag registrar.
 	 */
-	public Registrar getRegistrar() {
+	public static Registrar getRegistrar() {
 		return flagRegistrar;
 	}
     
+	/**
+	 * Gets the vault economy for this instance of Flags.
+	 * 
+	 * @return The vault economy.
+	 */
+	public static Economy getEconomy() {
+		return economy;
+	}
+		
 	/**
 	 * Executes the given command, returning its success 
 	 * 
@@ -167,7 +194,7 @@ public class Flags extends JavaPlugin{
 	 * 
 	 * @return True if the version provided is compatible
 	 */	
-	public boolean checkAPI(String version) {
+	public static boolean checkAPI(String version) {
 		float APIVersion = Float.valueOf(Bukkit.getServer().getBukkitVersion().substring(0, 3));
 		float CompareVersion = Float.valueOf(version.substring(0, 3));
 		int APIBuild = Integer.valueOf(Bukkit.getServer().getBukkitVersion().substring(4, 5));
@@ -183,9 +210,9 @@ public class Flags extends JavaPlugin{
 	 * Sends a debug message through the Flags logger if the plug-in is a development build.
 	 * @param message The debug message
 	 */
-	public final void Debug(String message) {
+	public static final void Debug(String message) {
 		if (DEBUG) {
-			this.getLogger().info("DEBUG: " + message);
+			Flags.instance.getLogger().info("DEBUG: " + message);
 		}
 	}
 	
@@ -194,10 +221,10 @@ public class Flags extends JavaPlugin{
 	 * 
 	 * @return True if the economy was successfully configured. 
 	 */
-    private boolean setupEconomy()
+    private static boolean setupEconomy()
     {
     	if (!Flags.instance.getServer().getPluginManager().isPluginEnabled("Vault")) { return false; }
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager()
         		.getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
         	economy = economyProvider.getProvider();
@@ -210,8 +237,8 @@ public class Flags extends JavaPlugin{
 	/*
 	 * Acquires the land management plugin.
 	 */
-	private LandSystem findSystem(PluginManager pm) {
-		List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
+	private static LandSystem findSystem(PluginManager pm) {
+		List<?> pluginList = Flags.instance.getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
 			if (pm.isPluginEnabled((String)o)) {
@@ -221,7 +248,7 @@ public class Flags extends JavaPlugin{
 		return LandSystem.NONE;				
 	}
 	
-	private class UpdateListener implements Listener {
+	private static class UpdateListener implements Listener {
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
 			if(e.getPlayer().hasPermission("flags.admin.notifyupdate") && updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {

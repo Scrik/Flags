@@ -37,7 +37,7 @@ abstract class FlagCmd extends Common {
 		boolean first = true; // Governs whether we insert a comma or not (true means no)
 		Area defaultArea = new Default(player.getWorld());
 		
-		for (Flag f : Flags.instance.getRegistrar().getFlags()) {
+		for (Flag f : Flags.getRegistrar().getFlags()) {
 			// Get the flag's value
 			Boolean value = area.getValue(f, true);
 			
@@ -106,7 +106,7 @@ abstract class FlagCmd extends Common {
 		
 		// Removing all flags if the player has permission
 		boolean success = true;
-		for (Flag f : Flags.instance.getRegistrar().getFlags()) {
+		for (Flag f : Flags.getRegistrar().getFlags()) {
 			if(area.getValue(f, true) != null) {
 				if (flagPermitted(flag, player)) {
 					if (!area.setValue(f, null, player)) {
@@ -128,10 +128,10 @@ abstract class FlagCmd extends Common {
 	}
 	
 	protected static boolean help (CommandSender sender, int page, String group) {
-		Registrar registrar = Flags.instance.getRegistrar();
+		Registrar registrar = Flags.getRegistrar();
 		List<String> groupNames = new ArrayList<String>();
 		List<String> allowedFlagNames = new ArrayList<String>();
-		Set<String> flagNames = Flags.instance.getRegistrar().getFlagNames();
+		Set<String> flagNames = Flags.getRegistrar().getFlagNames();
 
 		// First we need to filter out the flags and groups to show to the particular user.
 		for (String f : flagNames) {
@@ -438,8 +438,8 @@ abstract class FlagCmd extends Common {
 	protected static boolean getPrice(CommandSender sender, PurchaseType type, Flag flag) {
 		
 		String price;
-		if(Flags.economy != null) {
-			price = Flags.economy.format(flag.getPrice(type));
+		if(Flags.getEconomy() != null) {
+			price = Flags.getEconomy().format(flag.getPrice(type));
 		} else {
 			price = String.valueOf(flag.getPrice(type));
 		}

@@ -91,7 +91,7 @@ public class GriefPreventionClaim77 extends Area implements Removable, Siege, Ad
 	 */
 	@Override
 	public void remove() {
- 	   Flags.dataStore.write(getDataPath(), (String)null);
+ 	   Flags.getDataStore().write(getDataPath(), (String)null);
 	}
 	
 	// ******************************

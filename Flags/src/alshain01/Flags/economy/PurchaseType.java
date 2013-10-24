@@ -60,6 +60,6 @@ public enum PurchaseType {
 	 * @return True if the refund setting is true for this type
 	 */
 	public boolean isRefundable() {
-		return Flags.instance.getConfig().getBoolean("Flags.Economy.Refund." + this.toString());
+		return Flags.getInstance().getConfig().getBoolean("Flags.Economy.Refund." + this.toString());
 	}
 }

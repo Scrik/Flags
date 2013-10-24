@@ -65,24 +65,24 @@ final class EconomyListener implements Listener {
 		EconomyResponse r;
 		if (transaction == TransactionType.Withdraw) {
 			// Check to see if they have the money.
-			if (price > Flags.economy.getBalance(player.getName())) {
+			if (price > Flags.getEconomy().getBalance(player.getName())) {
 				player.sendMessage(Message.LowFunds.get()
 						.replaceAll("\\{PurchaseType\\}", product.getLocal().toLowerCase())
-						.replaceAll("\\{Price\\}", Flags.economy.format(price))
+						.replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
 						.replaceAll("\\{Flag\\}", flag.getName()));
 				return true;
 			}
 		
 			// They have the money, make transaction
-			r = Flags.economy.withdrawPlayer(player.getName(), price);
+			r = Flags.getEconomy().withdrawPlayer(player.getName(), price);
 		} else {
 			// Deposit
-			r = Flags.economy.depositPlayer(player.getName(), price);
+			r = Flags.getEconomy().depositPlayer(player.getName(), price);
 		}
 		
 		if (r.transactionSuccess()) {
 			player.sendMessage(transaction.getMessage()
-					.replaceAll("<1>", Flags.economy.format(price)));
+					.replaceAll("<1>", Flags.getEconomy().format(price)));
 			return false;
 		}
 		

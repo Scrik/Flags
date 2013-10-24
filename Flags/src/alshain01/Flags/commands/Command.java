@@ -37,7 +37,6 @@ public class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) {
-			Flags.instance.Debug("Invalid Arguments");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -47,7 +46,6 @@ public class Command {
 		if(command.requiresLocation) {
 			location = CommandLocation.get(args[1]);
 			if(location == null) {
-				Flags.instance.Debug("Required Location Missing");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -70,7 +68,7 @@ public class Command {
 		Flag flag = null;
 		if(command.requiresFlag != null) {
 			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
-				flag = Flags.instance.getRegistrar().getFlagIgnoreCase(args[2]);
+				flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
 				if(flag == null) {
 					sender.sendMessage(Message.InvalidFlagError.get()
 							.replaceAll("\\{RequestedName\\}", args[2])
