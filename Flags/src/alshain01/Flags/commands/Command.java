@@ -36,7 +36,8 @@ public class Command {
 
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
-				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
+				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) {
+			Flags.instance.Debug("Invalid Arguments");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -46,6 +47,7 @@ public class Command {
 		if(command.requiresLocation) {
 			location = CommandLocation.get(args[1]);
 			if(location == null) {
+				Flags.instance.Debug("Required Location Missing");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -68,11 +70,12 @@ public class Command {
 		Flag flag = null;
 		if(command.requiresFlag != null) {
 			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
-				flag = Flags.instance.getRegistrar().getFlag(args[2]);
+				flag = Flags.instance.getRegistrar().getFlagIgnoreCase(args[2]);
 				if(flag == null) {
 					sender.sendMessage(Message.InvalidFlagError.get()
 							.replaceAll("\\{RequestedName\\}", args[2])
 							.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+					return true;
 				}
 			}
 		}
@@ -93,16 +96,15 @@ public class Command {
 			success = FlagCmd.viewTrust((Player)sender, location, flag);
 		} else if (command == FCommandType.TRUST) {
 			// List of players for trust
-			Set<String> players = getPlayers(args);
+			Set<String> players = getPlayers(args, command.requiredArgs - 1);
 			
 			success = FlagCmd.trust((Player)sender, location, flag, players);
 		} else if (command == FCommandType.DISTRUST) {
-			// List of players for trust
+			// List of players for distrust
 			Set<String> players = new HashSet<String>();
-			if(args.length > 3) { players = getPlayers(args); } // Players can be omitted to distrust all
+			if(args.length > command.requiredArgs) { players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
 	    	
 			success = FlagCmd.distrust((Player)sender, location, flag, players);
-			return true;
 		} else if (command == FCommandType.PRESENTMESSAGE) {
 			success = FlagCmd.presentMessage((Player)sender, location, flag);
 		} else if (command == FCommandType.MESSAGE) {
@@ -229,9 +231,9 @@ public class Command {
 	 * @param args Command arguments
 	 * @return A list of players
 	 */
-	private static Set<String> getPlayers(String[] args) {
+	private static Set<String> getPlayers(String[] args, int start) {
 		Set<String> players = new HashSet<String>();
-		for(int a = 3; a < args.length; a++) {
+		for(int a = start; a < args.length; a++) {
 			players.add(args[a]);
 		}
 		return players;

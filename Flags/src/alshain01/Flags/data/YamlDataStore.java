@@ -64,8 +64,13 @@ public class YamlDataStore implements DataStore {
 	
 	@Override
 	public void write(String path, Set<String> set) {
+		List<String> list = new ArrayList<String>();
+		for(String s : set) {
+			list.add(s);
+		}
+		
 		CustomYML cYml = getYml(path);
-		cYml.getConfig().set(path, set);
+		cYml.getConfig().set(path, list);
 		cYml.saveConfig();
 	}
 	

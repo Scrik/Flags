@@ -67,7 +67,7 @@ abstract class FlagCmd extends Common {
 		
 		// Check permissions
 		if (!allPermitted(flag, area, player)) { return true; } 
-		
+	
 		// Acquire the value (maybe)
 		if(value == null) {
 			value = !area.getValue(flag, false);
@@ -156,8 +156,6 @@ abstract class FlagCmd extends Common {
 					.replaceAll("{Type}", Message.Flag.get().toLowerCase()));
 			return true;
 		}
-		Collections.sort(allowedFlagNames);
-		combinedHelp.addAll(allowedFlagNames);
 		
 		// Show them alphabetically and group them together for easier coding
 		if(groupNames.size() > 0) {
@@ -165,6 +163,10 @@ abstract class FlagCmd extends Common {
 			combinedHelp.addAll(groupNames);
 		}
 		
+		Collections.sort(allowedFlagNames);
+		combinedHelp.addAll(allowedFlagNames);
+		
+
 		//Get total pages
 		//1 header per page
 		//9 flags per page, except on the first which has a usage line and 8 flags
@@ -330,6 +332,7 @@ abstract class FlagCmd extends Common {
 		// Remove all players
 		if (playerList.size() == 0) {
 			for (String p : trustList) {
+				if (area.getOwners().contains(p)) { continue; }
 				if (!area.setTrust(flag, p, false, player)) {
 					success = false;
 				}

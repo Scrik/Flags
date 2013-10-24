@@ -1,11 +1,11 @@
 package alshain01.Flags.commands;
 
 enum FCommandType {
-	SET('s', 2, 1, true, true, "Set <area|world|default> <flag> [true|false]"),
+	SET('s', 3, 1, true, true, "Set <area|world|default> <flag> [true|false]"),
 	GET('g', 2, 1, true, false, "Get <area|world|default> [flag]"),
 	REMOVE ('r', 2, 1, true, false, "Remove <area|world|default> [flag]"),
-	TRUST('t', 3, -1, true, true, "Trust <area|world|default> <flag> <player> [player]..."),
-	DISTRUST('d', 2, -1, true, true, "Distrust <area|world|default> <flag> [player] [player]..."),
+	TRUST('t', 4, -1, true, true, "Trust <area|world|default> <flag> <player> [player]..."),
+	DISTRUST('d', 3, -1, true, true, "Distrust <area|world|default> <flag> [player] [player]..."),
 	VIEWTRUST('v', 3, 0, true, true, "ViewTrust <area|world|default> <flag>"),
 	MESSAGE('m', 4, -1, true, true, "Message <area|world|default> <flag> <message>"),
 	PRESENTMESSAGE('p', 3, 0, true, true, "PresentMessage <area|world|default> <flag>"),

@@ -356,8 +356,8 @@ public abstract class Area implements Comparable<Area> {
 		if(transaction != null) {
 			makeTransaction(transaction, PurchaseType.Message, flag, (Player)sender);
 		}
-		
-		Flags.instance.dataStore.write(getDataPath() + "." + flag.getName() + messageFooter, message.replaceAll("§", "&"));
+		if(message != null) { message = message.replaceAll("§", "&"); }
+		Flags.instance.dataStore.write(getDataPath() + "." + flag.getName() + messageFooter, message);
 		return true;
 	}
 	
