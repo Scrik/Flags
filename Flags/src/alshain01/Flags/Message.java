@@ -33,7 +33,6 @@ public enum Message {
 	 */
 	public final String get() {
 		String message = Flags.instance.messageStore.getConfig().getString("Message." + this.toString());
-		Flags.instance.Debug(message);
 		if (message == null) {
 			Flags.instance.getLogger().warning("ERROR: Invalid message.yml Message for " + this.toString());
 			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";

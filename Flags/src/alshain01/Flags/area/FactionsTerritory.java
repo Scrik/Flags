@@ -19,42 +19,35 @@ import com.massivecraft.mcore.ps.PS;
 public class FactionsTerritory extends Area implements Removable{
 	protected final static String dataHeader = "FactionsData.";
 	Faction faction;
-	World world;
+	String worldName;
 	
 	// ******************************
 	// Constructors
 	// ******************************
-	public FactionsTerritory (Faction faction, World world) {
-		this.faction = faction;
-		this.world = world;
-	}
-	
 	public FactionsTerritory (String worldName, String factionID) {
 		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
-		this.world = Bukkit.getServer().getWorld(worldName);
+		this.worldName = worldName;
 	}
 	
 	public FactionsTerritory (Location location) {
 		BoardColls.get().getFactionAt(PS.valueOf(location));
-		this.world = location.getWorld();
+		this.worldName = location.getWorld().getName();
 	}
 	
-	@Override
-	public int compareTo(Area a) {
-		if(a instanceof FactionsTerritory && a.getSystemID() == getSystemID()) {
-			return 0;
-		}
-		return 3;
-	}
-
+	// ******************************
+	// Area Interface
+	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + getSystemID();
+		return dataHeader + worldName + "." + getSystemID();
 	}
 
 	@Override
 	public String getSystemID() {
-		return faction.getId();
+		if (isArea()) {
+			return faction.getId();
+		}
+		return null;
 	}
 
 	@Override
@@ -69,15 +62,37 @@ public class FactionsTerritory extends Area implements Removable{
 
 	@Override
 	public World getWorld() {
-		return world;
+		return Bukkit.getServer().getWorld(worldName);
 	}
 
 	@Override
 	public boolean isArea() {
-		if(this.faction != null) { return true; }
-		return false;
+		return(this.faction != null);
 	}
-
+	
+	// ******************************
+	// Comparable Interface
+	// ******************************
+	/**
+	 * 0 if the the plots are the same, 3 if they are not.
+	 * 
+	 * @return The value of the comparison.
+	 */	
+	@Override
+	public int compareTo(Area a) {
+		if(a instanceof FactionsTerritory && a.getSystemID().equals(this.getSystemID())) {
+			return 0;
+		}
+		return 3;
+	}
+	
+	// ******************************
+	// Removable Interface
+	// ******************************
+	/**
+	 * Permanently removes the area from the data store
+	 * USE CAUTION!
+	 */
 	@Override
 	public void remove() {
 		Flags.instance.dataStore.write(getDataPath(), (String)null);

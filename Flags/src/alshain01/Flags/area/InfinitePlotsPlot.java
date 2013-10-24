@@ -24,10 +24,10 @@ public class InfinitePlotsPlot extends Area implements Removable {
 		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
 	}
 	
-	public InfinitePlotsPlot(String plotLocation) {
+	public InfinitePlotsPlot(String worldName, String plotLocation) {
 		String[] plotLocData = plotLocation.split(":");
 		this.plot = InfinitePlots.getInstance().getPlotManager()
-				.getPlotAt(new PlotLocation(plotLocData[0], Integer.valueOf(plotLocData[1]), Integer.valueOf(plotLocData[2])));
+				.getPlotAt(new PlotLocation(worldName, Integer.valueOf(plotLocData[0]), Integer.valueOf(plotLocData[1])));
 	}
 	
 	// ******************************
@@ -35,13 +35,15 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + getSystemID();
+		return dataHeader + plot.getLocation().getWorldName() + "." + getSystemID();
 	}
 
 	@Override
 	public String getSystemID() {
-		PlotLocation loc = plot.getLocation();
-		return plot.getAdmin() + "." + loc.getWorldName() + ":" + loc.getX() + ":" + loc.getZ();
+		if(isArea()) {
+			return plot.getLocation().getX() + ":" + plot.getLocation().getZ();
+		}
+		return null;
 	}
 
 	@Override
@@ -61,8 +63,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public boolean isArea() {
-		if(plot != null && plot.getAdmin() != null) { return true; }
-		return false;
+		return(plot != null && plot.getAdmin() != null);
 	}
 	
 	// ******************************
@@ -75,7 +76,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 */	
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof InfinitePlotsPlot && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
+		if(a instanceof InfinitePlotsPlot && a.getSystemID().equals(this.getSystemID())) {
 			return 0;
 		}
 

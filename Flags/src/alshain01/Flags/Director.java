@@ -116,7 +116,7 @@ public final class Director {
 		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
 			for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
-				new FactionsTerritory(e.getFaction(), w).remove();
+				new FactionsTerritory(w.getName(), e.getFaction().getId()).remove();
 			}
 		}
 	}
@@ -165,14 +165,12 @@ public final class Director {
 	 * GriefPrevention = ID number
 	 * WorldGuard = worldname.regionname
 	 * Residence = Residence name OR ResidenceName.SubzoneName
-	 * InifitePlots = OwnerName.PlotName
+	 * InifitePlots = worldname.PlotLoc (X:Z)
 	 * Factions = worldname.FactionID
 	 * 
 	 * @param name The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system selection.
-	 * @deprecated Functionality is sketchy
 	 */
-	@Deprecated
 	public static Area getArea(String name) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
@@ -186,14 +184,14 @@ public final class Director {
 				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.instance.currentSystem = LandSystem.NONE;
 			}
-		} else if(getSystem() == LandSystem.WORLDGUARD) { 
-			String[] path = name.split("\\.");
-			name = name.replaceAll(path[0] + ".", "");
-			return new WorldGuardRegion(Bukkit.getServer().getWorld(path[0]), name);
 		} else if(getSystem() == LandSystem.RESIDENCE) { 
 			return new ResidenceClaimedResidence(name);
-		} else if(getSystem() == LandSystem.INFINITEPLOTS) { 
-			return new InfinitePlotsPlot(name);
+		} else if(getSystem() == LandSystem.WORLDGUARD) { 
+			String[] path = name.split("\\.");
+			return new WorldGuardRegion(path[0], path[1]);
+		} else if(getSystem() == LandSystem.INFINITEPLOTS) {
+			String[] path = name.split("\\.");
+			return new InfinitePlotsPlot(path[0], path[1]);
 		} else if(getSystem() == LandSystem.FACTIONS) { 
 			String[] path = name.split("\\.");
 			return new FactionsTerritory(path[0], path[1]);
@@ -224,15 +222,16 @@ public final class Director {
 		}
 		
 		if(getSystem() == LandSystem.INFINITEPLOTS) {
-			Set<String> players = Flags.instance.dataStore.readKeys("InfinitePlotsData");
+			Set<String> worlds = Flags.instance.dataStore.readKeys("InfinitePlotsData");
 			Set<String> areas = new HashSet<String>();
-			for(String player : players) {
-				Set<String>localAreas = Flags.instance.dataStore.readKeys("InifitePlotsData." + player);
+			for(String world : worlds) {
+				Set<String>localAreas = Flags.instance.dataStore.readKeys("InfinitePlotsData." + world);
 				for(String localArea : localAreas) {
-					areas.add(player + "." + localArea);
+					areas.add(world + "." + localArea);
 				}
 			}
-			return areas; 
+			
+			return areas;
 		}
 		
 		if(getSystem() == LandSystem.FACTIONS) {
