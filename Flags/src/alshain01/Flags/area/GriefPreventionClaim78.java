@@ -34,9 +34,9 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	@Override
 	protected String getDataPath() {
 		if(isSubdivision() && !isInherited()) {
-			return dataHeader + getSystemID() + "." + getSystemSubID();
+			return super.getDataPath() + "." + getSystemSubID();
 		}
-		return dataHeader + getSystemID();
+		return super.getDataPath();
 	}
 	
 	@Override
