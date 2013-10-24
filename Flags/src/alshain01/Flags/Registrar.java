@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import alshain01.Flags.Flag;
 
 public class Registrar {
@@ -26,6 +30,12 @@ public class Registrar {
 		if(!flagStore.containsKey(name)) {
 			Flag flag = new Flag(name, description, def, group, false, null, null);
 			flagStore.put(name, flag);
+			
+			//Add the permission for the flag to the server
+			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.OP);
+			perm.addParent("flags.flagtype.*", true);
+			Bukkit.getServer().getPluginManager().addPermission(perm);
+
 			return flag;
 		}
 		return null;
@@ -46,6 +56,17 @@ public class Registrar {
 		if(!flagStore.containsKey(name)) {
 			Flag flag = new Flag(name, description, def, group, true, areaMessage, worldMessage);
 			flagStore.put(name, flag);
+			
+			//Add the permission for the flag to the server
+			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.OP);
+			perm.addParent("flags.flagtype.*", true);
+			Bukkit.getServer().getPluginManager().addPermission(perm);
+			
+			//Add the permission for the flag bypass to the server
+			perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.OP);
+			perm.addParent("flags.bypass.*", true);
+			Bukkit.getServer().getPluginManager().addPermission(perm);
+			
 			return flag;
 		}
 		return null;

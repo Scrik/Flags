@@ -139,7 +139,7 @@ abstract class FlagCmd extends Common {
 			// Add flags for the requested group only
 			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
 				// Only show flags that can be used.
-				if(flag.hasPermission((Player)sender)){
+				if(((Player)sender).hasPermission(flag.getPermission())){
 					allowedFlagNames.add(flag.getName());
 					// Add the group, but only once and only if a group hasn't been requested
 					if(group == null && !groupNames.contains(flag.getGroup())) {

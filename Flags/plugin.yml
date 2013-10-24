@@ -25,7 +25,6 @@ permissions:
       flags.bundle.*: true
       flags.flagtype.*: true
       flags.bundletype.*: true
-      flags.bypass.*: true
       flags.admin.notifyupdate: true
   
   flags.flag.*:
@@ -57,7 +56,7 @@ permissions:
 
   flags.bypass.*:
     description: Allows ability to bypass all player flag effects.
-    default: op
+    default: false
   
 # Flag command actions
   flags.flag:

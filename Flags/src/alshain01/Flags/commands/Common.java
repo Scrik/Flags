@@ -24,7 +24,7 @@ abstract class Common {
 	}
 	
 	protected static boolean flagPermitted(Flag flag, Player player) {
-		if(flag.hasPermission(player)) { return true; }
+		if(player.hasPermission(flag.getPermission())) { return true; }
 		player.sendMessage(Message.FlagPermError.get()
 				.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
 		return false;

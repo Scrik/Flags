@@ -115,10 +115,11 @@ public class Flag {
 	 * Gets whether or not the provided player has permission to modify this flag.
 	 * 
 	 * @return True if the provided player has permission.
+	 * @deprecated Flag permissions are now added to the server dynamically with the appropriate parent. Use player.hasPermission(flag.getPermission()) instead.
 	 */
+	@Deprecated
     public final boolean hasPermission(Player player) {
-		if (player.hasPermission("flags.flagtype.*")
-				|| player.hasPermission(getPermission())) {
+		if (player.hasPermission(getPermission())) {
 			return true;
 		}
 		return false;
@@ -137,10 +138,11 @@ public class Flag {
 	 * Gets whether or not the provided player has bypass permission for this flag.
 	 * 
 	 * @return True if the provided player has permission to ignore the effects of this flag.
+	 * @deprecated Bypass permissions are now added to the server dynamically with the appropriate parent. Use player.hasPermission(flag.getBypassPermission()) instead.
 	 */
+	@Deprecated
     public final boolean hasBypassPermission(Player player) {
-		if (player.hasPermission("flags.bypass.*")
-				|| player.hasPermission(getBypassPermission())) {
+		if (player.hasPermission(getBypassPermission())) {
 			return true;
 		}
 		return false;
