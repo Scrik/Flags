@@ -46,6 +46,10 @@ public final class Bundle {
 	 * @param flags A list of flags in the bundle. (does not verify validity)
 	 */
 	public static void writeBundle(String name, Set<String> flags) {
+		if(flags == null || flags.size() == 0) {
+			Flags.instance.dataStore.write("Bundle." + name, (String)null);
+			return;
+		}
 		Flags.instance.dataStore.write("Bundle." + name, flags);
 	}
 }

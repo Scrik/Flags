@@ -30,7 +30,7 @@ Message:
   SetMultipleFlagsError: '&cFailed to set one or more flags.'
   RemoveAllFlagsError: '&cFailed to remove one or more flags.'
   EraseBundleError: '&cFailed to erase bundle.'
-  AddBundleError: '&cFailed to add find one or more flags. Aborting addition.'
+  AddBundleError: '&cFailed to find one or more flags. Aborting addition.'
   BundlePermError: '&cYou do not have permission to edit bundles.'
   SubdivisionError: '&cStand in the subdivision you wish to set inheritance for.'
   NoSystemError: '&cNo land system available. Area actions are disabled.'

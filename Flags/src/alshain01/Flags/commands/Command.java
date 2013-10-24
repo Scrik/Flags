@@ -180,11 +180,13 @@ public class Command {
 		}
 		
 		String bundle = null;
-		if(command.requiresBundle) {
-			if(command.requiresLocation) {
-				bundle = args[2];
-			} else {
-				bundle = args[1];
+		if(command.requiresBundle != null) {
+			if(command.requiresBundle || (!command.requiresBundle && args.length >= 3)) {
+				if(command.requiresLocation) {
+					bundle = args[2];
+				} else {
+					bundle = args[1];
+				}
 			}
 		}
 		

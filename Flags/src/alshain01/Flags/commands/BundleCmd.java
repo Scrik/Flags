@@ -183,12 +183,12 @@ abstract class BundleCmd extends Common {
 		}
 		
 		for (String f : flags) {
-        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
+        	Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
         		return true;
        		}
-        	bundle.add(f);
+        	bundle.add(flag.getName());
 		}
        	
 		Bundle.writeBundle(bundleName, bundle);
@@ -210,9 +210,9 @@ abstract class BundleCmd extends Common {
 		
 		boolean success = true;
 		for (String f : flags) {
-        	Flag flag = Flags.instance.getRegistrar().getFlag(f);
+        	Flag flag = Flags.instance.getRegistrar().getFlagIgnoreCase(f);
         	if (flag != null) {
-        		if (!bundle.remove(f)) {
+        		if (!bundle.remove(flag.getName())) {
         			success = false;
         		}
         		continue;
