@@ -20,7 +20,7 @@ import com.massivecraft.factions.event.FactionsEventDisband;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
 import alshain01.Flags.area.GriefPreventionClaim78;
-import alshain01.Flags.area.GriefPreventionClaim77;
+import alshain01.Flags.area.GriefPreventionClaim;
 import alshain01.Flags.area.InfinitePlotsPlot;
 import alshain01.Flags.area.ResidenceClaimedResidence;
 import alshain01.Flags.area.World;
@@ -143,7 +143,7 @@ public final class Director {
 			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 				area = new GriefPreventionClaim78(location);
 			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
-				area = new GriefPreventionClaim77(location);
+				area = new GriefPreventionClaim(location);
 			} else {
 				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;
@@ -179,7 +179,7 @@ public final class Director {
 				return new GriefPreventionClaim78(ID);
 			} else if(Float.valueOf(plugin.getDescription().getVersion()) == 7.7){
 				Long ID = Long.parseLong(name);
-				return new GriefPreventionClaim77(ID);
+				return new GriefPreventionClaim(ID);
 			} else {
 				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;

@@ -30,7 +30,7 @@ public class Flag {
 	}
 
 	/**
-	 * Retrieves whether or not the flag is a player flag. (Supports messaging and trust)
+	 * Gets whether or not the flag is a player flag. (Supports messaging and trust)
 	 * 
 	 * @return True if this flag is a player flag.
 	 */
@@ -39,7 +39,7 @@ public class Flag {
 	}
 
 	/**
-	 * Retrieves the plug-in default value of the flag.
+	 * Gets the plug-in default value of the flag.
 	 * 
 	 * @return The default value.
 	 */
@@ -48,7 +48,7 @@ public class Flag {
 	}
 
 	/**
-	 * Retrieves the name of the flag.
+	 * Gets the name of the flag.
 	 * 
 	 * @return The name.
 	 */
@@ -57,7 +57,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves a string representation of the flag meta.
+	 * Gets a string representation of the flag meta.
 	 * 
 	 * @return The flag as a string
 	 */
@@ -67,7 +67,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves the default area message of the flag.
+	 * Gets the default area message of the flag.
 	 * 
 	 * @return The default area message.
 	 */
@@ -76,7 +76,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves the group the flag is assigned to.
+	 * Gets the group the flag is assigned to.
 	 * 
 	 * @return The group this flag is assigned to.
 	 */
@@ -85,7 +85,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves the default world message of the flag
+	 * Gets the default world message of the flag
 	 * 
 	 * @return The default world message.
 	 */
@@ -94,7 +94,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves the flag's description
+	 * Gets the flag's description
 	 * 
 	 * @return The description.
 	 */
@@ -103,7 +103,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves the flagtype permission string.
+	 * Gets the flagtype permission string.
 	 * 
 	 * @return The permission string (flags.flagtype.flagname)
 	 */
@@ -112,7 +112,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves whether or not the provided player has permission to modify this flag.
+	 * Gets whether or not the provided player has permission to modify this flag.
 	 * 
 	 * @return True if the provided player has permission.
 	 */
@@ -125,7 +125,7 @@ public class Flag {
     }
 	
     /**
-     * Retrieves the bypass permission string.
+     * Gets the bypass permission string.
      * 
      * @return The bypass permission string (flags.bypass.flagname)
 	 */
@@ -134,7 +134,7 @@ public class Flag {
 	}
 	
 	/**
-	 * Retrieves whether or not the provided player has bypass permission for this flag.
+	 * Gets whether or not the provided player has bypass permission for this flag.
 	 * 
 	 * @return True if the provided player has permission to ignore the effects of this flag.
 	 */
@@ -146,11 +146,23 @@ public class Flag {
 		return false;
     }
     
+    /**
+     * Gets the price of the flag or message.
+     * 
+     * @param type The PurchaseType to get for this flag
+     * @return The price of the purchase.
+     */
     public final double getPrice(PurchaseType type) {
     	if(!Flags.getDataStore().isSet("Price." + type.toString() + "." + name)) { return 0; }
     	return Flags.getDataStore().readDouble("Price." + type.toString() + "." + name);
     }
     
+    /**
+     * Sets the price of the flag or message
+     * 
+     * @param type The PurchaseType to set for this flag
+     * @param price The new price of the purchase.
+     */
     public final void setPrice(PurchaseType type, double price) {
     	Flags.getDataStore().write("Price." + type.toString() + "." + name, price);
     }

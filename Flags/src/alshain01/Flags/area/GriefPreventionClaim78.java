@@ -1,21 +1,11 @@
 package alshain01.Flags.area;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.Message;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-public class GriefPreventionClaim78 extends Area implements Subdivision, Removable, Siege, Administrator {
-	protected final static String dataHeader = "GriefPreventionData.";
-	protected Claim claim;
-	
+public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subdivision {
 	private String getInheritPath() {
 		return dataHeader + getSystemID() + "." + getSystemSubID() + "." + "InheritParent";
 	}
@@ -24,16 +14,16 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	// Constructors
 	// ******************************
 	public GriefPreventionClaim78(Location location) {
-		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+		super(location);
 	}
 	
 	public GriefPreventionClaim78(long ID) {
-		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
+		super(ID);
 	}
 	
 	public GriefPreventionClaim78(long ID, long subID) {
-		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
-		if (claim != null) {
+		super(ID);
+		if (this.claim != null) {
 			this.claim = claim.getSubClaim(subID);
 		}
 	}
@@ -50,34 +40,8 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	}
 	
 	@Override
-	public String getSystemID() {
-		if(isSubdivision()) {
-			return String.valueOf(claim.parent.getID());
-		}else if(isArea()) {
-			return String.valueOf(claim.getID());
-		} else {
-			return null;
-		}
-	}
-	
-	@Override
-	public String getAreaType() {
-		return Message.GriefPrevention.get();
-	}
-	
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
-	}
-	
-	@Override
 	public org.bukkit.World getWorld() {
 		return Bukkit.getServer().getWorld(claim.getClaimWorldName());
-	}
-	
-	@Override
-	public boolean isArea() {
-		return (claim != null);
 	}
 	
 	// ******************************
@@ -124,18 +88,6 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 	}
 	
 	// ******************************
-	// Removable Interface
-	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
-	@Override
-	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String)null);
-	}
-	
-	// ******************************
 	// Subdivision Interface
 	// ******************************
 	@Override
@@ -175,22 +127,5 @@ public class GriefPreventionClaim78 extends Area implements Subdivision, Removab
 		
 		Flags.getDataStore().write(getInheritPath(), String.valueOf(value));
 		return true;
-	}
-	
-	// ******************************
-	// Siege Interface
-	// ******************************
-	@Override
-	public boolean isUnderSiege() {
-		if (claim == null || claim.siegeData == null) { return false; }
-		return true;
-	}
-
-	// ******************************
-	// Admin Interface
-	// ******************************
-	@Override
-	public boolean isAdminArea() {
-		return claim.isAdminClaim();
 	}
 }

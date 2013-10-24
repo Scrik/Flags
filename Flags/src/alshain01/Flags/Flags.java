@@ -33,14 +33,13 @@ public class Flags extends JavaPlugin{
 	protected static CustomYML messageStore;
 	protected static LandSystem currentSystem = LandSystem.NONE;
 
+	private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
-	private static Flags instance;
 	private static Economy economy = null;
 	private static final Registrar flagRegistrar = new Registrar();
 	private static final Boolean DEBUG = true;
 
-	
 	/**
 	 * Called when this plug-in is enabled
 	 */

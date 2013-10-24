@@ -25,9 +25,9 @@ import alshain01.Flags.events.PlayerChangedAreaEvent;
 class BorderPatrol implements Listener {
 	private static final int eventsDivisor = Flags.getInstance().getConfig().getInt("Flags.BorderPatrol.EventDivisor");
 	private static final int timeDivisor = Flags.getInstance().getConfig().getInt("Flags.BorderPatrol.TimeDivisor");
-	private int eventCalls = 0;
+	private static int eventCalls = 0;
 
-	ConcurrentHashMap<String, PreviousMove> moveStore = new ConcurrentHashMap<String, PreviousMove>();
+	static ConcurrentHashMap<String, PreviousMove> moveStore = new ConcurrentHashMap<String, PreviousMove>();
 	
 	private class PreviousMove {
 		private long time;
@@ -42,7 +42,7 @@ class BorderPatrol implements Listener {
 	}
 
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-	private void onPlayerJoin(PlayerJoinEvent event) {
+	private static void onPlayerJoin(PlayerJoinEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			// Remove any garbage entries that may have been left behind
 			// Probably won't happen, but just in case.
@@ -51,7 +51,7 @@ class BorderPatrol implements Listener {
 	}
 	
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-	private void onPlayerQuit(PlayerQuitEvent event) {
+	private static void onPlayerQuit(PlayerQuitEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			// Remove the last location to keep memory usage low.
 			moveStore.remove(event.getPlayer().getName());

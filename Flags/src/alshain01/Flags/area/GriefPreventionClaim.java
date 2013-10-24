@@ -11,20 +11,22 @@ import alshain01.Flags.Message;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-public class GriefPreventionClaim77 extends Area implements Removable, Siege, Administrator {
-	private final static String dataHeader = "GriefPreventionData.";
-	private Claim claim;
+public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
+	protected final static String dataHeader = "GriefPreventionData.";
+	protected Claim claim;
 	
 	// ******************************
 	// Constructors
 	// ******************************	
-	public GriefPreventionClaim77(Location location) {
+	public GriefPreventionClaim(Location location) {
 		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 	}
 	
-	public GriefPreventionClaim77(long ID) {
+	public GriefPreventionClaim(long ID) {
 		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
+	
+	protected GriefPreventionClaim() { }
 	
 	// ******************************
 	// Area Interface
@@ -75,7 +77,7 @@ public class GriefPreventionClaim77 extends Area implements Removable, Siege, Ad
 	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof GriefPreventionClaim77 && a.getSystemID().equals(this.getSystemID())) {
+		if(a instanceof GriefPreventionClaim && a.getSystemID().equals(this.getSystemID())) {
 			return 0;
 		}
 
@@ -99,8 +101,7 @@ public class GriefPreventionClaim77 extends Area implements Removable, Siege, Ad
 	// ******************************
 	@Override
 	public boolean isUnderSiege() {
-		if (claim == null) { return false; }
-		if (claim.siegeData == null) { return false; }
+		if (claim == null || claim.siegeData == null) { return false; }
 		return true;
 	}
 
