@@ -144,36 +144,29 @@ public abstract class Area implements Comparable<Area> {
 	 * 
 	 * @param flag The flag to set the value for.
 	 * @param value The value to set, null to remove.
-	 * @param sender The command sender for event call, may be null if no associated player or console.
+	 * @param sender The command sender for event call and economy, may be null if no associated player or console.
 	 * @return False if the event was canceled.
 	 */
 	public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
 		if(!isArea()) { return false; }
 		
+        // Check to see if this can be paid for
 		TransactionType transaction = null;
-		
-        // Check to see if this is a purchase or deposit
-        if(Flags.getEconomy() != null					// No economy 
-        		&& flag.getPrice(PurchaseType.Flag) != 0	// No defined price
-        		&& !(this instanceof World)					// No charge for world flags
-        		&& !(this instanceof Default)				// No charge for defaults
+        if(Flags.getEconomy() != null								// No economy 
+        		&& (sender != null && (sender instanceof Player))	// Need a player to charge
+        		&& value != getValue(flag, true)					// The flag isn't actually changing
+        		&& flag.getPrice(PurchaseType.Flag) != 0			// No defined price
+        		&& !(this instanceof World)							// No charge for world flags
+        		&& !(this instanceof Default)						// No charge for defaults
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
         {
-    		if (BaseValue.ALWAYS.isSet()
-    				|| (BaseValue.PLUGIN.isSet() && getValue(flag, true) != null && getValue(flag, true) != flag.getDefault()) 
-    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != null && getValue(flag, true) != new Default(((Player)sender).getLocation()).getValue(flag, true)))
-    	    { 
-        		// Is the flag being deleted?			
-        		if(value == null) {
-        			// Check whether or not to refund the account for removing the flag
-        			if (PurchaseType.Flag.isRefundable()) {
-        				transaction = TransactionType.Deposit;
-        			}
-        		} else {
-    	    		// Check whether or not to charge the account
-        			if(!isFundingAvailable(PurchaseType.Flag, flag, (Player)sender)) { return false; }
-        			transaction = TransactionType.Withdraw;
-        		}
+    		if (value != null && (BaseValue.ALWAYS.isSet()
+    				|| (BaseValue.PLUGIN.isSet() && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())) 
+    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation()).getValue(flag, true))))
+    	    {
+	    		// The flag is being set, see if the player can afford it.
+    			if(!isFundingAvailable(PurchaseType.Flag, flag, (Player)sender)) { return false; }
+    			transaction = TransactionType.Withdraw;
     	    } else {
         		// Check whether or not to refund the account for setting the flag value
         		if (PurchaseType.Flag.isRefundable() && !BaseValue.ALWAYS.isSet()) {
@@ -322,10 +315,11 @@ public abstract class Area implements Comparable<Area> {
 		TransactionType transaction = null;
 		
         // Check to see if this is a purchase or deposit
-        if(Flags.getEconomy() != null					// No economy 
-        		&& flag.getPrice(PurchaseType.Message) != 0	// No defined price
-        		&& !(this instanceof World)					// No charge for world flags
-        		&& !(this instanceof Default)				// No charge for defaults
+        if(Flags.getEconomy() != null								// No economy 
+        		&& (sender != null && (sender instanceof Player))	// Need a player to charge
+        		&& flag.getPrice(PurchaseType.Message) != 0			// No defined price
+        		&& !(this instanceof World)							// No charge for world flags
+        		&& !(this instanceof Default)						// No charge for defaults
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
         {
 

@@ -59,7 +59,9 @@ public class Flags extends JavaPlugin{
 			}
 			
 			if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-				Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_RED + "An update is available for Flags. Please visit http://dev.bukkit.org/bukkit-plugins/flags/ to update.");
+				Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_PURPLE + 
+						"The version of Flags that this server is running is out of date. "
+						+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			} else if(updater.getResult() == UpdateResult.SUCCESS) {
 				Bukkit.getServer().reload();
 			}
@@ -252,7 +254,9 @@ public class Flags extends JavaPlugin{
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
 			if(e.getPlayer().hasPermission("flags.admin.notifyupdate") && updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-					e.getPlayer().sendMessage(ChatColor.DARK_RED + "An update is available for Flags. Please visit http://dev.bukkit.org/bukkit-plugins/flags/ to update.");
+					e.getPlayer().sendMessage( ChatColor.DARK_PURPLE + 
+							"The version of Flags that this server is running is out of date. "
+							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			}
 		}
 	}
