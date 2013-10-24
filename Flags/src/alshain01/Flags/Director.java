@@ -87,12 +87,12 @@ public final class Director {
 			if(Float.valueOf(pm.getPlugin(getSystem().toString())
 					.getDescription().getVersion().substring(0,3)) >= 7.8) {
 				
-				pm.registerEvents(new GriefPreventionCleaner(), Flags.instance);
+				pm.registerEvents(new GriefPreventionCleaner(), Flags.getInstance());
 			}
 		} else if(getSystem() == LandSystem.RESIDENCE) {
-			pm.registerEvents(new ResidenceCleaner(), Flags.instance);
+			pm.registerEvents(new ResidenceCleaner(), Flags.getInstance());
 		} else if(getSystem() == LandSystem.FACTIONS) {
-			pm.registerEvents(new FactionsCleaner(), Flags.instance);
+			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
 		}
 	}
 	
@@ -139,13 +139,13 @@ public final class Director {
 	public static Area getAreaAt(Location location) {
 		Area area = null;
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
+			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 				area = new GriefPreventionClaim78(location);
 			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
 				area = new GriefPreventionClaim77(location);
 			} else {
-				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
+				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;
 			}
 		}
@@ -173,7 +173,7 @@ public final class Director {
 	 */
 	public static Area getArea(String name) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			Plugin plugin = Flags.instance.getServer().getPluginManager().getPlugin("GriefPrevention");
+			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion()) >= 7.8) {
 				Long ID = Long.parseLong(name);
 				return new GriefPreventionClaim78(ID);
@@ -181,7 +181,7 @@ public final class Director {
 				Long ID = Long.parseLong(name);
 				return new GriefPreventionClaim77(ID);
 			} else {
-				Flags.instance.getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
+				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;
 			}
 		} else if(getSystem() == LandSystem.RESIDENCE) { 
@@ -205,14 +205,14 @@ public final class Director {
 	 * @return A list containing all the area names.
 	 */
 	public static Set<String> getAreaNames() {
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.dataStore.readKeys("GriefPreventionData"); }
-		if(getSystem() == LandSystem.RESIDENCE) { return Flags.dataStore.readKeys("ResidenceData"); }
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return Flags.getDataStore().readKeys("GriefPreventionData"); }
+		if(getSystem() == LandSystem.RESIDENCE) { return Flags.getDataStore().readKeys("ResidenceData"); }
 		
 		if(getSystem() == LandSystem.WORLDGUARD) {
-			Set<String> worlds = Flags.dataStore.readKeys("WorldGuardData");
+			Set<String> worlds = Flags.getDataStore().readKeys("WorldGuardData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.dataStore.readKeys("WorldGuardData." + world);
+				Set<String>localAreas = Flags.getDataStore().readKeys("WorldGuardData." + world);
 				for(String localArea : localAreas) {
 					areas.add(world + "." + localArea);
 				}
@@ -222,10 +222,10 @@ public final class Director {
 		}
 		
 		if(getSystem() == LandSystem.INFINITEPLOTS) {
-			Set<String> worlds = Flags.dataStore.readKeys("InfinitePlotsData");
+			Set<String> worlds = Flags.getDataStore().readKeys("InfinitePlotsData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.dataStore.readKeys("InfinitePlotsData." + world);
+				Set<String>localAreas = Flags.getDataStore().readKeys("InfinitePlotsData." + world);
 				for(String localArea : localAreas) {
 					areas.add(world + "." + localArea);
 				}
@@ -235,10 +235,10 @@ public final class Director {
 		}
 		
 		if(getSystem() == LandSystem.FACTIONS) {
-			Set<String> worlds = Flags.dataStore.readKeys("FactionsData");
+			Set<String> worlds = Flags.getDataStore().readKeys("FactionsData");
 			Set<String> areas = new HashSet<String>();
 			for(String world : worlds) {
-				Set<String>localAreas = Flags.dataStore.readKeys("FactionsData." + world);
+				Set<String>localAreas = Flags.getDataStore().readKeys("FactionsData." + world);
 				for(String localArea : localAreas) {
 					if(!areas.contains(localArea)) {
 						areas.add(world + "." + localArea);
@@ -259,7 +259,7 @@ public final class Director {
 	 * @return a list of all flags for the provided area.
 	 */
 	public static Set<String> getAreaFlags(String area) {
-		return Flags.dataStore.readKeys(area);
+		return Flags.getDataStore().readKeys(area);
 	}
 	
 	

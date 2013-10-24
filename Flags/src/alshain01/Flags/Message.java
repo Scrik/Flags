@@ -34,7 +34,7 @@ public enum Message {
 	public final String get() {
 		String message = Flags.messageStore.getConfig().getString("Message." + this.toString());
 		if (message == null) {
-			Flags.instance.getLogger().warning("ERROR: Invalid message.yml Message for " + this.toString());
+			Flags.getInstance().getLogger().warning("ERROR: Invalid message.yml Message for " + this.toString());
 			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);

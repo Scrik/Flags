@@ -54,10 +54,10 @@ final class EconomyListener implements Listener {
 		String pricePath = "Price." + product.toString() + "." + flag.getName();
 
 		// Plug-in has not been configured for this flag, so it's assumed free.	
-		if (!Flags.dataStore.isSet(pricePath)) { return false; }
+		if (!Flags.getDataStore().isSet(pricePath)) { return false; }
 		
 		// Get the price as a string
-		double price = Flags.dataStore.readDouble(pricePath);
+		double price = Flags.getDataStore().readDouble(pricePath);
 		
 		// Plug-in was configured for flag to be free.
 		if (price == (double)0) { return false; } 
@@ -87,7 +87,7 @@ final class EconomyListener implements Listener {
 		}
 		
 		// Something went wrong if we made it this far.
-		Flags.instance.getLogger().severe(String.format("An error occured: %s", r.errorMessage));
+		Flags.getInstance().getLogger().severe(String.format("An error occured: %s", r.errorMessage));
 		player.sendMessage(Message.Error.get()
 				.replaceAll("\\{Error\\}", r.errorMessage));
 		return true;

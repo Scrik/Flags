@@ -23,8 +23,8 @@ import alshain01.Flags.events.PlayerChangedAreaEvent;
  * @author Alshain01
  */
 class BorderPatrol implements Listener {
-	private static final int eventsDivisor = Flags.instance.getConfig().getInt("Flags.BorderPatrol.EventDivisor");
-	private static final int timeDivisor = Flags.instance.getConfig().getInt("Flags.BorderPatrol.TimeDivisor");
+	private static final int eventsDivisor = Flags.getInstance().getConfig().getInt("Flags.BorderPatrol.EventDivisor");
+	private static final int timeDivisor = Flags.getInstance().getConfig().getInt("Flags.BorderPatrol.TimeDivisor");
 	private int eventCalls = 0;
 
 	ConcurrentHashMap<String, PreviousMove> moveStore = new ConcurrentHashMap<String, PreviousMove>();

@@ -29,12 +29,13 @@ import alshain01.Flags.metrics.MetricsManager;
  * @author Alshain01
  */
 public class Flags extends JavaPlugin{
-	protected static Flags instance;
+
 	protected static CustomYML messageStore;
 	protected static LandSystem currentSystem = LandSystem.NONE;
-	protected static Updater updater = null;
-	protected static DataStore dataStore;
-	
+
+	private static DataStore dataStore;
+	private static Updater updater = null;
+	private static Flags instance;
 	private static Economy economy = null;
 	private static final Registrar flagRegistrar = new Registrar();
 	private static final Boolean DEBUG = true;

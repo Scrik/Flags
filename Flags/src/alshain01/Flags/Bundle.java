@@ -17,7 +17,7 @@ public final class Bundle {
 	 * @return A list containing the bundle.  Null if it doesn't exist.
 	 */
 	public static Set<String> getBundle(String bundle) {
-		return Flags.dataStore.readSet("Bundle." + bundle.toLowerCase());
+		return Flags.getDataStore().readSet("Bundle." + bundle.toLowerCase());
 	}
 	
 	/**
@@ -26,7 +26,7 @@ public final class Bundle {
 	 * @return A set of bundles names configured on the server.
 	 */
 	public static Set<String> getBundleNames() {
-		return Flags.dataStore.readKeys("Bundle");
+		return Flags.getDataStore().readKeys("Bundle");
 	}
 	
 	/**
@@ -47,9 +47,9 @@ public final class Bundle {
 	 */
 	public static void writeBundle(String name, Set<String> flags) {
 		if(flags == null || flags.size() == 0) {
-			Flags.dataStore.write("Bundle." + name, (String)null);
+			Flags.getDataStore().write("Bundle." + name, (String)null);
 			return;
 		}
-		Flags.dataStore.write("Bundle." + name, flags);
+		Flags.getDataStore().write("Bundle." + name, flags);
 	}
 }
