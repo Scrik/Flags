@@ -38,7 +38,7 @@ public class Flags extends JavaPlugin{
 	private static Updater updater = null;
 	private static Economy economy = null;
 	private static final Registrar flagRegistrar = new Registrar();
-	private static final Boolean DEBUG = true;
+	private static final Boolean DEBUG = false;
 
 	/**
 	 * Called when this plug-in is enabled
