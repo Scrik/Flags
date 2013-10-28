@@ -26,6 +26,62 @@ public class MetricsManager {
 		    	}
 		    }
 		    
+		    //TODO: Find a way to make this start up AFTER the flags have been registered.
+		    /*		    
+		    // Flag groups installed
+		    Graph groupGraph = metrics.createGraph("Flag Groups");
+		    for(String group : Flags.getRegistrar().getFlagGroups()){
+		    	groupGraph.addPlotter(new Metrics.Plotter(group) {
+		            @Override
+		            public int getValue() {
+	            		return 1;
+		            }
+		    	});
+		    }*/
+		    
+		    // Border Patrol Status
+		    Graph bpGraph = metrics.createGraph("Economy Enabled");
+		    if(Flags.getInstance().getConfig().getBoolean("Flags.BorderPatrol.Enable")) {	    	
+		    	bpGraph.addPlotter(new Metrics.Plotter("Enabled") {
+		    		@Override
+		            public int getValue() {
+	            		return 1;
+		            }
+		    	});
+		    } else {
+		    	bpGraph.addPlotter(new Metrics.Plotter("Disabled") {
+		            @Override
+		            public int getValue() {
+		            	return 1;
+			        }
+			    });
+		    }
+		    	
+		    // Auto Update settings
+		    Graph updateGraph = metrics.createGraph("Update Configuration");
+		    if(!Flags.getInstance().getConfig().getBoolean("Flags.Update.Check")) {
+		    	updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
+		            @Override
+		            public int getValue() {
+		            	return 1;
+		            }
+		    	});
+		    } else if(!Flags.getInstance().getConfig().getBoolean("Flags.Update.Download")) {
+		    	updateGraph.addPlotter(new Metrics.Plotter("Check for Updates") {
+		            @Override
+		            public int getValue() {
+		            	return 1;
+		            }
+		    	});
+			} else {
+			   	updateGraph.addPlotter(new Metrics.Plotter("Download Updates") {
+		            @Override
+		            public int getValue() {
+		            	return 1;
+		            }
+		    	});
+			}
+		    
 		    // Economy Graph
 		    Graph econGraph = metrics.createGraph("Economy Enabled");
 		    if(Flags.getEconomy() == null) {	    	

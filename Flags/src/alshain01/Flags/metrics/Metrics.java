@@ -316,10 +316,11 @@ class Metrics {
         // plugin.getDataFolder() => base/plugins/PluginA/
         // pluginsFolder => base/plugins/
         // The base is not necessarily relative to the startup directory.
-        File pluginsFolder = plugin.getDataFolder().getParentFile();
+        //File pluginsFolder = plugin.getDataFolder().getParentFile();
 
         // return => base/plugins/PluginMetrics/config.yml
-        return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
+        //return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
+        return new File(plugin.getDataFolder() + "metrics.yml");
     }
 
     /**

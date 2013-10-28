@@ -13,7 +13,7 @@ import org.bukkit.permissions.PermissionDefault;
 import alshain01.Flags.Flag;
 
 public class Registrar {
-	ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();;
+	ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();
 	
 	protected Registrar() { }
 	
@@ -96,7 +96,7 @@ public class Registrar {
 	}
 	
 	/**
-	 * Retrieves a flag, ignoring the case.
+	 * Gets a flag, ignoring the case.
 	 * This is an inefficient method, use it
 	 * only when absolutely necessary.
 	 * 
@@ -112,7 +112,7 @@ public class Registrar {
 	}
 	
 	/**
-	 * Retrieves a collection of all registered flags.
+	 * Gets a collection of all registered flags.
 	 * 
 	 * @return A collection of all the flags registered.
 	 */
@@ -121,11 +121,26 @@ public class Registrar {
 	}
 
 	/**
-	 * Retrieves a set of all registered flag names.
+	 * Gets a set of all registered flag names.
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
 	public Set<String> getFlagNames() {
+		return new HashSet<String>(Collections.list(flagStore.keys()));
+	}
+	
+	/**
+	 * Gets a set of all registered flag group names.
+	 * 
+	 * @return A list of names of all the flags registered.
+	 */
+	public Set<String> getFlagGroups() {
+		Set<String> groups = new HashSet<String>();
+		for(Flag flag : flagStore.values()) {
+			if(!groups.contains(flag.getGroup())) {
+				groups.add(flag.getGroup());
+			}
+		}
 		return new HashSet<String>(Collections.list(flagStore.keys()));
 	}
 }
