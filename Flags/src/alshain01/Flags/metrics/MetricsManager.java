@@ -40,7 +40,7 @@ public class MetricsManager {
 		    }*/
 		    
 		    // Border Patrol Status
-		    Graph bpGraph = metrics.createGraph("Economy Enabled");
+		    Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
 		    if(Flags.getInstance().getConfig().getBoolean("Flags.BorderPatrol.Enable")) {	    	
 		    	bpGraph.addPlotter(new Metrics.Plotter("Enabled") {
 		    		@Override
