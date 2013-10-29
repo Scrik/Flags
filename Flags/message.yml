@@ -18,6 +18,7 @@ Message:
   Residence: 'Residence'
   InfinitePlots: 'Plot'
   Factions: 'Territory'
+  PlotMe: 'Plot'
   
   # Other Translations
   Message: 'Message'

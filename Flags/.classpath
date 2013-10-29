@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Factions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/mcore.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/bukkit-1.6.4-R1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/PlotMe.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
