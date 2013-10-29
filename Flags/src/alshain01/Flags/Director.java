@@ -22,6 +22,7 @@ import alshain01.Flags.area.FactionsTerritory;
 import alshain01.Flags.area.GriefPreventionClaim78;
 import alshain01.Flags.area.GriefPreventionClaim;
 import alshain01.Flags.area.InfinitePlotsPlot;
+import alshain01.Flags.area.PlotMePlot;
 import alshain01.Flags.area.ResidenceClaimedResidence;
 import alshain01.Flags.area.World;
 import alshain01.Flags.area.WorldGuardRegion;
@@ -40,7 +41,8 @@ public final class Director {
 		WORLDGUARD("WorldGuard", "WorldGuard"),
 		RESIDENCE("Residence", "Residence"),
 		INFINITEPLOTS("InfinitePlots","InfinitePlots"),
-		FACTIONS("Factions", "Factions");
+		FACTIONS("Factions", "Factions"),
+		PLOTME("PlotMe", "PlotMe");
 		
 		private String pluginName = null;
 		private String displayName = null;
@@ -153,6 +155,7 @@ public final class Director {
 		else if(getSystem() == LandSystem.RESIDENCE) { area = new ResidenceClaimedResidence(location); }
 		else if(getSystem() == LandSystem.INFINITEPLOTS) { area = new InfinitePlotsPlot(location); }
 		else if(getSystem() == LandSystem.FACTIONS) { area = new FactionsTerritory(location); }
+		else if(getSystem() == LandSystem.PLOTME) { area = new PlotMePlot(location); }
 		
 		if(area == null || !area.isArea()) {
 			area = new World(location);
@@ -167,6 +170,7 @@ public final class Director {
 	 * Residence = Residence name OR ResidenceName.SubzoneName
 	 * InifitePlots = worldname.PlotLoc (X:Z)
 	 * Factions = worldname.FactionID
+	 * PlotMe = worldname.PlotID
 	 * 
 	 * @param name The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system selection.
@@ -195,6 +199,9 @@ public final class Director {
 		} else if(getSystem() == LandSystem.FACTIONS) { 
 			String[] path = name.split("\\.");
 			return new FactionsTerritory(path[0], path[1]);
+		} else if(getSystem() == LandSystem.PLOTME) {
+			String[] path = name.split("\\.");
+			return new PlotMePlot(path[0], path[1]);
 		}
 		return null;
 	}
@@ -248,6 +255,19 @@ public final class Director {
 			
 			return areas;
 		}
+		
+		if(getSystem() == LandSystem.PLOTME) {
+			Set<String> worlds = Flags.getDataStore().readKeys("PlotMeData");
+			Set<String> areas = new HashSet<String>();
+			for(String world : worlds) {
+				Set<String>localAreas = Flags.getDataStore().readKeys("PlotMeData." + world);
+				for(String localArea : localAreas) {
+					areas.add(world + "." + localArea);
+				}
+			}
+			
+			return areas;
+		}
 
 		return null;
 	}
@@ -285,6 +305,7 @@ public final class Director {
 		if(getSystem() == LandSystem.RESIDENCE) { return Message.Residence.get(); }
 		if(getSystem() == LandSystem.INFINITEPLOTS) { return Message.InfinitePlots.get(); }
 		if(getSystem() == LandSystem.FACTIONS) { return Message.Factions.get(); }
+		if(getSystem() == LandSystem.PLOTME) { return Message.PlotMe.get(); }
 		// Should never make it here.
 		return Message.World.get();
 	}
