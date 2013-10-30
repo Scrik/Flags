@@ -37,8 +37,8 @@ public class Flags extends JavaPlugin{
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
+	private static Boolean DEBUG = false;
 	private static final Registrar flagRegistrar = new Registrar();
-	private static final Boolean DEBUG = false;
 
 	/**
 	 * Called when this plug-in is enabled
@@ -49,6 +49,7 @@ public class Flags extends JavaPlugin{
 		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
+		this.DEBUG = this.getConfig().getBoolean("Flags.Debug");
 		
 		if(this.getConfig().getBoolean("Flags.Update.Check")) {
 			String key = this.getConfig().getString("Flags.Update.ServerModsAPIKey");

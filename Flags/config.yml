@@ -48,3 +48,7 @@ Flags:
     Check: true
     Download: false
     ServerModsAPIKey: null
+  #
+  # Puts the plugin in debug mode.
+  #
+  Debug: false
