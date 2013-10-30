@@ -17,17 +17,17 @@ commands:
     usage: /flag <set|remove|add|delete|erase|help>
 permissions:
 # Wildcards (note that flag types, bundle types, and bypass are handled in the plugin)
-  flags.*:
+  flags.all:
     description: Allows access to all permissions in the plugin.
     default: op
     children:
-      flags.flag.*: true
-      flags.bundle.*: true
-      flags.flagtype.*: true
-      flags.bundletype.*: true
+      flags.flag.all: true
+      flags.bundle.all: true
+      flags.flagtype.all: true
+      flags.bundletype.all: true
       flags.admin.notifyupdate: true
   
-  flags.flag.*:
+  flags.flag.all:
     description: Allows access to the flag command and all flag command actions.
     default: false
     children:
@@ -36,7 +36,7 @@ permissions:
       flags.flag.set.world: true
       flags.flag.set.default: true
   
-  flags.bundle.*:
+  flags.bundle.all:
     description: Allows access to the bundle command and all bundle command actions.
     default: false
     children:
@@ -46,15 +46,15 @@ permissions:
       flags.bundle.set.default: true
       flags.bundle.edit: true
       
-  flags.flagtype.*:
+  flags.flagtype.all:
     description: Allows ability to set all flag types.
     default: false
 
-  flags.bundletype.*:
+  flags.bundletype.all:
     description: Allows ability to set all flag types.
     default: false
 
-  flags.bypass.*:
+  flags.bypass.all:
     description: Allows ability to bypass all player flag effects.
     default: false
   

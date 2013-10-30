@@ -33,7 +33,7 @@ public class Registrar {
 			
 			//Add the permission for the flag to the server
 			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.FALSE);
-			perm.addParent("flags.flagtype.*", true);
+			perm.addParent("flags.flagtype.all", true);
 			Bukkit.getServer().getPluginManager().addPermission(perm);
 
 			return flag;
@@ -58,12 +58,12 @@ public class Registrar {
 		
 		//Add the permission for the flag to the server
 		Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.FALSE);
-		perm.addParent("flags.flagtype.*", true);
+		perm.addParent("flags.flagtype.all", true);
 		Bukkit.getServer().getPluginManager().addPermission(perm);
 		
 		//Add the permission for the flag bypass to the server
 		perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.FALSE);
-		perm.addParent("flags.bypass.*", true);
+		perm.addParent("flags.bypass.all", true);
 		Bukkit.getServer().getPluginManager().addPermission(perm);
 		
 		flagStore.put(name, flag);
