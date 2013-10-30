@@ -32,7 +32,7 @@ public class Registrar {
 			flagStore.put(name, flag);
 			
 			//Add the permission for the flag to the server
-			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.OP);
+			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.FALSE);
 			perm.addParent("flags.flagtype.*", true);
 			Bukkit.getServer().getPluginManager().addPermission(perm);
 
@@ -53,23 +53,21 @@ public class Registrar {
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
 	public Flag register(String name, String description, boolean def, String group, String areaMessage, String worldMessage) {
-		if(!flagStore.containsKey(name)) {
-			Flag flag = new Flag(name, description, def, group, true, areaMessage, worldMessage);
-			flagStore.put(name, flag);
-			
-			//Add the permission for the flag to the server
-			Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.OP);
-			perm.addParent("flags.flagtype.*", true);
-			Bukkit.getServer().getPluginManager().addPermission(perm);
-			
-			//Add the permission for the flag bypass to the server
-			perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.FALSE);
-			perm.addParent("flags.bypass.*", true);
-			Bukkit.getServer().getPluginManager().addPermission(perm);
-			
-			return flag;
-		}
-		return null;
+		if(flagStore.containsKey(name)) { return null; }
+		Flag flag = new Flag(name, description, def, group, true, areaMessage, worldMessage);
+		
+		//Add the permission for the flag to the server
+		Permission perm = new Permission(flag.getPermission(), "Allows players to set the flag " + flag.getName(), PermissionDefault.FALSE);
+		perm.addParent("flags.flagtype.*", true);
+		Bukkit.getServer().getPluginManager().addPermission(perm);
+		
+		//Add the permission for the flag bypass to the server
+		perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.FALSE);
+		perm.addParent("flags.bypass.*", true);
+		Bukkit.getServer().getPluginManager().addPermission(perm);
+		
+		flagStore.put(name, flag);
+		return flag;
 	}
 	
 	/**

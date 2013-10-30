@@ -9,7 +9,7 @@ commands:
   flag:
     description: Allows you to perform actions on flags.
     permission: flags.flag
-    usage: /flag <get|set|remove|trust|distrust|view|message|present|erase|inherit|help>
+    usage: /flag <get|set|remove|trust|distrust|view|message|present|erase|charge|inherit|help>
   
   bundle:
     description: Allows you to perform actions on bundles.
@@ -29,7 +29,7 @@ permissions:
   
   flags.flag.*:
     description: Allows access to the flag command and all flag command actions.
-    default: op
+    default: false
     children:
       flags.flag.set.others: true
       flags.flag.set.admin: true
@@ -38,7 +38,7 @@ permissions:
   
   flags.bundle.*:
     description: Allows access to the bundle command and all bundle command actions.
-    default: op
+    default: false
     children:
       flags.bundle.set.others: true
       flags.bundle.set.admin: true
@@ -48,11 +48,11 @@ permissions:
       
   flags.flagtype.*:
     description: Allows ability to set all flag types.
-    default: op
+    default: false
 
   flags.bundletype.*:
     description: Allows ability to set all flag types.
-    default: op
+    default: false
 
   flags.bypass.*:
     description: Allows ability to bypass all player flag effects.
@@ -65,31 +65,31 @@ permissions:
 
   flags.flag.set:
     description: Allows user to set or remove flags, messages, and trust in their own areas.
-    default: op
+    default: false
     children:
       flags.flag: true
   
   flags.flag.set.others:
     description: Allows user to set or remove flags, messages, and trust at areas owned by others.
-    default: op
+    default: false
     children:
       flags.flag.set: true
   
   flags.flag.set.admin:
     description: Allows user to set or remove flags, messages, and trust at admin areas.
-    default: op
+    default: false
     children:
       flags.flag.set: true
   
   flags.flag.set.world:
     description: Allows user to set or remove flags, messages, and trust for worlds.
-    default: op
+    default: false
     children:
       flags.flag.set: true
   
   flags.flag.set.default:
     description: Allows user to set or remove flags, messages, and trust for the area default.
-    default: op
+    default: false
     children:
       flags.flag.set: true
 
@@ -100,38 +100,38 @@ permissions:
 
   flags.bundle.set:
     description: Allows user to set or remove bundles in their own areas.
-    default: op
+    default: false
     children:
       flags.bundle: true
   
   flags.bundle.set.others:
     description: Allows user to set or remove bundles at areas owned by others.
-    default: op
+    default: false
     children:
       flags.bundle.set: true
 
   flags.bundle.set.admin:
     description: Allows user to set or remove bundles at admin areas.
-    default: op
+    default: false
     children:
       flags.bundle.set: true
   
   flags.bundle.set.world:
     description: Allows user to set or remove bundles for worlds.
-    default: op
+    default: false
     children:
       flags.bundle.set: true
   
   flags.bundle.set.default:
     description: Allows user to set or remove bundles for the area default.
-    default: op
+    default: false
     children:
       flags.bundle.set: true
   
   flags.bundle.set.edit:
     description: Allows user to set or remove bundles for the area default.
-    default: op
+    default: false
   
   flags.admin.notifyupdate:
     description: Notifies players when Flags needs updating.
-    default: op
+    default: false
