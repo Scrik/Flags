@@ -26,8 +26,6 @@ public class MetricsManager {
 		    	}
 		    }
 		    
-		    //TODO: Find a way to make this start up AFTER the flags have been registered.
-		    /*		    
 		    // Flag groups installed
 		    Graph groupGraph = metrics.createGraph("Flag Groups");
 		    for(String group : Flags.getRegistrar().getFlagGroups()){
@@ -37,7 +35,7 @@ public class MetricsManager {
 	            		return 1;
 		            }
 		    	});
-		    }*/
+		    }
 		    
 		    // Border Patrol Status
 		    Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");

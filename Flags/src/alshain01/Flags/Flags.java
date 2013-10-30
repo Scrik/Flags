@@ -11,6 +11,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.command.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,14 +72,7 @@ public class Flags extends JavaPlugin{
 			}
 		}
 		this.getServer().getPluginManager().registerEvents(new UpdateListener(), instance);
-		
-		// Add the bundle permissions
-		for(String b : Bundle.getBundleNames()) {
-			Permission perm = new Permission("flags.bundle." + b, "Grants ability to use the bundle " + b, PermissionDefault.FALSE);
-			perm.addParent("flags.bundle", true);
-			Bukkit.getServer().getPluginManager().addPermission(perm);
-		}
-        
+
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
 		dataStore = new YamlDataStore(this);
@@ -110,6 +104,9 @@ public class Flags extends JavaPlugin{
 			GPFImport.importGPF();
 		}
 		
+		// Add the bundle permissions
+		new onEnabledTask().runTask(this);
+		
 		// Enable Vault support
 		setupEconomy();
 		
@@ -121,9 +118,7 @@ public class Flags extends JavaPlugin{
 			this.getServer().getPluginManager().registerEvents(new BorderPatrol(), instance);
 		}
 		
-		if(!DEBUG && checkAPI("1.3.2")) {
-			MetricsManager.StartMetrics();
-		}
+
 		
 		this.getLogger().info("Flags Has Been Enabled.");
 	}
@@ -268,5 +263,20 @@ public class Flags extends JavaPlugin{
 							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			}
 		}
+	}
+	
+	private class onEnabledTask extends BukkitRunnable {
+		public void run() {
+			for(String b : Bundle.getBundleNames()) {
+				Debug("Registering Bundle Permission:" + b);
+				Permission perm = new Permission("flags.bundle." + b, "Grants ability to use the bundle " + b, PermissionDefault.FALSE);
+				perm.addParent("flags.bundle", true);
+				Bukkit.getServer().getPluginManager().addPermission(perm);
+			}
+			
+			if(!DEBUG && checkAPI("1.3.2")) {
+				MetricsManager.StartMetrics();
+			}
+	    }
 	}
 }

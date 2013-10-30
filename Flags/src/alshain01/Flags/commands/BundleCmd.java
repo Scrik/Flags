@@ -3,8 +3,11 @@ package alshain01.Flags.commands;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import alshain01.Flags.Bundle;
 import alshain01.Flags.Flag;
@@ -179,6 +182,11 @@ abstract class BundleCmd extends Common {
 		
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		if (bundle == null || bundle.size() == 0) { 
+			if(bundle == null) {
+				Permission perm = new Permission("flags.bundle." + bundleName, "Grants ability to use the bundle " + bundleName, PermissionDefault.FALSE);
+				perm.addParent("flags.bundle", true);
+				Bukkit.getServer().getPluginManager().addPermission(perm);
+			}
 			bundle = new HashSet<String>();
 		}
 		
@@ -241,6 +249,8 @@ abstract class BundleCmd extends Common {
 		}
 		
 		Bundle.writeBundle(bundleName, null);
+		Bukkit.getServer().getPluginManager().removePermission("flags.bundle." + bundleName);
+		
 		sender.sendMessage(Message.EraseBundle.get()
 				.replaceAll("\\{Bundle\\}", bundleName));
 		return true;
