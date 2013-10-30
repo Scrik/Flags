@@ -63,7 +63,7 @@ public class Registrar {
 			Bukkit.getServer().getPluginManager().addPermission(perm);
 			
 			//Add the permission for the flag bypass to the server
-			perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.OP);
+			perm = new Permission(flag.getBypassPermission(), "Allows players to bypass the effects of the flag " + flag.getName(), PermissionDefault.FALSE);
 			perm.addParent("flags.bypass.*", true);
 			Bukkit.getServer().getPluginManager().addPermission(perm);
 			
