@@ -154,7 +154,7 @@ public final class Director {
 	 * 
 	 * @return An Area from the configured system or the world if no system is installed.
 	 */
-	public static Area getArea() {
+	private static Area getArea() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
