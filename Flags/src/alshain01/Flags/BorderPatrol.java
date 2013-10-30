@@ -92,7 +92,7 @@ class BorderPatrol implements Listener {
 				if (comparison != 0) {
 					if (comparison > 1
 						|| (comparison == -1 && areaFrom instanceof Subdivision && !((Subdivision)areaFrom).isInherited())
-						|| (comparison == 1 && areaTo instanceof Subdivision && !((Subdivision)areaFrom).isInherited())) {
+						|| (comparison == 1 && areaTo instanceof Subdivision && !((Subdivision)areaTo).isInherited())) {
 						
 						playerPrevMove.ignore = false;
 		
