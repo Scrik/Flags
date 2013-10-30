@@ -90,9 +90,10 @@ class BorderPatrol implements Listener {
 				// If they are the same area, don't bother.
 				int comparison = areaFrom.compareTo(areaTo);
 				if (comparison != 0) {
-					if (comparison > 1
-						|| (comparison == -1 && areaFrom instanceof Subdivision && !((Subdivision)areaFrom).isInherited())
-						|| (comparison == 1 && areaTo instanceof Subdivision && !((Subdivision)areaTo).isInherited())) {
+					if (comparison > 1 
+							// We can safely assume instanceof Subdivison if the comparison is 1 or -1
+						|| (comparison == -1 && !((Subdivision)areaFrom).isInherited())
+						|| (comparison == 1 && !((Subdivision)areaTo).isInherited())) {
 						
 						playerPrevMove.ignore = false;
 		
