@@ -8,130 +8,144 @@ softdepend: [Factions, GriefPrevention, InfinitePlots, PlotMe, Residence, WorldG
 commands:
   flag:
     description: Allows you to perform actions on flags.
-    permission: flags.flag
+    permission: flags.command.flag
     usage: /flag <get|set|remove|trust|distrust|view|message|present|erase|charge|inherit|help>
   
   bundle:
     description: Allows you to perform actions on bundles.
-    permission: flags.bundle
+    permission: flags.command.bundle
     usage: /flag <set|remove|add|delete|erase|help>
+    
 permissions:
-# Wildcards (note that flag types, bundle types, and bypass are handled in the plugin)
-  flags.all:
-    description: Allows access to all permissions in the plugin.
-    default: op
-    children:
-      flags.flag.all: true
-      flags.bundle.all: true
-      flags.flagtype.all: true
-      flags.bundletype.all: true
-      flags.admin.notifyupdate: true
-  
-  flags.flag.all:
-    description: Allows access to the flag command and all flag command actions.
+# Flag Command Permissions
+  flags.command:
+    description: Grants access to all commands and read/write actions.
     default: false
     children:
-      flags.flag.set.others: true
-      flags.flag.set.admin: true
-      flags.flag.set.world: true
-      flags.flag.set.default: true
+      flags.command.flag.set: true
+      flags.bundle.flag.set: true      
+
+  flags.command.flag:
+    descriptions: Grants access to the flag command and read actions.
+    default: true
+
+  flags.command.flag.set:
+    description: Grants access to the flag command and read/write actions.
+    default: false
+    children:
+      flags.command.flag: true
+      
+  flags.command.flag.charge:
+    description: Grants access to change the price of a flag.
+    default: op
+    children:
+      flags.command.flag: true
+            
+  flags.command.bundle:
+    description: Grants access to the bundle command and read actions.
+    default: true
+      
+  flags.command.bundle.set:
+    description: Grants access to the bundle command and read/write actions.
+    default: false
+    children:
+      flags.command.bundle: true
+      
+  flags.command.bundle.edit:
+    description: Grants access to the bundle command and bundle editing actions.
+    default: op
+    children:
+      flags.command.bundle: true
+
+# Area Permissions
+  flags.area:
+    description: Grants access to all plugin write command actions in all areas.
+    default: false
+    children:
+      flags.area.flag: true
+      flags.area.bundle: true
+
+  flags.area.flag:
+    description: Grants access to all flag write command actions in all area.
+    default: false
+    children:
+      flags.area.flag.others: true
+      flags.area.flag.admin: true
+      flags.area.flag.world: true
+      flags.area.flag.default: true
+      
+  flags.area.flag.others:
+    description: Grants access to use flag write actions at areas owned by others.
+    default: op
+    children:
+      flags.command.flag.set: true
+    
+  flags.area.flag.admin:
+    description: Grants access to use flag write actions at administrator areas
+    default: op
+    children:
+      flags.command.flag.set: true
+      
+  flags.area.flag.world:
+    description: Grants access to use flag write actions in the world.
+    default: op
+    children:
+      flags.command.flag.set: true
+    
+  flags.area.flag.default:
+    description: Grants access to use flag write actions on the server defaults.
+    default: op
+    children:
+      flags.command.flag.set: true
   
-  flags.bundle.all:
+  flags.area.bundle:
     description: Allows access to the bundle command and all bundle command actions.
     default: false
     children:
-      flags.bundle.set.others: true
-      flags.bundle.set.admin: true
-      flags.bundle.set.world: true
-      flags.bundle.set.default: true
-      flags.bundle.edit: true
+      flags.area.bundle.others: true
+      flags.area.bundle.admin: true
+      flags.area.bundle.world: true
+      flags.area.bundle.default: true
+      flags.area.bundle.edit: true
       
-  flags.flagtype.all:
-    description: Allows ability to set all flag types.
-    default: false
+  flags.area.bundle.others:
+    description: Grants access to use bundle write actions at areas owned by others.
+    default: op
+    children:
+      flags.command.bundle.set: true
+    
+  flags.area.bundle.admin:
+    description: Grants access to use bundle write actions at administrator areas
+    default: op
+    children:
+      flags.command.bundle.set: true
+      
+  flags.area.bundle.world:
+    description: Grants access to use bundle write actions in the world.
+    default: op
+    children:
+      flags.command.bundle.set: true
+    
+  flags.area.bundle.default:
+    description: Grants access to use bundle write actions on the server defaults.
+    default: op
+    children:
+      flags.command.bundle.set: true
 
-  flags.bundletype.all:
-    description: Allows ability to set all flag types.
-    default: false
-
-  flags.bypass.all:
-    description: Allows ability to bypass all player flag effects.
-    default: false
-  
-# Flag command actions
+# Individual Flag and Bundle Permissions (Children will be added dynamically)
   flags.flag:
-    descriptions: Allows access to the flag command and all get/view/present/help/count actions.
-    default: true
+    description: Grants ability to set all flag types.
+    default: op
 
-  flags.flag.set:
-    description: Allows user to set or remove flags, messages, and trust in their own areas.
-    default: false
-    children:
-      flags.flag: true
-  
-  flags.flag.set.others:
-    description: Allows user to set or remove flags, messages, and trust at areas owned by others.
-    default: false
-    children:
-      flags.flag.set: true
-  
-  flags.flag.set.admin:
-    description: Allows user to set or remove flags, messages, and trust at admin areas.
-    default: false
-    children:
-      flags.flag.set: true
-  
-  flags.flag.set.world:
-    description: Allows user to set or remove flags, messages, and trust for worlds.
-    default: false
-    children:
-      flags.flag.set: true
-  
-  flags.flag.set.default:
-    description: Allows user to set or remove flags, messages, and trust for the area default.
-    default: false
-    children:
-      flags.flag.set: true
-
-# Bundle command actions
   flags.bundle:
-    description: Allows access to the bundle command and get/help action.
-    default: true
+    description: Grants ability to set all bundle types.
+    default: op
 
-  flags.bundle.set:
-    description: Allows user to set or remove bundles in their own areas.
+  flags.bypass:
+    description: Grants ability to bypass all player flag effects.
     default: false
-    children:
-      flags.bundle: true
-  
-  flags.bundle.set.others:
-    description: Allows user to set or remove bundles at areas owned by others.
-    default: false
-    children:
-      flags.bundle.set: true
 
-  flags.bundle.set.admin:
-    description: Allows user to set or remove bundles at admin areas.
-    default: false
-    children:
-      flags.bundle.set: true
-  
-  flags.bundle.set.world:
-    description: Allows user to set or remove bundles for worlds.
-    default: false
-    children:
-      flags.bundle.set: true
-  
-  flags.bundle.set.default:
-    description: Allows user to set or remove bundles for the area default.
-    default: false
-    children:
-      flags.bundle.set: true
-  
-  flags.bundle.set.edit:
-    description: Allows user to set or remove bundles for the area default.
-    default: false
-  
+# Administrative Permissions
   flags.admin.notifyupdate:
     description: Notifies players when Flags needs updating.
-    default: false
+    default: op

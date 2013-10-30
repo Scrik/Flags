@@ -69,13 +69,13 @@ public class World extends Area {
 	
 	@Override
 	public boolean hasPermission(Player player) {
-		if (player.hasPermission("flags.flag.set.world")) { return true; }
+		if (player.hasPermission("flags.area.flag.world")) { return true; }
 		return false;
 	}
 
 	@Override
 	public boolean hasBundlePermission(Player player) {
-		if (player.hasPermission("flags.bundle.set.world")) { return true; }
+		if (player.hasPermission("flags.area.bundle.world")) { return true; }
 		return false;
 	}
 	

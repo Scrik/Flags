@@ -89,16 +89,16 @@ public abstract class Area implements Comparable<Area> {
 		if(!isArea()) { return false; }
 		
 		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.flag.set")) { return true; }
+			if (player.hasPermission("flags.command.flag.set")) { return true; }
 			return false;
 		}
 		
 		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
-			if (player.hasPermission("flags.flag.set.admin")) {	return true; }
+			if (player.hasPermission("flags.area.flag.admin")) {	return true; }
 			return false;
 		}
 		
-		if (player.hasPermission("flags.flag.set.others")) { return true; }
+		if (player.hasPermission("flags.area.flag.others")) { return true; }
 		return false;
 	}
 	
@@ -112,16 +112,16 @@ public abstract class Area implements Comparable<Area> {
 		if(!isArea()) { return false; }
 		
 		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.bundle.set")) {	return true; }
+			if (player.hasPermission("flags.command.bundle.set")) {	return true; }
 			return false;
 		}
 		
 		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
-			if (player.hasPermission("flags.bundle.set.admin")) { return true; }
+			if (player.hasPermission("flags.area.bundle.admin")) { return true; }
 			return false;
 		}
 		
-		if (player.hasPermission("flags.bundle.set.others")) { return true;	}
+		if (player.hasPermission("flags.area.bundle.others")) { return true; }
 		return false;
 	}
 	

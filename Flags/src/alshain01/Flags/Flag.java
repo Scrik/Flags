@@ -103,12 +103,12 @@ public class Flag {
 	}
 	
 	/**
-	 * Gets the flagtype permission string.
+	 * Gets the flag permission string.
 	 * 
 	 * @return The permission string (flags.flagtype.flagname)
 	 */
 	public String getPermission() {
-		return "flags.flagtype." + name.toLowerCase();
+		return "flags.flag." + name;
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class Flag {
      * @return The bypass permission string (flags.bypass.flagname)
 	 */
 	public String getBypassPermission() {
-		return "flags.bypass." + name.toLowerCase();
+		return "flags.bypass." + name;
 	}
 	
 	/**

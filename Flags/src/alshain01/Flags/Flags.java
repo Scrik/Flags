@@ -6,6 +6,8 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +53,7 @@ public class Flags extends JavaPlugin{
 		this.saveDefaultConfig();
 		DEBUG = this.getConfig().getBoolean("Flags.Debug");
 		
+		// Update script
 		if(this.getConfig().getBoolean("Flags.Update.Check")) {
 			String key = this.getConfig().getString("Flags.Update.ServerModsAPIKey");
 			if(this.getConfig().getBoolean("Flags.Update.Download")) {
@@ -68,6 +71,13 @@ public class Flags extends JavaPlugin{
 			}
 		}
 		this.getServer().getPluginManager().registerEvents(new UpdateListener(), instance);
+		
+		// Add the bundle permissions
+		for(String b : Bundle.getBundleNames()) {
+			Permission perm = new Permission("flags.bundle." + b, "Grants ability to use the bundle " + b, PermissionDefault.FALSE);
+			perm.addParent("flags.bundle", true);
+			Bukkit.getServer().getPluginManager().addPermission(perm);
+		}
         
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
@@ -101,9 +111,7 @@ public class Flags extends JavaPlugin{
 		}
 		
 		// Enable Vault support
-		if(setupEconomy()) {
-			//this.getServer().getPluginManager().registerEvents(new EconomyListener(), instance);
-		}
+		setupEconomy();
 		
 		// Load Mr. Clean
 		Director.enableMrClean(this.getServer().getPluginManager());

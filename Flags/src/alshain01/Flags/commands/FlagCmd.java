@@ -452,7 +452,8 @@ abstract class FlagCmd extends Common {
 	}
 	
 	protected static boolean setPrice(CommandSender sender, PurchaseType type, Flag flag, String price) {
-		
+		if((sender instanceof Player) && !((Player)sender).hasPermission("flags.command.flag.charge")) { return false; }
+
 		double p;
 		try {
 			p = Double.valueOf(price);

@@ -72,13 +72,13 @@ public class Default extends Area {
 	
 	@Override
 	public boolean hasPermission(Player player) {
-		if (player.hasPermission("flags.flag.set.default")) { return true; }
+		if (player.hasPermission("flags.area.flag.default")) { return true; }
 		return false;
 	}
 
 	@Override
 	public boolean hasBundlePermission(Player player) {
-		if (player.hasPermission("flags.bundle.set.default")) { return true; }
+		if (player.hasPermission("flags.area.bundle.default")) { return true; }
 		return false;
 	}
 

@@ -25,7 +25,7 @@ abstract class BundleCmd extends Common {
 	}
 	
 	protected static boolean bundleEditPermitted(Player player) {
-			if (player.hasPermission("flags.bundle.edit")) {
+			if (player.hasPermission("flags.command.bundle.edit")) {
 			return true;
 		}
 		player.sendMessage(Message.BundlePermError.get());
@@ -88,7 +88,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundletype.*") && !player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
+		if (!player.hasPermission("flags.bundle." + bundleName)) {
 			sender.sendMessage(Message.FlagPermError.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			return true;
@@ -143,7 +143,7 @@ abstract class BundleCmd extends Common {
 		}
 		
 		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundletype.*") && !player.hasPermission("flags.bundletype." + bundleName.toLowerCase())) {
+		if (!player.hasPermission("flags.bundle" + bundleName)) {
 			sender.sendMessage(Message.FlagPermError.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			return true;
