@@ -320,7 +320,7 @@ class Metrics {
 
         // return => base/plugins/PluginMetrics/config.yml
         //return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
-        return new File(plugin.getDataFolder() + "metrics.yml");
+        return new File(plugin.getDataFolder() + "\\metrics.yml");
     }
 
     /**
