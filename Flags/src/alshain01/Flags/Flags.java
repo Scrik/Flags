@@ -49,7 +49,7 @@ public class Flags extends JavaPlugin{
 		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
-		this.DEBUG = this.getConfig().getBoolean("Flags.Debug");
+		DEBUG = this.getConfig().getBoolean("Flags.Debug");
 		
 		if(this.getConfig().getBoolean("Flags.Update.Check")) {
 			String key = this.getConfig().getString("Flags.Update.ServerModsAPIKey");
