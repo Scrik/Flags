@@ -13,6 +13,8 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	// ******************************
 	// Constructors
 	// ******************************
+	public GriefPreventionClaim78() { }
+	
 	public GriefPreventionClaim78(Location location) {
 		super(location);
 	}

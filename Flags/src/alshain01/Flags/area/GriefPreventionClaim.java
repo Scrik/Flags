@@ -13,24 +13,29 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
 	protected final static String dataHeader = "GriefPreventionData.";
-	protected Claim claim;
+	protected Claim claim = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************	
+	public GriefPreventionClaim() {	}
+	
 	public GriefPreventionClaim(Location location) {
-		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+		reconstructAt(location);
 	}
 	
 	public GriefPreventionClaim(long ID) {
 		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
 	
-	protected GriefPreventionClaim() { }
-	
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + getSystemID();
@@ -64,7 +69,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	@Override
 	public boolean isArea() {
-		return (claim != null);
+		return claim != null;
 	}
     
 	// ******************************

@@ -18,25 +18,32 @@ import com.massivecraft.mcore.ps.PS;
 
 public class FactionsTerritory extends Area implements Removable{
 	protected final static String dataHeader = "FactionsData.";
-	Faction faction;
-	String worldName;
+	Faction faction = null;
+	String worldName = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
+	public FactionsTerritory() { }
+	
 	public FactionsTerritory (String worldName, String factionID) {
 		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
 		this.worldName = worldName;
 	}
 	
 	public FactionsTerritory (Location location) {
-		BoardColls.get().getFactionAt(PS.valueOf(location));
-		this.worldName = location.getWorld().getName();
+		reconstructAt(location);
 	}
 	
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		BoardColls.get().getFactionAt(PS.valueOf(location));
+		this.worldName = location.getWorld().getName();
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + worldName + "." + getSystemID();
@@ -67,7 +74,7 @@ public class FactionsTerritory extends Area implements Removable{
 
 	@Override
 	public boolean isArea() {
-		return(this.faction != null);
+		return this.faction != null && this.worldName != null;
 	}
 	
 	// ******************************

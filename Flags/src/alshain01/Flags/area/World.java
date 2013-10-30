@@ -14,23 +14,29 @@ import alshain01.Flags.Message;
 
 public class World extends Area {
 	private final static String dataHeader = "World.";
-	private org.bukkit.World world;
+	private org.bukkit.World world = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
+	public World() { }
 	
 	public World(org.bukkit.World world) {
 		this.world = world;
 	}
 	
 	public World(Location location) {
-		this.world = location.getWorld();
+		reconstructAt(location);
 	}
 	
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		this.world = location.getWorld();
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + getSystemID();
@@ -58,8 +64,7 @@ public class World extends Area {
 	
 	@Override
 	public boolean isArea() {
-		// There is always a world.
-		return true;
+		return this.world != null;
 	}
 	
 	@Override

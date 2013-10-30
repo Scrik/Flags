@@ -15,7 +15,7 @@ import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
 public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
 	private final static String dataHeader = "ResidenceData.";
-	private ClaimedResidence residence;
+	private ClaimedResidence residence = null;
 	
 	private String getInheritPath() {
 		return dataHeader + getSystemSubID() + "." + "InheritParent";
@@ -23,9 +23,11 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	// ******************************
 	// Constructors
-	// ******************************	
+	// ******************************
+	public ResidenceClaimedResidence() { }
+	
 	public ResidenceClaimedResidence(Location location) {
-		residence = Residence.getResidenceManager().getByLoc(location);
+		reconstructAt(location);
 	}
 	
 	public ResidenceClaimedResidence(String name) {
@@ -35,6 +37,11 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		residence = Residence.getResidenceManager().getByLoc(location);
+	}
+	
 	@Override
 	protected String getDataPath() {
 		if(isSubdivision() && !isInherited()) {

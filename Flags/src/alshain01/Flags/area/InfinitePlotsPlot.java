@@ -16,13 +16,15 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
 public class InfinitePlotsPlot extends Area implements Removable {
 	protected final static String dataHeader = "InfinitePlotsData";
-	protected Plot plot;
+	protected Plot plot = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
+	public InfinitePlotsPlot() { }
+	 
 	public InfinitePlotsPlot(Location location) {
-		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
+		reconstructAt(location);
 	}
 	
 	public InfinitePlotsPlot(String worldName, String plotLocation) {
@@ -34,6 +36,11 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + plot.getLocation().getWorldName() + "." + getSystemID();
@@ -64,7 +71,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public boolean isArea() {
-		return(plot != null && plot.getAdmin() != null);
+		return plot != null && plot.getAdmin() != null;
 	}
 	
 	// ******************************

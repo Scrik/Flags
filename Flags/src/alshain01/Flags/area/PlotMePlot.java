@@ -16,13 +16,15 @@ import com.worldcretornica.plotme.PlotManager;
 
 public class PlotMePlot extends Area implements Removable {
 	protected final static String dataHeader = "PlotMeData";
-	protected Plot plot;
+	protected Plot plot = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
+	public PlotMePlot() { }
+	
 	public PlotMePlot(Location location) {
-		this.plot = PlotManager.getPlotById(location);
+		reconstructAt(location);
 	}
 	
 	public PlotMePlot(String worldName, String plotID) {
@@ -32,6 +34,11 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+		this.plot = PlotManager.getPlotById(location);
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + plot.world + "." + getSystemID();
@@ -62,7 +69,7 @@ public class PlotMePlot extends Area implements Removable {
 	
 	@Override
 	public boolean isArea() {
-		return(plot != null && !plot.owner.isEmpty());
+		return plot != null && !plot.owner.isEmpty();
 	}
 	
 	// ******************************

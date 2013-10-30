@@ -13,13 +13,13 @@ Message:
   # System specific area types {AreaType}
   Default: 'Default'
   World: 'World'
-  GriefPrevention: 'Claim'
-  WorldGuard: 'Region'
-  Residence: 'Residence'
-  InfinitePlots: 'Plot'
   Factions: 'Territory'
+  GriefPrevention: 'Claim'
+  InfinitePlots: 'Plot'
   PlotMe: 'Plot'
-  
+  Residence: 'Residence'
+  WorldGuard: 'Region'
+
   # Other Translations
   Message: 'Message'
   Error: '&cAn error occured - {Error}'

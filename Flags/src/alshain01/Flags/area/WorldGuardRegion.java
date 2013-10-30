@@ -14,13 +14,28 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardRegion extends Area implements Removable {
 	private final static String dataHeader = "WorldGuardData.";
-	private ProtectedRegion region;
-	private String worldName;
+	private ProtectedRegion region = null;
+	private String worldName = null;
 	
 	// ******************************
 	// Constructors
-	// ******************************	
+	// ******************************
+	public WorldGuardRegion() { }
+	
 	public WorldGuardRegion(Location location) {
+		reconstructAt(location);
+	}
+	
+	public WorldGuardRegion(String worldName, String name) {
+		this.worldName = worldName;
+		region = WGBukkit.getRegionManager(this.getWorld()).getRegionExact(name);
+	}
+
+	// ******************************
+	// Area Interface
+	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
 		this.worldName = location.getWorld().getName();
 		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(this.getWorld()).getApplicableRegions(location);
 		if(regionSet == null) { this.region = null; }
@@ -35,14 +50,6 @@ public class WorldGuardRegion extends Area implements Removable {
 		}
 	}
 	
-	public WorldGuardRegion(String worldName, String name) {
-		this.worldName = worldName;
-		region = WGBukkit.getRegionManager(this.getWorld()).getRegionExact(name);
-	}
-
-	// ******************************
-	// Area Interface
-	// ******************************
 	protected String getDataPath() {
 		return dataHeader + worldName + "." + getSystemID();
 	}
@@ -72,7 +79,7 @@ public class WorldGuardRegion extends Area implements Removable {
 	
 	@Override
 	public boolean isArea() {
-		return(region != null);
+		return region != null && worldName != null;
 	}
 
 	// ******************************

@@ -139,28 +139,40 @@ public final class Director {
 	 * @return An Area from the configured system or the world if no area is defined.
 	 */
 	public static Area getAreaAt(Location location) {
-		Area area = null;
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
-			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
-				area = new GriefPreventionClaim78(location);
-			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
-				area = new GriefPreventionClaim(location);
-			} else {
-				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
-				Flags.currentSystem = LandSystem.NONE;
-			}
-		}
-		else if(getSystem() == LandSystem.WORLDGUARD) { area = new WorldGuardRegion(location); }
-		else if(getSystem() == LandSystem.RESIDENCE) { area = new ResidenceClaimedResidence(location); }
-		else if(getSystem() == LandSystem.INFINITEPLOTS) { area = new InfinitePlotsPlot(location); }
-		else if(getSystem() == LandSystem.FACTIONS) { area = new FactionsTerritory(location); }
-		else if(getSystem() == LandSystem.PLOTME) { area = new PlotMePlot(location); }
-		
-		if(area == null || !area.isArea()) {
+		Area area = getArea();
+		area.reconstructAt(location);
+	
+		if(!area.isArea()) {
 			area = new World(location);
 		}
 		return area;
+	}
+	
+	/**
+	 * Gets a blank area for the configured system type for reconstruction at a later time.
+	 * isArea() will will always be false on areas returned by this method.
+	 * 
+	 * @return An Area from the configured system or the world if no system is installed.
+	 */
+	public static Area getArea() {
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
+			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
+				return new GriefPreventionClaim78();
+			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
+				return new GriefPreventionClaim();
+			} else {
+				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
+				Flags.currentSystem = LandSystem.NONE;
+				return new World();
+			}
+		}
+		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(); }
+		else if(getSystem() == LandSystem.RESIDENCE) { return new ResidenceClaimedResidence(); }
+		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(); }
+		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(); }
+		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(); }
+		return new World();
 	}
 	
 	/**

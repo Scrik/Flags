@@ -13,28 +13,33 @@ import alshain01.Flags.Message;
 
 public class Default extends Area {
 	private final static String dataHeader = "Default.";
-	private org.bukkit.World world;
+	private org.bukkit.World world = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
+	public Default() { }
+	
 	public Default(org.bukkit.World world) {
 		this.world = world;
 	}
 	
 	public Default(Location location) {
-		this.world = location.getWorld();
+		reconstructAt(location);
 	}
 	
-	public void reconstruct(org.bukkit.World world) {
-		if (this.world != world) {
+	public void reinitializeAt(org.bukkit.World world) {
 			this.world = world;
-		}
 	}
 	
 	// ******************************
 	// Area Interface
 	// ******************************
+	@Override
+	public void reconstructAt(Location location) {
+			this.world = location.getWorld();
+	}
+	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + getSystemID();
@@ -62,8 +67,7 @@ public class Default extends Area {
 	
 	@Override
 	public boolean isArea() {
-		// There is always a default.
-		return true;
+		return this.world != null;
 	}
 	
 	@Override
