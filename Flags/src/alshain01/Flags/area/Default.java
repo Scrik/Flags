@@ -3,7 +3,9 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -13,29 +15,26 @@ import alshain01.Flags.Message;
 
 public class Default extends Area {
 	private final static String dataHeader = "Default.";
-	private org.bukkit.World world = null;
+	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("default"));
+	private UUID worldUID = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
 	public Default(org.bukkit.World world) {
-		this.world = world;
+		this.worldUID = world.getUID();
 	}
 	
-/*	public Default(Location location) {
-		reconstructAt(location);
-	}*/
-	
-/*	public void reinitializeAt(org.bukkit.World world) {
-			this.world = world;
-	}*/
+	public Default(Location location) {
+		this.worldUID = location.getWorld().getUID();
+	}
 	
 	// ******************************
 	// Area Interface
 	// ******************************
 	@Override
 	public void reconstructAt(Location location) {
-			this.world = location.getWorld();
+			this.worldUID = location.getWorld().getUID();
 	}
 	
 	@Override
@@ -45,7 +44,7 @@ public class Default extends Area {
 	
 	@Override
 	public String getSystemID() {
-		return world.getName();
+		return Bukkit.getWorld(this.worldUID).getName();
 	}
 	
 	@Override
@@ -55,29 +54,27 @@ public class Default extends Area {
 	
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String> (Arrays.asList("default"));
+		return owners;
 	}
 	
 	@Override
 	public org.bukkit.World getWorld() {
-		return world;
+		return Bukkit.getWorld(this.worldUID);
 	}
 	
 	@Override
 	public boolean isArea() {
-		return this.world != null;
+		return this.worldUID != null;
 	}
 	
 	@Override
 	public boolean hasPermission(Player player) {
-		if (player.hasPermission("flags.area.flag.default")) { return true; }
-		return false;
+		return player.hasPermission("flags.area.flag.default");
 	}
 
 	@Override
 	public boolean hasBundlePermission(Player player) {
-		if (player.hasPermission("flags.area.bundle.default")) { return true; }
-		return false;
+		return player.hasPermission("flags.area.bundle.default");
 	}
 
 	@Override
@@ -107,11 +104,7 @@ public class Default extends Area {
 	public String getMessage(Flag flag, boolean parse) {
 		// We are ignore parse here.  We just want to override it.
 		String message = Flags.getDataStore().read(getDataPath() + "." + flag.getName() + messageFooter);
-	 	
-		if (message == null) {
-			message = flag.getDefaultAreaMessage();
-		}
-		return message; // They can use their own color codes
+	 	return (message != null) ? message : flag.getDefaultAreaMessage();
 	}
 
 	// ******************************
@@ -124,9 +117,6 @@ public class Default extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof Default && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
-			return 0;
-		}		
-		return 3;
+		return (a instanceof Default && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
 	}
 }

@@ -3,7 +3,9 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,25 +16,26 @@ import alshain01.Flags.Message;
 
 public class World extends Area {
 	private final static String dataHeader = "World.";
-	private org.bukkit.World world = null;
+	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
+	private UUID worldUID = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
 	public World(org.bukkit.World world) {
-		this.world = world;
+		this.worldUID = world.getUID();
 	}
-/*	
-	public World(Location location) {
-		reconstructAt(location);
-	}*/
 	
+	public World(Location location) {
+		this.worldUID = location.getWorld().getUID();
+	}
+
 	// ******************************
 	// Area Interface
 	// ******************************
 	@Override
 	public void reconstructAt(Location location) {
-		this.world = location.getWorld();
+		this.worldUID = location.getWorld().getUID();
 	}
 	
 	@Override
@@ -42,7 +45,7 @@ public class World extends Area {
 	
 	@Override
 	public String getSystemID() {
-		return world.getName();
+		return Bukkit.getWorld(this.worldUID).getName();
 	}
 
 	@Override
@@ -52,29 +55,27 @@ public class World extends Area {
 	
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String> (Arrays.asList("world"));
+		return owners;
 	}
 	
 	@Override
 	public org.bukkit.World getWorld() {
-		return world;
+		return Bukkit.getWorld(this.worldUID);
 	}
 	
 	@Override
 	public boolean isArea() {
-		return this.world != null;
+		return this.worldUID != null;
 	}
 	
 	@Override
 	public boolean hasPermission(Player player) {
-		if (player.hasPermission("flags.area.flag.world")) { return true; }
-		return false;
+		return player.hasPermission("flags.area.flag.world");
 	}
 
 	@Override
 	public boolean hasBundlePermission(Player player) {
-		if (player.hasPermission("flags.area.bundle.world")) { return true; }
-		return false;
+		return player.hasPermission("flags.area.bundle.world");
 	}
 	
 	@Override
@@ -111,7 +112,7 @@ public class World extends Area {
 		if (parse) {
 			message = message
 					.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", this.world.getName());
+					.replaceAll("\\{World\\}", Bukkit.getWorld(this.worldUID).getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -127,9 +128,6 @@ public class World extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) {
-			return 0;
-		}
-		return 3;
+		return (a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0: 3;
 	}
 }
