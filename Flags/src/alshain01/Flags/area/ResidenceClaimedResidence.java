@@ -24,10 +24,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	// Constructors
 	// ******************************
-	public ResidenceClaimedResidence() { }
-	
 	public ResidenceClaimedResidence(Location location) {
-		reconstructAt(location);
+		residence = Residence.getResidenceManager().getByLoc(location);
 	}
 	
 	public ResidenceClaimedResidence(String name) {
@@ -37,11 +35,6 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		residence = Residence.getResidenceManager().getByLoc(location);
-	}
-	
 	@Override
 	protected String getDataPath() {
 		if(isSubdivision() && !isInherited()) {

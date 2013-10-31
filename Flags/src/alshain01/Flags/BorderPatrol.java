@@ -89,6 +89,7 @@ class BorderPatrol implements Listener {
 				
 				// If they are the same area, don't bother.
 				int comparison = areaFrom.compareTo(areaTo);
+				//TODO Still not working right
 				if (comparison != 0) {
 					if (comparison > 1 
 							// We can safely assume instanceof Subdivison if the comparison is 1 or -1

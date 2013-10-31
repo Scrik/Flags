@@ -21,10 +21,8 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Constructors
 	// ******************************
-	public InfinitePlotsPlot() { }
-	 
 	public InfinitePlotsPlot(Location location) {
-		reconstructAt(location);
+		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
 	}
 	
 	public InfinitePlotsPlot(String worldName, String plotLocation) {
@@ -36,11 +34,6 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
-	}
-	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + plot.getLocation().getWorldName() + "." + getSystemID();

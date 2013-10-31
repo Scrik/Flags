@@ -8,7 +8,6 @@ import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,17 +30,6 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The data path of the data storage system for the area
 	 */
 	protected abstract String getDataPath();
-	
-	/**
-	 * Calls the location based constructor on an existing object. 
-	 * Allows the object to be reused and re-purposed for efficiency.
-	 * 
-	 * Be mindful of thread safety when using this method.  This should not be
-	 * used in an event handler unless that event handler created the object.
-	 * 
-	 * @param location The new location to reconstruct the object at.
-	 */
-	public abstract void reconstructAt(Location location);
 	
 	/**
 	 * Retrieve the land system's ID for this area.

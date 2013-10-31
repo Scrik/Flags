@@ -1,5 +1,6 @@
 package alshain01.Flags.area;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -20,10 +21,22 @@ public class WorldGuardRegion extends Area implements Removable {
 	// ******************************
 	// Constructors
 	// ******************************
-	public WorldGuardRegion() { }
-	
 	public WorldGuardRegion(Location location) {
-		reconstructAt(location);
+		this.worldName = location.getWorld().getName();
+		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(this.getWorld()).getApplicableRegions(location);
+		if(regionSet == null) { this.region = null; }
+		else {
+			int currentPriority = -2147483648;
+			
+			Iterator<ProtectedRegion> iter = regionSet.iterator();
+			while(iter.hasNext()) {
+				ProtectedRegion region = iter.next();
+				if(region.getPriority() >= currentPriority) {
+					this.region = region;
+					currentPriority = region.getPriority();
+				}
+			}
+		}
 	}
 	
 	public WorldGuardRegion(String worldName, String name) {
@@ -34,32 +47,14 @@ public class WorldGuardRegion extends Area implements Removable {
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		this.worldName = location.getWorld().getName();
-		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(this.getWorld()).getApplicableRegions(location);
-		if(regionSet == null) { this.region = null; }
-		else {
-			int currentPriority = -2147483648;
-			for (ProtectedRegion region : regionSet) {
-				if(region.getPriority() >= currentPriority) {
-					this.region = region;
-					currentPriority = region.getPriority();
-				}
-			}
-		}
-	}
-	
 	protected String getDataPath() {
 		return dataHeader + worldName + "." + getSystemID();
 	}
 	
 	@Override
 	public String getSystemID() {
-		if (isArea()) {
-			return region.getId();
-		}
-		return null;
+		if (!isArea()) { return null; }
+		return region.getId();
 	}
 	
 	@Override
@@ -87,10 +82,7 @@ public class WorldGuardRegion extends Area implements Removable {
 	// ******************************
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof WorldGuardRegion && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
-		}
-		return 3;
+		return (a instanceof WorldGuardRegion && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

@@ -3,6 +3,7 @@ package alshain01.Flags;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,7 +72,7 @@ public class Registrar {
 	}
 	
 	/**
-	 * Informs whether or not a flag name has been registered.
+	 * Gets whether or not a flag name has been registered.
 	 * 
 	 * @param flag The flag name
 	 * @return True if the flag name has been registered
@@ -81,31 +82,32 @@ public class Registrar {
 	}
 	
 	/**
-	 * Retrieves a flag based on it's case sensitive name.
+	 * Gets a flag based on it's case sensitive name.
 	 * 
 	 * @param flag The flag to retrieve.
 	 * @return The flag requested or null if it does not exist.
 	 */
 	public Flag getFlag(String flag) {
-		if(isFlag(flag)) {
-			return flagStore.get(flag);
-		}
-		return null;
+		return (isFlag(flag)) ? flagStore.get(flag) : null;
 	}
 	
 	/**
 	 * Gets a flag, ignoring the case.
-	 * This is an inefficient method, use it
+	 * 
+	 * This is an less efficient method, use it
 	 * only when absolutely necessary.
 	 * 
 	 * @param flag The flag to retrieve.
 	 * @return The flag requested or null if it does not exist.
 	 */
 	public Flag getFlagIgnoreCase(String flag) {
-		for(Flag f : getFlags())
-			if(f.getName().equalsIgnoreCase(flag)) {
-				return f;
-			}
+		Iterator<Flag> iter = getFlags().iterator();
+		Flag f;
+		
+		while(iter.hasNext()) {
+			f = iter.next();
+			if(f.getName().equalsIgnoreCase(flag)) { return f; }
+		}
 		return null;
 	}
 	
@@ -133,8 +135,12 @@ public class Registrar {
 	 * @return A list of names of all the flags registered.
 	 */
 	public Set<String> getFlagGroups() {
+		Iterator<Flag> iter = flagStore.values().iterator();
 		Set<String> groups = new HashSet<String>();
-		for(Flag flag : flagStore.values()) {
+		Flag flag;		
+
+		while(iter.hasNext()) {
+			flag = iter.next();
 			if(!groups.contains(flag.getGroup())) {
 				groups.add(flag.getGroup());
 			}

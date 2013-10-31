@@ -148,39 +148,36 @@ public final class Director {
 	 * @return An Area from the configured system or the world if no area is defined.
 	 */
 	public static Area getAreaAt(Location location) {
+		// hasArea() and area.isArea() may not necessarily be the same for all systems,
+		// however hasArea() is faster than constructing an area object, and calling both has minimal impact.
+		// This is done purely for efficiency.
 		if(!hasArea(location)) { return new World(location); }
 		
-		Area area = getArea();
-		area.reconstructAt(location);
-	
+		Area area = getArea(location);
+
 		if(!area.isArea()) { return new World(location); }
 		return area;
 	}
 	
-	/**
-	 * Gets a blank area for the configured system type for reconstruction at a later time.
-	 * isArea() will will always be false on areas returned by this method.
-	 * 
-	 * @return An Area from the configured system.
-	 */
-	private static Area getArea() {
+
+	private static Area getArea(Location location) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
 			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
 			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
-				return new GriefPreventionClaim78();
+				return new GriefPreventionClaim78(location);
 			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
-				return new GriefPreventionClaim();
+				return new GriefPreventionClaim(location);
 			} else {
 				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;
 				return null;
 			}
 		}
-		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(); }
-		else if(getSystem() == LandSystem.RESIDENCE) { return new ResidenceClaimedResidence(); }
-		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(); }
-		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(); }
-		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(); }
+		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(location); }
+		else if(getSystem() == LandSystem.RESIDENCE) { return new ResidenceClaimedResidence(location); }
+		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(location); }
+		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(location); }
+		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(location); }
 		return null;
 	}
 	

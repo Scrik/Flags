@@ -33,11 +33,6 @@ public class Default extends Area {
 	// Area Interface
 	// ******************************
 	@Override
-	public void reconstructAt(Location location) {
-			this.worldUID = location.getWorld().getUID();
-	}
-	
-	@Override
 	protected String getDataPath() {
 		return dataHeader + getSystemID();
 	}

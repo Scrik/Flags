@@ -24,26 +24,19 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	// Constructors
 	// ******************************
-	public FactionsTerritory() { }
-	
 	public FactionsTerritory (String worldName, String factionID) {
 		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
 		this.worldName = worldName;
 	}
 	
 	public FactionsTerritory (Location location) {
-		reconstructAt(location);
+		BoardColls.get().getFactionAt(PS.valueOf(location));
+		this.worldName = location.getWorld().getName();
 	}
 	
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		BoardColls.get().getFactionAt(PS.valueOf(location));
-		this.worldName = location.getWorld().getName();
-	}
-	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + worldName + "." + getSystemID();

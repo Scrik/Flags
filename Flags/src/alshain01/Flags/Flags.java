@@ -43,10 +43,6 @@ public class Flags extends JavaPlugin{
 	private static Boolean debug = false;
 	private static final Registrar flagRegistrar = new Registrar();
 	
-	// Cached areas
-	//private static ConcurrentHashMap<UUID, Area> worldAreas = new ConcurrentHashMap<UUID, Area>();
-	//private static ConcurrentHashMap<UUID, Area> defaultAreas = new ConcurrentHashMap<UUID, Area>();
-
 	/**
 	 * Called when this plug-in is enabled
 	 */
@@ -120,7 +116,7 @@ public class Flags extends JavaPlugin{
 		}
 		
 		// Schedule tasks to perform after server is running
-		new onEnabledTask().runTask(this);
+		new onServerEnabledTask().runTask(this);
 		
 		this.getLogger().info("Flags Has Been Enabled.");
 	}
@@ -171,26 +167,6 @@ public class Flags extends JavaPlugin{
 		return economy;
 	}
 	
-/*	*//**
-	 * Gets a cached default area.
-	 * 
-	 * @param world The world to get the default area for.
-	 * @return The default area
-	 *//*
-	public static Area getCachedDefaultArea(org.bukkit.World world) {
-		return defaultAreas.get(world.getUID());
-	}
-	
-	*//**
-	 * Gets a cached world area.
-	 * 
-	 * @param world The world to get the default area for.
-	 * @return The default area
-	 *//*
-	public static Area getCachedWorldArea(org.bukkit.World world) {
-		return worldAreas.get(world.getUID());
-	}*/
-		
 	/**
 	 * Executes the given command, returning its success 
 	 * 
@@ -292,10 +268,10 @@ public class Flags extends JavaPlugin{
 	}
 	
 	/*
-	 * Tasks the must be run only after the entire sever has loaded.
+	 * Tasks that must be run only after the entire sever has loaded.
 	 * Runs on first server tick.
 	 */
-	private class onEnabledTask extends BukkitRunnable {
+	private class onServerEnabledTask extends BukkitRunnable {
 		public void run() {
 			for(String b : Bundle.getBundleNames()) {
 				Debug("Registering Bundle Permission:" + b);

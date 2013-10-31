@@ -1,7 +1,5 @@
 package alshain01.Flags;	
 
-import org.bukkit.entity.Player;
-
 import alshain01.Flags.economy.PurchaseType;
 
 /**
@@ -111,20 +109,6 @@ public class Flag {
 		return "flags.flag." + name;
 	}
 	
-	/**
-	 * Gets whether or not the provided player has permission to modify this flag.
-	 * 
-	 * @return True if the provided player has permission.
-	 * @deprecated Flag permissions are now added to the server dynamically with the appropriate parent. Use player.hasPermission(flag.getPermission()) instead.
-	 */
-	@Deprecated
-    public final boolean hasPermission(Player player) {
-		if (player.hasPermission(getPermission())) {
-			return true;
-		}
-		return false;
-    }
-	
     /**
      * Gets the bypass permission string.
      * 
@@ -134,20 +118,6 @@ public class Flag {
 		return "flags.bypass." + name;
 	}
 	
-	/**
-	 * Gets whether or not the provided player has bypass permission for this flag.
-	 * 
-	 * @return True if the provided player has permission to ignore the effects of this flag.
-	 * @deprecated Bypass permissions are now added to the server dynamically with the appropriate parent. Use player.hasPermission(flag.getBypassPermission()) instead.
-	 */
-	@Deprecated
-    public final boolean hasBypassPermission(Player player) {
-		if (player.hasPermission(getBypassPermission())) {
-			return true;
-		}
-		return false;
-    }
-    
     /**
      * Gets the price of the flag or message.
      * 
@@ -155,8 +125,8 @@ public class Flag {
      * @return The price of the purchase.
      */
     public final double getPrice(PurchaseType type) {
-    	if(!Flags.getDataStore().isSet("Price." + type.toString() + "." + name)) { return 0; }
-    	return Flags.getDataStore().readDouble("Price." + type.toString() + "." + name);
+    	return (!Flags.getDataStore().isSet("Price." + type.toString() + "." + name)) ? 0 :
+    		Flags.getDataStore().readDouble("Price." + type.toString() + "." + name);
     }
     
     /**

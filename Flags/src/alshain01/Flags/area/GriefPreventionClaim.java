@@ -18,10 +18,8 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	// Constructors
 	// ******************************	
-	public GriefPreventionClaim() {	}
-	
 	public GriefPreventionClaim(Location location) {
-		reconstructAt(location);
+		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 	}
 	
 	public GriefPreventionClaim(long ID) {
@@ -31,11 +29,6 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-	}
-	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + getSystemID();
@@ -82,11 +75,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	 */
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof GriefPreventionClaim && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
-		}
-
-		return 3;
+		return (a instanceof GriefPreventionClaim && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************
@@ -106,8 +95,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	@Override
 	public boolean isUnderSiege() {
-		if (claim == null || claim.siegeData == null) { return false; }
-		return true;
+		return !(claim == null || claim.siegeData == null);
 	}
 
 	// ******************************

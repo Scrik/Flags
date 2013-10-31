@@ -3,6 +3,7 @@ package alshain01.Flags.data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +66,9 @@ public class YamlDataStore implements DataStore {
 	@Override
 	public void write(String path, Set<String> set) {
 		List<String> list = new ArrayList<String>();
-		for(String s : set) {
-			list.add(s);
+		Iterator<String> iter = set.iterator();
+		while(iter.hasNext()) {
+			list.add(iter.next());
 		}
 		
 		CustomYML cYml = getYml(path);
@@ -87,9 +89,9 @@ public class YamlDataStore implements DataStore {
 		if(listData == null) { return null; }
 		
 		List<String> stringData = new ArrayList<String>();
-		
-		for (Object value : listData) {
-			stringData.add((String)value);
+		Iterator<?> iter = listData.iterator();
+		while(iter.hasNext()) {
+			stringData.add((String)iter.next());
 		}
 		return stringData;
 	}
@@ -100,9 +102,9 @@ public class YamlDataStore implements DataStore {
 		if(setData == null) { return null; }
 		
 		Set<String> stringData = new HashSet<String>();
-		
-		for (Object value : setData) {
-			stringData.add((String)value);
+		Iterator<?> iter = setData.iterator();
+		while(iter.hasNext()) {
+			stringData.add((String)iter.next());
 		}
 		return stringData;
 	}
@@ -146,7 +148,7 @@ public class YamlDataStore implements DataStore {
 
 	@Override
 	public void update(JavaPlugin plugin) {
-		//DatabaseManager.UpgradeDatabase(plugin, this);
+		// No update at this time.
 	}
 
 	@Override
@@ -157,31 +159,17 @@ public class YamlDataStore implements DataStore {
 
 	@Override
 	public int getVersionMajor() {
-		String ver = read("Default.Database.Version");
-		
-		// Correct for old "2-digit" version storage
-		if (ver.length() <= 3) { ver += ".0"; }
-		
-		String[] version = ver.split("//.");
-		return Integer.valueOf(version[0]);
+		return Integer.valueOf(read("Default.Database.Version").split("//.")[0]);
 	}
 	
 	@Override
 	public int getVersionMinor() {
-		String ver = read("Default.Database.Version");
-		if (ver.length() <= 3) { ver += ".0"; }
-		
-		String[] version = ver.split("//.");
-		return Integer.valueOf(version[1]);
+		return Integer.valueOf(read("Default.Database.Version").split("//.")[1]);
 	}
 
 	@Override
 	public int getBuild() {
-		String ver = read("Default.Database.Version");
-		if (ver.length() <= 3) { return 0; }
-		
-		String[] version = ver.split("//.");
-		return Integer.valueOf(version[2]);
+		return Integer.valueOf(read("Default.Database.Version").split("//.")[2]);
 	}
 	
 	@Override

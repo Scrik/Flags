@@ -21,10 +21,8 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Constructors
 	// ******************************
-	public PlotMePlot() { }
-	
 	public PlotMePlot(Location location) {
-		reconstructAt(location);
+		this.plot = PlotManager.getPlotById(location);
 	}
 	
 	public PlotMePlot(String worldName, String plotID) {
@@ -34,11 +32,6 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Area Interface
 	// ******************************
-	@Override
-	public void reconstructAt(Location location) {
-		this.plot = PlotManager.getPlotById(location);
-	}
-	
 	@Override
 	protected String getDataPath() {
 		return dataHeader + plot.world + "." + getSystemID();
