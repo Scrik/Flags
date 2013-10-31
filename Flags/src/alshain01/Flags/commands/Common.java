@@ -4,7 +4,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flag;
-import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.Director;
 import alshain01.Flags.area.Area;

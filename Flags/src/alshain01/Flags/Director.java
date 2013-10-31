@@ -3,7 +3,6 @@ package alshain01.Flags;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.Bukkit;
@@ -17,8 +16,6 @@ import org.bukkit.plugin.PluginManager;
 
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
 import com.massivecraft.factions.event.FactionsEventDisband;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
