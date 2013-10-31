@@ -3,6 +3,7 @@ package alshain01.Flags;
 import java.util.HashSet;
 import java.util.Set;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.Bukkit;
@@ -14,8 +15,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
+import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
+
+import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
+import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.event.FactionsEventDisband;
+import com.massivecraft.mcore.ps.PS;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.worldcretornica.plotme.PlotManager;
 
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
@@ -139,12 +148,12 @@ public final class Director {
 	 * @return An Area from the configured system or the world if no area is defined.
 	 */
 	public static Area getAreaAt(Location location) {
+		if(!hasArea(location)) { return new World(location); }
+		
 		Area area = getArea();
 		area.reconstructAt(location);
 	
-		if(area == null || !area.isArea()) {
-			area = new World(location.getWorld());
-		}
+		if(!area.isArea()) { return new World(location); }
 		return area;
 	}
 	
@@ -339,10 +348,13 @@ public final class Director {
 		return false;
 	}
 	
-/*	private static hasArea(Location location) {
+	private static boolean hasArea(Location location) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return GriefPrevention.instance.dataStore.getClaimAt(location, false) != null; }
 		if(getSystem() == LandSystem.WORLDGUARD) { return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0; }
-		if(getSystem())
+		if(getSystem() == LandSystem.RESIDENCE) { return Residence.getResidenceManager().getByLoc(location) != null; }
+		if(getSystem() == LandSystem.INFINITEPLOTS) { return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null; }
+		if(getSystem() == LandSystem.FACTIONS) { return BoardColls.get().getFactionAt(PS.valueOf(location)) != null; }
+		if(getSystem() == LandSystem.PLOTME) { return PlotManager.getPlotById(location) != null; }
 		return false;
-	}*/
+	}
 }
