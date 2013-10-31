@@ -2,6 +2,7 @@ package alshain01.Flags.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 
@@ -131,11 +132,11 @@ abstract class FlagCmd extends Common {
 		Registrar registrar = Flags.getRegistrar();
 		List<String> groupNames = new ArrayList<String>();
 		List<String> allowedFlagNames = new ArrayList<String>();
-		Set<String> flagNames = Flags.getRegistrar().getFlagNames();
+		Enumeration<String> flagNames = Flags.getRegistrar().getFlagNames();
 
 		// First we need to filter out the flags and groups to show to the particular user.
-		for (String f : flagNames) {
-			Flag flag = registrar.getFlag(f);
+		while(flagNames.hasMoreElements()) {
+			Flag flag = registrar.getFlag(flagNames.nextElement());
 			// Add flags for the requested group only
 			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
 				// Only show flags that can be used.

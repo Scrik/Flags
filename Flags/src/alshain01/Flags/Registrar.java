@@ -1,7 +1,7 @@
 package alshain01.Flags;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -123,8 +123,8 @@ public class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-	public Set<String> getFlagNames() {
-		return new HashSet<String>(Collections.list(flagStore.keys()));
+	public Enumeration<String> getFlagNames() {
+		return flagStore.keys();
 	}
 	
 	/**
@@ -139,6 +139,6 @@ public class Registrar {
 				groups.add(flag.getGroup());
 			}
 		}
-		return new HashSet<String>(Collections.list(flagStore.keys()));
+		return groups;
 	}
 }
