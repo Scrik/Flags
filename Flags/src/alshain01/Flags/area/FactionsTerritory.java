@@ -30,7 +30,7 @@ public class FactionsTerritory extends Area implements Removable{
 	}
 	
 	public FactionsTerritory (Location location) {
-		BoardColls.get().getFactionAt(PS.valueOf(location));
+		this.faction = BoardColls.get().getFactionAt(PS.valueOf(location));
 		this.worldName = location.getWorld().getName();
 	}
 	
@@ -44,10 +44,7 @@ public class FactionsTerritory extends Area implements Removable{
 
 	@Override
 	public String getSystemID() {
-		if (isArea()) {
-			return faction.getId();
-		}
-		return null;
+		return (isArea()) ? faction.getId() : null;
 	}
 
 	@Override
@@ -62,7 +59,7 @@ public class FactionsTerritory extends Area implements Removable{
 
 	@Override
 	public World getWorld() {
-		return Bukkit.getServer().getWorld(worldName);
+		return Bukkit.getWorld(worldName);
 	}
 
 	@Override
@@ -80,10 +77,7 @@ public class FactionsTerritory extends Area implements Removable{
 	 */	
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof FactionsTerritory && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
-		}
-		return 3;
+		return (a instanceof FactionsTerritory && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

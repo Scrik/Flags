@@ -123,6 +123,6 @@ public class World extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0: 3;
+		return (a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
 	}
 }

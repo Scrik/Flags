@@ -37,19 +37,12 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	@Override
 	protected String getDataPath() {
-		if(isSubdivision() && !isInherited()) {
-			return dataHeader + getSystemSubID();
-		}
-		return dataHeader + getSystemID();
+		return (isSubdivision() && !isInherited()) ? dataHeader + getSystemSubID() : dataHeader + getSystemID();
 	}
 	
 	@Override
 	public String getSystemID() {
-		if (isSubdivision()) {
-			return residence.getParent().getName();
-
-		}
-		return residence.getName();
+		return (isSubdivision()) ? residence.getParent().getName() : residence.getName();
 	}
 
 	@Override
@@ -69,7 +62,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	@Override
 	public boolean isArea() {
-		return (residence != null);
+		return residence != null;
 	}
 	
 	// ******************************
@@ -112,10 +105,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	@Override
 	public String getSystemSubID() {
-		if(isSubdivision()) {
-			return residence.getName();
-		}
-		return null;
+		return (isSubdivision()) ? residence.getName() : null;
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package alshain01.Flags;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -126,8 +127,9 @@ public final class Director {
 	private static class FactionsCleaner implements Listener {
 		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
-			for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
-				new FactionsTerritory(w.getName(), e.getFaction().getId()).remove();
+			Iterator<org.bukkit.World> iter = Bukkit.getWorlds().iterator();
+			while(iter.hasNext()) {
+				new FactionsTerritory(iter.next().getName(), e.getFaction().getId()).remove();
 			}
 		}
 	}
@@ -152,11 +154,8 @@ public final class Director {
 		// however hasArea() is faster than constructing an area object, and calling both has minimal impact.
 		// This is done purely for efficiency.
 		if(!hasArea(location)) { return new World(location); }
-		
 		Area area = getArea(location);
-
-		if(!area.isArea()) { return new World(location); }
-		return area;
+		return (area.isArea()) ? area : new World(location);
 	}
 	
 
@@ -236,9 +235,17 @@ public final class Director {
 		if(getSystem() == LandSystem.WORLDGUARD) {
 			Set<String> worlds = Flags.getDataStore().readKeys("WorldGuardData");
 			Set<String> areas = new HashSet<String>();
-			for(String world : worlds) {
-				Set<String>localAreas = Flags.getDataStore().readKeys("WorldGuardData." + world);
-				for(String localArea : localAreas) {
+			Set<String> localAreas;
+			String world, localArea;
+			
+			Iterator<String> areaIter, worldIter = worlds.iterator();
+			while(worldIter.hasNext()) {
+				world = worldIter.next();
+				localAreas = Flags.getDataStore().readKeys("WorldGuardData." + world);
+				
+				areaIter = localAreas.iterator();
+				while(areaIter.hasNext()) {
+					localArea = areaIter.next();
 					areas.add(world + "." + localArea);
 				}
 			}
@@ -298,16 +305,6 @@ public final class Director {
 	 */
 	public static Set<String> getAreaFlags(String area) {
 		return Flags.getDataStore().readKeys(area);
-	}
-	
-	
-	/**
-	 * @deprecated Use getSystemAreaType()
-	 * @return The user friendly name.
-	 */
-	@Deprecated
-	public static String getAreaType() {
-		return getSystemAreaType();
 	}
 	
 	/**

@@ -39,10 +39,7 @@ public class PlotMePlot extends Area implements Removable {
 	
 	@Override
 	public String getSystemID() {
-		if(isArea()) {
-			return plot.id;
-		}
-		return null;
+		return (isArea()) ? plot.id : null;
 	}
 	
 	@Override
@@ -75,11 +72,7 @@ public class PlotMePlot extends Area implements Removable {
 	 */	
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof PlotMePlot && a.getWorld() == this.getWorld() && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
-		}
-		
-		return 3;
+		return (a instanceof PlotMePlot && a.getWorld() == this.getWorld() && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

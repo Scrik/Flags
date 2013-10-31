@@ -41,10 +41,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public String getSystemID() {
-		if(isArea()) {
-			return plot.getLocation().getX() + ":" + plot.getLocation().getZ();
-		}
-		return null;
+		return (isArea()) ? plot.getLocation().getX() + ":" + plot.getLocation().getZ() : null;
 	}
 
 	@Override
@@ -77,11 +74,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 */	
 	@Override
 	public int compareTo(Area a) {
-		if(a instanceof InfinitePlotsPlot && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
-		}
-
-		return 3;
+		return (a instanceof InfinitePlotsPlot && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************
