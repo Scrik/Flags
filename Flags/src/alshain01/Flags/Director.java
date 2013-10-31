@@ -3,6 +3,7 @@ package alshain01.Flags;
 import java.util.HashSet;
 import java.util.Set;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,8 @@ import org.bukkit.plugin.PluginManager;
 
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
 import com.massivecraft.factions.event.FactionsEventDisband;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
@@ -24,6 +27,7 @@ import alshain01.Flags.area.GriefPreventionClaim;
 import alshain01.Flags.area.InfinitePlotsPlot;
 import alshain01.Flags.area.PlotMePlot;
 import alshain01.Flags.area.ResidenceClaimedResidence;
+import alshain01.Flags.area.World;
 import alshain01.Flags.area.WorldGuardRegion;
 
 /**
@@ -142,7 +146,7 @@ public final class Director {
 		area.reconstructAt(location);
 	
 		if(area == null || !area.isArea()) {
-			area = Flags.getCachedWorldArea(location.getWorld());
+			area = new World(location.getWorld());
 		}
 		return area;
 	}
@@ -337,4 +341,11 @@ public final class Director {
 		}
 		return false;
 	}
+	
+/*	private static hasArea(Location location) {
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return GriefPrevention.instance.dataStore.getClaimAt(location, false) != null; }
+		if(getSystem() == LandSystem.WORLDGUARD) { return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0; }
+		if(getSystem())
+		return false;
+	}*/
 }

@@ -51,8 +51,8 @@ public class Flags extends JavaPlugin{
 	private static final Registrar flagRegistrar = new Registrar();
 	
 	// Cached areas
-	private static ConcurrentHashMap<UUID, Area> worldAreas;
-	private static ConcurrentHashMap<UUID, Area> defaultAreas;
+	//private static ConcurrentHashMap<UUID, Area> worldAreas = new ConcurrentHashMap<UUID, Area>();
+	//private static ConcurrentHashMap<UUID, Area> defaultAreas = new ConcurrentHashMap<UUID, Area>();
 
 	/**
 	 * Called when this plug-in is enabled
@@ -103,12 +103,12 @@ public class Flags extends JavaPlugin{
 		dataStore.update(this);
 		
 		// Cache the initial world & default areas (loaded before event listeners take effect)
-		for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
+/*		for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
 			if(!defaultAreas.contains(w.getUID())) {
 				worldAreas.put(w.getUID(), new World(w));
 				defaultAreas.put(w.getUID(), new Default(w));
 			}
-		}
+		}*/
 		
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
@@ -186,25 +186,25 @@ public class Flags extends JavaPlugin{
 		return economy;
 	}
 	
-	/**
+/*	*//**
 	 * Gets a cached default area.
 	 * 
 	 * @param world The world to get the default area for.
 	 * @return The default area
-	 */
+	 *//*
 	public static Area getCachedDefaultArea(org.bukkit.World world) {
 		return defaultAreas.get(world.getUID());
 	}
 	
-	/**
+	*//**
 	 * Gets a cached world area.
 	 * 
 	 * @param world The world to get the default area for.
 	 * @return The default area
-	 */
+	 *//*
 	public static Area getCachedWorldArea(org.bukkit.World world) {
 		return worldAreas.get(world.getUID());
-	}
+	}*/
 		
 	/**
 	 * Executes the given command, returning its success 
@@ -305,7 +305,7 @@ public class Flags extends JavaPlugin{
 			}
 		}
 		
-		// Cache any worlds added or removed by plugins.
+/*		// Cache any worlds added or removed by plugins.
 		@EventHandler
 		private void onWorldLoad(WorldLoadEvent e) {
 			if(!defaultAreas.contains(e.getWorld().getUID())) {
@@ -318,7 +318,7 @@ public class Flags extends JavaPlugin{
 		private void onWorldUnload(WorldUnloadEvent e) {
 			worldAreas.remove(e.getWorld().getUID());
 			defaultAreas.remove(e.getWorld().getUID());
-		}
+		}*/
 	}
 	
 	/*

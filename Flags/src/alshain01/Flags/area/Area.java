@@ -148,7 +148,7 @@ public abstract class Area implements Comparable<Area> {
     	
     	if(absolute) { return value; }
         return (value != null) ? value :
-        	Flags.getCachedDefaultArea(getWorld()).getValue(flag, false);
+        	new Default(getWorld()).getValue(flag, false);
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public abstract class Area implements Comparable<Area> {
         {
     		if (value != null && (BaseValue.ALWAYS.isSet()
     				|| (BaseValue.PLUGIN.isSet() && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())) 
-    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != Flags.getCachedDefaultArea(((Player)sender).getLocation().getWorld()).getValue(flag, true))))
+    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation().getWorld()).getValue(flag, true))))
     	    {
 	    		// The flag is being set, see if the player can afford it.
     			if(!isFundingAvailable(PurchaseType.Flag, flag, (Player)sender)) { return false; }
@@ -301,7 +301,7 @@ public abstract class Area implements Comparable<Area> {
 		String message = Flags.getDataStore().read(getDataPath() + "." + flag.getName() + messageFooter);
 	 	   
 		if (message == null) {
-			message = Flags.getCachedDefaultArea(getWorld()).getMessage(flag);
+			message = new Default(getWorld()).getMessage(flag);
 		}
 		
 		if (parse) {
