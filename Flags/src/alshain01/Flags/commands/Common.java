@@ -4,10 +4,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flag;
+import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.Director;
 import alshain01.Flags.area.Area;
-import alshain01.Flags.area.Default;
 import alshain01.Flags.area.World;
 /**
  * Top level class for command based functions
@@ -50,9 +50,9 @@ abstract class Common {
 	
 	protected static Area getArea(CommandSender sender, CommandLocation location) {
 		if (location == CommandLocation.DEFAULT) {
-			return new Default(((Player)sender).getWorld());
+			Flags.getCachedWorldArea((((Player)sender).getWorld()));
 		} else if (location == CommandLocation.WORLD) {
-			return new World(((Player)sender).getWorld());
+			return Flags.getCachedDefaultArea((((Player)sender).getWorld()));
 		} else if (location == CommandLocation.AREA) {
 			Area area = Director.getAreaAt(((Player)sender).getLocation());
 			if(area instanceof World) {

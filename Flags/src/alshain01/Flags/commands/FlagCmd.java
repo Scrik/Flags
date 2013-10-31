@@ -35,7 +35,7 @@ abstract class FlagCmd extends Common {
 		StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));
 		boolean first = true; // Governs whether we insert a comma or not (true means no)
-		Area defaultArea = new Default(player.getWorld());
+		Area defaultArea = Flags.getCachedDefaultArea(player.getWorld());
 		
 		for (Flag f : Flags.getRegistrar().getFlags()) {
 			// Get the flag's value
