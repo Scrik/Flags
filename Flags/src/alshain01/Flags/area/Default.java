@@ -18,19 +18,17 @@ public class Default extends Area {
 	// ******************************
 	// Constructors
 	// ******************************
-	public Default() { }
-	
 	public Default(org.bukkit.World world) {
 		this.world = world;
 	}
 	
-	public Default(Location location) {
+/*	public Default(Location location) {
 		reconstructAt(location);
-	}
+	}*/
 	
-	public void reinitializeAt(org.bukkit.World world) {
+/*	public void reinitializeAt(org.bukkit.World world) {
 			this.world = world;
-	}
+	}*/
 	
 	// ******************************
 	// Area Interface

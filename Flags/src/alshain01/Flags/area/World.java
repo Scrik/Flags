@@ -19,15 +19,13 @@ public class World extends Area {
 	// ******************************
 	// Constructors
 	// ******************************
-	public World() { }
-	
 	public World(org.bukkit.World world) {
 		this.world = world;
 	}
-	
+/*	
 	public World(Location location) {
 		reconstructAt(location);
-	}
+	}*/
 	
 	// ******************************
 	// Area Interface

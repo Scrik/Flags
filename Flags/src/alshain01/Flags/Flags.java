@@ -1,6 +1,8 @@
 package alshain01.Flags;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -16,9 +18,14 @@ import org.bukkit.command.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 
 import alshain01.Flags.Director.LandSystem;
 import alshain01.Flags.Updater.UpdateResult;
+import alshain01.Flags.area.Area;
+import alshain01.Flags.area.Default;
+import alshain01.Flags.area.World;
 import alshain01.Flags.commands.Command;
 import alshain01.Flags.data.CustomYML;
 import alshain01.Flags.data.DataStore;
@@ -40,8 +47,12 @@ public class Flags extends JavaPlugin{
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
-	private static Boolean DEBUG = false;
+	private static Boolean debug = false;
 	private static final Registrar flagRegistrar = new Registrar();
+	
+	// Cached areas
+	private static ConcurrentHashMap<UUID, Area> worldAreas;
+	private static ConcurrentHashMap<UUID, Area> defaultAreas;
 
 	/**
 	 * Called when this plug-in is enabled
@@ -52,7 +63,7 @@ public class Flags extends JavaPlugin{
 		
 		// Create the configuration file if it doesn't exist
 		this.saveDefaultConfig();
-		DEBUG = this.getConfig().getBoolean("Flags.Debug");
+		debug = this.getConfig().getBoolean("Flags.Debug");
 		
 		// Update script
 		if(this.getConfig().getBoolean("Flags.Update.Check")) {
@@ -71,7 +82,7 @@ public class Flags extends JavaPlugin{
 				Bukkit.getServer().reload();
 			}
 		}
-		this.getServer().getPluginManager().registerEvents(new UpdateListener(), instance);
+		this.getServer().getPluginManager().registerEvents(new FlagsListener(), instance);
 
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
@@ -91,6 +102,14 @@ public class Flags extends JavaPlugin{
 		// Update the data to current as needed.
 		dataStore.update(this);
 		
+		// Cache the initial world & default areas (loaded before event listeners take effect)
+		for(org.bukkit.World w : Bukkit.getServer().getWorlds()) {
+			if(!defaultAreas.contains(w.getUID())) {
+				worldAreas.put(w.getUID(), new World(w));
+				defaultAreas.put(w.getUID(), new Default(w));
+			}
+		}
+		
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
 		if (currentSystem == LandSystem.NONE) {
@@ -104,9 +123,6 @@ public class Flags extends JavaPlugin{
 			GPFImport.importGPF();
 		}
 		
-		// Add the bundle permissions
-		new onEnabledTask().runTask(this);
-		
 		// Enable Vault support
 		setupEconomy();
 		
@@ -118,7 +134,8 @@ public class Flags extends JavaPlugin{
 			this.getServer().getPluginManager().registerEvents(new BorderPatrol(), instance);
 		}
 		
-
+		// Schedule tasks to perform after server is running
+		new onEnabledTask().runTask(this);
 		
 		this.getLogger().info("Flags Has Been Enabled.");
 	}
@@ -167,6 +184,26 @@ public class Flags extends JavaPlugin{
 	 */
 	public static Economy getEconomy() {
 		return economy;
+	}
+	
+	/**
+	 * Gets a cached default area.
+	 * 
+	 * @param world The world to get the default area for.
+	 * @return The default area
+	 */
+	public static Area getCachedDefaultArea(org.bukkit.World world) {
+		return defaultAreas.get(world.getUID());
+	}
+	
+	/**
+	 * Gets a cached world area.
+	 * 
+	 * @param world The world to get the default area for.
+	 * @return The default area
+	 */
+	public static Area getCachedWorldArea(org.bukkit.World world) {
+		return worldAreas.get(world.getUID());
 	}
 		
 	/**
@@ -217,7 +254,7 @@ public class Flags extends JavaPlugin{
 	 * @param message The debug message
 	 */
 	public static final void Debug(String message) {
-		if (DEBUG) {
+		if (debug) {
 			Flags.instance.getLogger().info("DEBUG: " + message);
 		}
 	}
@@ -254,7 +291,11 @@ public class Flags extends JavaPlugin{
 		return LandSystem.NONE;				
 	}
 	
-	private static class UpdateListener implements Listener {
+	/*
+	 * Contains event listeners required for plugin maintenance.
+	 */
+	private static class FlagsListener implements Listener {
+		// Update listener
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
 			if(e.getPlayer().hasPermission("flags.admin.notifyupdate") && updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
@@ -263,8 +304,27 @@ public class Flags extends JavaPlugin{
 							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			}
 		}
+		
+		// Cache any worlds added or removed by plugins.
+		@EventHandler
+		private void onWorldLoad(WorldLoadEvent e) {
+			if(!defaultAreas.contains(e.getWorld().getUID())) {
+				worldAreas.put(e.getWorld().getUID(), new World(e.getWorld()));
+				defaultAreas.put(e.getWorld().getUID(), new World(e.getWorld()));
+			}
+		}
+		
+		@EventHandler
+		private void onWorldUnload(WorldUnloadEvent e) {
+			worldAreas.remove(e.getWorld().getUID());
+			defaultAreas.remove(e.getWorld().getUID());
+		}
 	}
 	
+	/*
+	 * Tasks the must be run only after the entire sever has loaded.
+	 * Runs on first server tick.
+	 */
 	private class onEnabledTask extends BukkitRunnable {
 		public void run() {
 			for(String b : Bundle.getBundleNames()) {
@@ -274,7 +334,7 @@ public class Flags extends JavaPlugin{
 				Bukkit.getServer().getPluginManager().addPermission(perm);
 			}
 			
-			if(!DEBUG && checkAPI("1.3.2")) {
+			if(!debug && checkAPI("1.3.2")) {
 				MetricsManager.StartMetrics();
 			}
 	    }

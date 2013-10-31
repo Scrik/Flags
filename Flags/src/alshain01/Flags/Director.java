@@ -24,7 +24,6 @@ import alshain01.Flags.area.GriefPreventionClaim;
 import alshain01.Flags.area.InfinitePlotsPlot;
 import alshain01.Flags.area.PlotMePlot;
 import alshain01.Flags.area.ResidenceClaimedResidence;
-import alshain01.Flags.area.World;
 import alshain01.Flags.area.WorldGuardRegion;
 
 /**
@@ -142,8 +141,8 @@ public final class Director {
 		Area area = getArea();
 		area.reconstructAt(location);
 	
-		if(!area.isArea()) {
-			area = new World(location);
+		if(area == null || !area.isArea()) {
+			area = Flags.getCachedWorldArea(location.getWorld());
 		}
 		return area;
 	}
@@ -152,7 +151,7 @@ public final class Director {
 	 * Gets a blank area for the configured system type for reconstruction at a later time.
 	 * isArea() will will always be false on areas returned by this method.
 	 * 
-	 * @return An Area from the configured system or the world if no system is installed.
+	 * @return An Area from the configured system.
 	 */
 	private static Area getArea() {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
@@ -164,7 +163,7 @@ public final class Director {
 			} else {
 				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
 				Flags.currentSystem = LandSystem.NONE;
-				return new World();
+				return null;
 			}
 		}
 		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(); }
@@ -172,7 +171,7 @@ public final class Director {
 		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(); }
 		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(); }
 		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(); }
-		return new World();
+		return null;
 	}
 	
 	/**
