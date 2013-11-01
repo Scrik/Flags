@@ -21,10 +21,19 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of InfinitePlotsPlot based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public InfinitePlotsPlot(Location location) {
 		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
 	}
 	
+	/**
+	 * Creates an instance of InfinitePlotsPlot based on a Bukkit world and Plot Location
+	 * @param worldName The Bukkit world name
+	 * @param ID The Plot Location (not Bukkit location)
+	 */
 	public InfinitePlotsPlot(String worldName, String plotLocation) {
 		String[] plotLocData = plotLocation.split(":");
 		this.plot = InfinitePlots.getInstance().getPlotManager()
@@ -67,23 +76,15 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
-	/**
-	 * 0 if the the plots are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */	
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof InfinitePlotsPlot && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof InfinitePlotsPlot)) { return 0; }
+		return super.compareTo(a);
 	}
 	
 	// ******************************
 	// Removable Interface
 	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
 	@Override
 	public void remove() {
  	   Flags.getDataStore().write(getDataPath(), (String)null);

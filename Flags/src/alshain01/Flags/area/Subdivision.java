@@ -7,28 +7,28 @@ package alshain01.Flags.area;
   */
 public interface Subdivision {
 	/**
-	 * Determines whether or not the area is a subdivision.
+	 * Checks if the area is a subdivision.
 	 * 
 	 * @return True if the are is a subdivision of another area.
 	 */
 	public boolean isSubdivision();
 
 	/**
-	 * Retrieves the id of the subdivision.
+	 * Gets the id of the subdivision.
 	 * 
 	 * @return The subdivision ID, null if not a subdivision
 	 */
 	public String getSystemSubID();
 	
 	/**
-	 * Determines if the subdivision is inheriting flags from it's parent
+	 * Checks if the subdivision is inheriting flags from it's parent
 	 * 
 	 * @return True if the area is inheriting.
 	 */
 	public boolean isInherited();
 	
 	/**
-	 * Changes whether or not a subdivision is inheriting from it's parent
+	 * Sets if a subdivision is inheriting from it's parent
 	 * 
 	 * @param value True if the area should inherit from the parent area.
 	 * @return True if successfully set.

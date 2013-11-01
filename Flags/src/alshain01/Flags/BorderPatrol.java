@@ -28,8 +28,10 @@ class BorderPatrol implements Listener {
 	private static final int timeDivisor = Flags.getInstance().getConfig().getInt("Flags.BorderPatrol.TimeDivisor");
 	private static int eventCalls = 0;
 
+	/*
+	 * Storage for the player's last known location
+	 */
 	static ConcurrentHashMap<String, PreviousMove> moveStore = new ConcurrentHashMap<String, PreviousMove>();
-	
 	private class PreviousMove {
 		private long time;
 		private Location location;
@@ -42,23 +44,31 @@ class BorderPatrol implements Listener {
 		}
 	}
 
+	/* 
+	 * Remove any garbage entries that may have been left behind
+	 * Probably won't happen, but just in case.
+	 */
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private static void onPlayerJoin(PlayerJoinEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
-			// Remove any garbage entries that may have been left behind
-			// Probably won't happen, but just in case.
+
 			moveStore.remove(event.getPlayer().getName());
 		}
 	}
 	
+	/*
+	 * Remove the last location to keep memory usage low.
+	 */
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private static void onPlayerQuit(PlayerQuitEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
-			// Remove the last location to keep memory usage low.
 			moveStore.remove(event.getPlayer().getName());
 		}
 	}
 
+	/*
+	 * Monitor the player's movement
+	 */
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
 		// Divide the number of events to prevent heavy event timing

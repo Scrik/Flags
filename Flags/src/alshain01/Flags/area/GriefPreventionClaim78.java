@@ -13,14 +13,27 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of GriefPreventionClaim78 based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public GriefPreventionClaim78(Location location) {
 		super(location);
 	}
 	
+	/**
+	 * Creates an instance of GriefPreventionClaim78 based on a claim ID
+	 * @param ID The claim ID
+	 */
 	public GriefPreventionClaim78(long ID) {
 		super(ID);
 	}
 	
+	/**
+	 * Creates an instance of GriefPreventionClaim78 based on a claim ID and subclaimID
+	 * @param ID The claim ID
+	 * @param subID The subclaim ID
+	 */
 	public GriefPreventionClaim78(long ID, long subID) {
 		super(ID);
 		if (this.claim != null) {

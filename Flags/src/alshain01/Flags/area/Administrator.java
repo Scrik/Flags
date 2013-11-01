@@ -7,5 +7,9 @@ package alshain01.Flags.area;
  * @author Alshain01
  */
 public interface Administrator {
+	/**
+	 * Checks if the area is an Administrator area defined by the system.
+	 * @return true if the area is an administrator area
+	 */
 	public boolean isAdminArea();
 }

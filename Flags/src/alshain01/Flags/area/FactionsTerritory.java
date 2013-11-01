@@ -16,6 +16,11 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.mcore.ps.PS;
 
+/**
+ * Class for creating areas to manage a Factions Territory.
+ * 
+ * @author Kevin Seiden
+ */
 public class FactionsTerritory extends Area implements Removable{
 	protected final static String dataHeader = "FactionsData.";
 	Faction faction = null;
@@ -24,11 +29,20 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of FactionsTerritory based on a Bukkit World and faction ID
+	 * @param factionID The faction ID
+	 * @param worldName The Bukkit world
+	 */
 	public FactionsTerritory (String worldName, String factionID) {
 		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
 		this.worldName = worldName;
 	}
 	
+	/**
+	 * Creates an instance of FactionsTerritory based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public FactionsTerritory (Location location) {
 		this.faction = BoardColls.get().getFactionAt(PS.valueOf(location));
 		this.worldName = location.getWorld().getName();
@@ -72,7 +86,6 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	/**
 	 * 0 if the the plots are the same, 3 if they are not.
-	 * 
 	 * @return The value of the comparison.
 	 */	
 	@Override
@@ -83,10 +96,6 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	// Removable Interface
 	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
 	@Override
 	public void remove() {
 		Flags.getDataStore().write(getDataPath(), (String)null);

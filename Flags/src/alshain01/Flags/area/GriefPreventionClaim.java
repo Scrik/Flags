@@ -17,11 +17,19 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	// ******************************
 	// Constructors
-	// ******************************	
+	// ******************************
+	/**
+	 * Creates an instance of GriefPreventionClaim based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public GriefPreventionClaim(Location location) {
 		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 	}
-	
+
+	/**
+	 * Creates an instance of GriefPreventionClaim based on a claim ID
+	 * @param ID The claim ID
+	 */
 	public GriefPreventionClaim(long ID) {
 		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
@@ -68,23 +76,15 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	// Comparable Interface
 	// ******************************
-	/**
-	 * 0 if the the claims are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof GriefPreventionClaim && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof GriefPreventionClaim)) { return 0; }
+		return super.compareTo(a);
 	}
 	
 	// ******************************
 	// Removable Interface
 	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
 	@Override
 	public void remove() {
  	   Flags.getDataStore().write(getDataPath(), (String)null);

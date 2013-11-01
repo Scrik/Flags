@@ -82,16 +82,13 @@ public class WorldGuardRegion extends Area implements Removable {
 	// ******************************
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof WorldGuardRegion && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof WorldGuardRegion)) { return 0; }
+		return super.compareTo(a);
 	}
 	
 	// ******************************
 	// Removable Interface
 	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
 	@Override
 	public void remove() {
  	   Flags.getDataStore().write(getDataPath(), (String)null);

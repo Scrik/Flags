@@ -22,14 +22,22 @@ public class World extends Area {
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of World based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
+	public World(Location location) {
+		this.worldUID = location.getWorld().getUID();
+	}
+	
+	/**
+	 * Creates an instance of World based on a Bukkit World
+	 * @param world The Bukkit world
+	 */
 	public World(org.bukkit.World world) {
 		this.worldUID = world.getUID();
 	}
 	
-	public World(Location location) {
-		this.worldUID = location.getWorld().getUID();
-	}
-
 	// ******************************
 	// Area Interface
 	// ******************************
@@ -60,7 +68,7 @@ public class World extends Area {
 	
 	@Override
 	public boolean isArea() {
-		return this.worldUID != null;
+		return this.worldUID != null && Bukkit.getWorld(this.worldUID) != null;
 	}
 	
 	@Override
@@ -116,13 +124,9 @@ public class World extends Area {
 	// ******************************
 	// Comparable Interface
 	// ******************************
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof World && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof World)) { return 0; }
+		return super.compareTo(a);
 	}
 }

@@ -29,7 +29,9 @@ public enum Message {
 	SetPrice, GetPrice, LowFunds, Withdraw, Deposit;
 	
 	/**
-	 * @return A localized message for the enumeration.
+	 * Gets the localized message for the enumeration
+	 * 
+	 * @return the message associated with the enumeration
 	 */
 	public final String get() {
 		String message = Flags.messageStore.getConfig().getString("Message." + this.toString());

@@ -32,43 +32,42 @@ public abstract class Area implements Comparable<Area> {
 	protected abstract String getDataPath();
 	
 	/**
-	 * Retrieve the land system's ID for this area.
+	 * Gets the land system's ID for this area.
 	 * 
 	 * @return the area's ID in the format provided by the land management system.
 	 */
 	public abstract String getSystemID();
 	
 	/**
-	 * Retrieve the friendly name of the area type.
+	 * Gets the friendly name of the area type.
 	 * 
 	 * @return the area's type as a user friendly name.
 	 */
 	public abstract String getAreaType();
 	
 	/**
-	 * Retrieve a set of owners for the area.  On many systems, there will only be one.
+	 * Gets a set of owners for the area.  On many systems, there will only be one.
 	 * 
 	 * @return the player name of the area owner.
 	 */
 	public abstract Set<String> getOwners();
 	
 	/**
-	 * Retrieve the world for the area.
+	 * Gets the world for the area.
 	 * 
 	 * @return the world associated with the area.
 	 */
 	public abstract org.bukkit.World getWorld();
 
 	/**
-	 * Retrieve whether or not the area exists on the server.
-	 * Null Areas return false.
+	 * Checks if area exists on the server and is flaggable.
 	 * 
 	 * @return true if the area exists.
 	 */
 	public abstract boolean isArea();
 	
 	/**
-	 * Gets the players permission to set flags at this location.
+	 * Checks the players permission to set flags at this location.
 	 * 
 	 * @param player The player to check.
 	 * @return true if the player has permissions.
@@ -91,7 +90,7 @@ public abstract class Area implements Comparable<Area> {
 	}
 	
 	/**
-	 * Gets the players permission to set bundles at this location
+	 * Checks the players permission to set bundles at this location
 	 * 
 	 * @param player The player to check.
 	 * @return true if the player has permissions.
@@ -114,7 +113,7 @@ public abstract class Area implements Comparable<Area> {
 	}
 	
 	/**
-	 * Returns the value of the flag for this area.
+	 * Gets the value of the flag for this area.
 	 * 
 	 * @param flag The flag to retrieve the value for.
 	 * @param absolute True if you want a null value if the flag is not defined. False if you want the inherited default (ensures not null).
@@ -125,7 +124,8 @@ public abstract class Area implements Comparable<Area> {
 		
     	Boolean value = null;
     	if(isArea()) { 
-	    	String valueString = Flags.getDataStore().read(getDataPath() + "." + flag.getName() + valueFooter);
+	    	String valueString = Flags.getDataStore().read(getDataPath() 
+	    			+ "." + flag.getName() + valueFooter);
 	    	
 	    	if (valueString != null && valueString.toLowerCase().contains("true")) { 
 	    		value = true;
@@ -135,8 +135,7 @@ public abstract class Area implements Comparable<Area> {
     	}
     	
     	if(absolute) { return value; }
-        return (value != null) ? value :
-        	new Default(getWorld()).getValue(flag, false);
+        return (value != null) ? value : new Default(getWorld()).getValue(flag, false);
 	}
 	
 	/**
@@ -161,7 +160,8 @@ public abstract class Area implements Comparable<Area> {
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
         {
     		if (value != null && (BaseValue.ALWAYS.isSet()
-    				|| (BaseValue.PLUGIN.isSet() && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())) 
+    				|| (BaseValue.PLUGIN.isSet() && (getValue(flag, true) == null 
+    					|| getValue(flag, true) != flag.getDefault())) 
     				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation().getWorld()).getValue(flag, true))))
     	    {
 	    		// The flag is being set, see if the player can afford it.
@@ -195,7 +195,7 @@ public abstract class Area implements Comparable<Area> {
 	}
 	
 	/**
-	 * Retrieves the list of trusted players
+	 * Gets a list of trusted players
 	 * 
 	 * @param flag The flag to retrieve the trust list for.
 	 * @return The list of players
@@ -355,8 +355,16 @@ public abstract class Area implements Comparable<Area> {
 		return true;
 	}
 	
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
+	public int compareTo(Area a) {
+		return (a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
+	}
+	
 	/*
-	 * Check to make sure the player can afford the item.
+	 * Checks to make sure the player can afford the item.
 	 * If false, the player is automatically notified.
 	 */
 	private static boolean isFundingAvailable(PurchaseType product, Flag flag, Player player) {

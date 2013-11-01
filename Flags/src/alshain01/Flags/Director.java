@@ -63,7 +63,7 @@ public final class Director {
 		}
 		
 		/**
-		 * Retrieves the plug-in name as indicated in it's plugin.yml
+		 * Gets the plug-in name as indicated in it's plugin.yml
 		 * 
 		 * @return The case sensitive plugin.yml name for the enumerated value
 		 */
@@ -73,7 +73,7 @@ public final class Director {
 		}
 		
 		/**
-		 * Retrieves a user friendly string, including spaces, for the plug-in.
+		 * Gets a user friendly string, including spaces, for the plug-in.
 		 * 
 		 * @return The user friendly name of the plugin
 		 */
@@ -82,7 +82,7 @@ public final class Director {
 		}
 		
 		/**
-		 * Retrieves the enumeration that matches the case sensitive plugin.yml name.
+		 * Gets the enumeration that matches the case sensitive plugin.yml name.
 		 * 
 		 * @return The enumeration. LandSystem.NONE if no matches found.
 		 */
@@ -94,48 +94,8 @@ public final class Director {
 		}
 	}
 	
-	protected static void enableMrClean(PluginManager pm) {
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			if(Float.valueOf(pm.getPlugin(getSystem().toString())
-					.getDescription().getVersion().substring(0,3)) >= 7.8) {
-				
-				pm.registerEvents(new GriefPreventionCleaner(), Flags.getInstance());
-			}
-		} else if(getSystem() == LandSystem.RESIDENCE) {
-			pm.registerEvents(new ResidenceCleaner(), Flags.getInstance());
-		} else if(getSystem() == LandSystem.FACTIONS) {
-			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
-		}
-	}
-	
-	private static class GriefPreventionCleaner implements Listener {
-		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onClaimDeleted(ClaimDeletedEvent e) {
-			// Cleanup the database, keep the file from growing too large.
-			new GriefPreventionClaim78(e.getClaim().getID()).remove();
-		}
-	}
-	
-	private static class ResidenceCleaner implements Listener {
-		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onResidenceDelete(ResidenceDeleteEvent e) {
-			// Cleanup the database, keep the file from growing too large.
-			new ResidenceClaimedResidence(e.getResidence().getName()).remove();
-		}
-	}
-	
-	private static class FactionsCleaner implements Listener {
-		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onFactionDisband(FactionsEventDisband e) {
-			Iterator<org.bukkit.World> iter = Bukkit.getWorlds().iterator();
-			while(iter.hasNext()) {
-				new FactionsTerritory(iter.next().getName(), e.getFaction().getId()).remove();
-			}
-		}
-	}
-	
 	/**
-	 * Retrieves the current land system in use by Flags.
+	 * Gets the current land system in use by Flags.
 	 * 
 	 * @return The current Land Management System in use by Flags.
 	 */
@@ -144,7 +104,7 @@ public final class Director {
 	}
 
 	/**
-	 * Retrieves an area from the data store at a specific location.
+	 * Gets an area from the data store at a specific location.
 	 *  
 	 * @param location The location to request an area.
 	 * @return An Area from the configured system or the world if no area is defined.
@@ -158,30 +118,9 @@ public final class Director {
 		return (area.isArea()) ? area : new World(location);
 	}
 	
-
-	private static Area getArea(Location location) {
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
-			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
-				return new GriefPreventionClaim78(location);
-			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
-				return new GriefPreventionClaim(location);
-			} else {
-				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
-				Flags.currentSystem = LandSystem.NONE;
-				return null;
-			}
-		}
-		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(location); }
-		else if(getSystem() == LandSystem.RESIDENCE) { return new ResidenceClaimedResidence(location); }
-		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(location); }
-		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(location); }
-		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(location); }
-		return null;
-	}
-	
 	/**
-	 * Retrieves an area by system specific name
+	 * Gets an area by system specific name.  The name is formatted based on the system.
+	 * 
 	 * GriefPrevention = ID number
 	 * WorldGuard = worldname.regionname
 	 * Residence = Residence name OR ResidenceName.SubzoneName
@@ -224,7 +163,7 @@ public final class Director {
 	}
 	
 	/**
-	 * Returns a list of system specific area names stored in the database
+	 * Gets a set of system specific area names stored in the database
 	 * 
 	 * @return A list containing all the area names.
 	 */
@@ -296,19 +235,9 @@ public final class Director {
 
 		return null;
 	}
-	
+
 	/**
-	 * Retrieves a list of all flags set in the area.
-	 * 
-	 * @param area The system specific area name.
-	 * @return a list of all flags for the provided area.
-	 */
-	public static Set<String> getAreaFlags(String area) {
-		return Flags.getDataStore().readKeys(area);
-	}
-	
-	/**
-	 * Returns a user friendly name of the area type of the configured system, capitalized.
+	 * Gets a user friendly name of the area type of the configured system, capitalized.
 	 * For use when the name is required even though an area does not exist (such as error messages).
 	 * If you have an area instance, use Area.getAreaType() instead.
 	 * 
@@ -326,22 +255,43 @@ public final class Director {
 	}
 	
 	/**
-	 * Retrieves whether or not a player is in Pvp combat that
-	 * is being monitored by the system
-	 * 
-	 * Only supports Grief Prevention.
+	 * Checks if a player is in Pvp combat that is being monitored by the system
 	 * 
 	 * @param player The player to request information for
-	 * @return True if in pvp combat, false is not or if system is unsupported.
+	 * @return True if the player is in pvp combat, false is not or if system is unsupported.
 	 */
-	
 	public static boolean inPvpCombat(Player player) {
-		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
-			return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
-		}
-		return false;
+		return (getSystem() != LandSystem.GRIEF_PREVENTION) ? false : 
+			GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 	
+	/*
+	 * Gets the area at a specific location if one exists, otherwise null
+	 */
+	private static Area getArea(Location location) {
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
+			Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
+				return new GriefPreventionClaim78(location);
+			} else if(Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
+				return new GriefPreventionClaim(location);
+			} else {
+				Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. Shutting down integrated support. Only world flags will be available.");
+				Flags.currentSystem = LandSystem.NONE;
+				return null;
+			}
+		}
+		else if(getSystem() == LandSystem.WORLDGUARD) { return new WorldGuardRegion(location); }
+		else if(getSystem() == LandSystem.RESIDENCE) { return new ResidenceClaimedResidence(location); }
+		else if(getSystem() == LandSystem.INFINITEPLOTS) { return new InfinitePlotsPlot(location); }
+		else if(getSystem() == LandSystem.FACTIONS) { return new FactionsTerritory(location); }
+		else if(getSystem() == LandSystem.PLOTME) { return new PlotMePlot(location); }
+		return null;
+	}
+	
+	/*
+	 * Performs a fast check to see if an area is defined at a location
+	 */
 	private static boolean hasArea(Location location) {
 		if(getSystem() == LandSystem.GRIEF_PREVENTION) { return GriefPrevention.instance.dataStore.getClaimAt(location, false) != null; }
 		if(getSystem() == LandSystem.WORLDGUARD) { return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0; }
@@ -350,5 +300,48 @@ public final class Director {
 		if(getSystem() == LandSystem.FACTIONS) { return BoardColls.get().getFactionAt(PS.valueOf(location)) != null; }
 		if(getSystem() == LandSystem.PLOTME) { return PlotManager.getPlotById(location) != null; }
 		return false;
+	}
+	
+	/*
+	 * Database cleanup monitors
+	 */
+	protected static void enableMrClean(PluginManager pm) {
+		if(getSystem() == LandSystem.GRIEF_PREVENTION) {
+			if(Float.valueOf(pm.getPlugin(getSystem().toString())
+					.getDescription().getVersion().substring(0,3)) >= 7.8) {
+				
+				pm.registerEvents(new GriefPreventionCleaner(), Flags.getInstance());
+			}
+		} else if(getSystem() == LandSystem.RESIDENCE) {
+			pm.registerEvents(new ResidenceCleaner(), Flags.getInstance());
+		} else if(getSystem() == LandSystem.FACTIONS) {
+			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
+		}
+	}
+	
+	private static class GriefPreventionCleaner implements Listener {
+		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onClaimDeleted(ClaimDeletedEvent e) {
+			// Cleanup the database, keep the file from growing too large.
+			new GriefPreventionClaim78(e.getClaim().getID()).remove();
+		}
+	}
+	
+	private static class ResidenceCleaner implements Listener {
+		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onResidenceDelete(ResidenceDeleteEvent e) {
+			// Cleanup the database, keep the file from growing too large.
+			new ResidenceClaimedResidence(e.getResidence().getName()).remove();
+		}
+	}
+	
+	private static class FactionsCleaner implements Listener {
+		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onFactionDisband(FactionsEventDisband e) {
+			Iterator<org.bukkit.World> iter = Bukkit.getWorlds().iterator();
+			while(iter.hasNext()) {
+				new FactionsTerritory(iter.next().getName(), e.getFaction().getId()).remove();
+			}
+		}
 	}
 }

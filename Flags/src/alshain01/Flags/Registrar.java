@@ -28,18 +28,16 @@ public class Registrar {
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
 	public Flag register(String name, String description, boolean def, String group) {
-		if(!flagStore.containsKey(name)) {
-			Flag flag = new Flag(name, description, def, group, false, null, null);
-			flagStore.put(name, flag);
-			
-			//Add the permission for the flag to the server
-			Permission perm = new Permission(flag.getPermission(), "Grants ability to use the flag " + flag.getName(), PermissionDefault.FALSE);
-			perm.addParent("flags.flag", true);
-			Bukkit.getServer().getPluginManager().addPermission(perm);
-
-			return flag;
-		}
-		return null;
+		if(flagStore.containsKey(name)) { return null; }
+		Flag flag = new Flag(name, description, def, group, false, null, null);
+		
+		//Add the permission for the flag to the server
+		Permission perm = new Permission(flag.getPermission(), "Grants ability to use the flag " + flag.getName(), PermissionDefault.FALSE);
+		perm.addParent("flags.flag", true);
+		Bukkit.getServer().getPluginManager().addPermission(perm);
+		
+		flagStore.put(name, flag);
+		return flag;
 	}
 	
 	/**
@@ -72,7 +70,7 @@ public class Registrar {
 	}
 	
 	/**
-	 * Gets whether or not a flag name has been registered.
+	 * Checks if a flag name has been registered.
 	 * 
 	 * @param flag The flag name
 	 * @return True if the flag name has been registered

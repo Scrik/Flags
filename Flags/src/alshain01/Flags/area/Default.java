@@ -13,6 +13,11 @@ import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 
+/**
+ * Class for creating areas to manage server defaults.
+ * 
+ * @author Kevin Seiden
+ */
 public class Default extends Area {
 	private final static String dataHeader = "Default.";
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("default"));
@@ -21,12 +26,20 @@ public class Default extends Area {
 	// ******************************
 	// Constructors
 	// ******************************
-	public Default(org.bukkit.World world) {
-		this.worldUID = world.getUID();
+	/**
+	 * Creates an instance of Default based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
+	public Default(Location location) {
+		this(location.getWorld());
 	}
 	
-	public Default(Location location) {
-		this.worldUID = location.getWorld().getUID();
+	/**
+	 * Creates an instance of Default based on a Bukkit World
+	 * @param world The Bukkit world
+	 */
+	public Default(org.bukkit.World world) {
+		this.worldUID = world.getUID();
 	}
 	
 	// ******************************
@@ -59,7 +72,7 @@ public class Default extends Area {
 	
 	@Override
 	public boolean isArea() {
-		return this.worldUID != null;
+		return this.worldUID != null && Bukkit.getWorld(this.worldUID) != null;
 	}
 	
 	@Override
@@ -95,6 +108,13 @@ public class Default extends Area {
     	return (trustedPlayers != null) ? trustedPlayers : new HashSet<String>();
 	}
 
+	/**
+	 * Gets the message associated with a player flag.
+	 * 
+	 * @param flag The flag to retrieve the message for.
+	 * @param parse Ignored by Default area.
+	 * @return The message associated with the flag.
+	 */
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
 		// We are ignore parse here.  We just want to override it.
@@ -105,13 +125,9 @@ public class Default extends Area {
 	// ******************************
 	// Comparable Interface
 	// ******************************
-	/**
-	 * 0 if the the areas are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof Default && a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof Default)) { return 0; }
+		return super.compareTo(a);
 	}
 }

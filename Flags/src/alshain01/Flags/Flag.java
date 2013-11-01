@@ -17,6 +17,17 @@ public class Flag {
 	private String world;
 	private String plugin;
 
+	/**
+	 * Creates an instance of the Flag class.
+	 * 
+	 * @param name The flag name
+	 * @param description The flag description
+	 * @param def The flag default value
+	 * @param plugin The flag group
+	 * @param player True if the flag is a player flag
+	 * @param area The default area message for the flag.
+	 * @param world The default world message for the flag.
+	 */
 	protected Flag(String name, String description, boolean def, String plugin, boolean player, String area, String world) {
 		this.name = name;
 		this.description = description;
@@ -28,7 +39,7 @@ public class Flag {
 	}
 
 	/**
-	 * Gets whether or not the flag is a player flag. (Supports messaging and trust)
+	 * Checks if the flag is a player flag. (Supports messaging and trust)
 	 * 
 	 * @return True if this flag is a player flag.
 	 */

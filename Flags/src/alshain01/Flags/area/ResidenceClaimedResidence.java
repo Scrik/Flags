@@ -24,10 +24,18 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of ResidenceClaimedResidence based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public ResidenceClaimedResidence(Location location) {
 		residence = Residence.getResidenceManager().getByLoc(location);
 	}
 	
+	/**
+	 * Creates an instance of ResidenceClaimedResidence based on a residence name
+	 * @param ID The claim ID
+	 */
 	public ResidenceClaimedResidence(String name) {
 		residence = Residence.getResidenceManager().getByName(name);
 	}

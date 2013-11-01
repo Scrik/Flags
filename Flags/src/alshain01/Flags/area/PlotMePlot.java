@@ -21,10 +21,19 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Constructors
 	// ******************************
+	/**
+	 * Creates an instance of PlotMePlot based on a Bukkit Location
+	 * @param location The Bukkit location
+	 */
 	public PlotMePlot(Location location) {
 		this.plot = PlotManager.getPlotById(location);
 	}
 	
+	/**
+	 * Creates an instance of PlotMePlot based on a plot ID and Bukkit world
+	 * @param ID The claim ID
+	 * @param worldName The Bukkit world
+	 */
 	public PlotMePlot(String worldName, String plotID) {
 		this.plot = PlotManager.getPlotById(Bukkit.getServer().getWorld(worldName), plotID);
 	}
@@ -65,23 +74,15 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
-	/**
-	 * 0 if the the plots are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */	
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof PlotMePlot && a.getWorld() == this.getWorld() && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+		if(!(a instanceof PlotMePlot)) { return 0; }
+		return super.compareTo(a);
 	}
 	
 	// ******************************
 	// Removable Interface
 	// ******************************
-	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
-	 */
 	@Override
 	public void remove() {
 		Flags.getDataStore().write(getDataPath(), (String)null);

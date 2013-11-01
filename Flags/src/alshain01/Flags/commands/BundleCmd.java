@@ -199,7 +199,7 @@ abstract class BundleCmd extends Common {
         	bundle.add(flag.getName());
 		}
        	
-		Bundle.writeBundle(bundleName, bundle);
+		Bundle.setBundle(bundleName, bundle);
 		sender.sendMessage(Message.UpdateBundle.get()
 				.replaceAll("\\{Bundle\\}", bundleName));
 		return true;
@@ -228,7 +228,7 @@ abstract class BundleCmd extends Common {
         	success = false;
 		}
 		
-		Bundle.writeBundle(bundleName, bundle);
+		Bundle.setBundle(bundleName, bundle);
 		
 		if (success) {
 			sender.sendMessage(Message.UpdateBundle.get()
@@ -248,7 +248,7 @@ abstract class BundleCmd extends Common {
 			return true;
 		}
 		
-		Bundle.writeBundle(bundleName, null);
+		Bundle.setBundle(bundleName, null);
 		Bukkit.getServer().getPluginManager().removePermission("flags.bundle." + bundleName);
 		
 		sender.sendMessage(Message.EraseBundle.get()
