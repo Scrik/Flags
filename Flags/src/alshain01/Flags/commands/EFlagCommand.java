@@ -1,6 +1,6 @@
 package alshain01.Flags.commands;
 
-enum FCommandType {
+enum EFlagCommand {
 	SET('s', 3, 1, true, true, "Set <area|world|default> <flag> [true|false]"),
 	GET('g', 2, 1, true, false, "Get <area|world|default> [flag]"),
 	REMOVE ('r', 2, 1, true, false, "Remove <area|world|default> [flag]"),
@@ -21,7 +21,7 @@ enum FCommandType {
 	Boolean requiresFlag; // null if flag isn't even an optional arg.
 	String help;
 	
-	FCommandType(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
+	EFlagCommand(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
 		this.alias = alias;
 		this.requiredArgs = requiredArgs;
 		this.optionalArgs = optionalArgs;
@@ -30,8 +30,8 @@ enum FCommandType {
 		this.requiresFlag = requiresFlag;
 	}
 	
-	protected static FCommandType get(String name) {
-		for(FCommandType c : FCommandType.values()) {
+	protected static EFlagCommand get(String name) {
+		for(EFlagCommand c : EFlagCommand.values()) {
 			if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
 				return c;
 			}

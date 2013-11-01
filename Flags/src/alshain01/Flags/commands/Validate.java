@@ -35,12 +35,27 @@ public class Validate {
 		return true;
 	}
 	
+	protected static boolean isPlayerFlag(CommandSender cs, Flag f) {
+		if(f.isPlayerFlag()) { return true; }
+		cs.sendMessage(Message.PlayerFlagError.get()
+				.replaceAll("\\{Flag\\}", f.getName()));
+		return false;
+	}
+	
 	protected static boolean isTrustList(CommandSender cs, Set<String> tl, String a, String f) {
 		if(tl != null && !tl.isEmpty()) { return true; }
 		cs.sendMessage(Message.InvalidTrustError.get()
 				.replaceAll("\\{AreaType\\}", a.toLowerCase())
 				.replaceAll("\\{Flag\\}", f));
 		return false;
+	}
+		
+	protected static boolean isBundle(CommandSender cs, Set<String> b, String n) {
+		if (b != null && !b.isEmpty()) { return true; }
+		cs.sendMessage(Message.InvalidFlagError.get()
+				.replaceAll("\\{RequestedName\\}", n)
+				.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+		return false; 
 	}
 	
 	protected static boolean isPermitted(Player p, Object o) {
@@ -64,10 +79,36 @@ public class Validate {
 		return true;
 	}
 	
-	protected static boolean isPlayerFlag(CommandSender cs, Flag f) {
-		if(f.isPlayerFlag()) { return true; }
-		cs.sendMessage(Message.PlayerFlagError.get()
-				.replaceAll("\\{Flag\\}", f.getName()));
+	protected static boolean isBundlePermitted(Player p, Object o) {
+		if(o instanceof String) {
+			if(p.hasPermission("flags.bundle." + (String)o)) { return true; }
+			p.sendMessage(Message.FlagPermError.get()
+					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			return false;
+		}
+		
+		if(o instanceof Area) {
+			Area area = (Area)o;
+			if (area.hasBundlePermission(p)) { return true; }
+			p.sendMessage(((area instanceof World || area instanceof Default) 
+					? Message.WorldPermError.get() : Message.AreaPermError.get())
+						.replaceAll("\\{AreaType\\}", area.getAreaType())
+						.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
+						.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			return false;
+		}
+		return true;
+	}
+	
+	protected static boolean canEditBundle(Player player) {
+		if (player.hasPermission("flags.command.bundle.edit")) { return true; }
+		player.sendMessage(Message.BundlePermError.get());
+		return false;
+	}
+	
+	protected static boolean canEditPrice(Player player) {
+		if (player.hasPermission("flags.command.flag.charge")) { return true; }
+		player.sendMessage(Message.PricePermError.get());
 		return false;
 	}
 }

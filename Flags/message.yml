@@ -33,6 +33,7 @@ Message:
   EraseBundleError: '&cFailed to erase bundle.'
   AddBundleError: '&cFailed to find one or more flags. Aborting addition.'
   BundlePermError: '&cYou do not have permission to edit bundles.'
+  PricePermError: '&cYou do not have permission to edit prices.'
   SubdivisionError: '&cStand in the subdivision you wish to set inheritance for.'
   NoSystemError: '&cNo land system available. Area actions are disabled.'
   NoFlagFound: '&cThere are no {Type}s defined on this server.'

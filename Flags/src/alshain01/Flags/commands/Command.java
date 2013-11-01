@@ -30,7 +30,7 @@ public class Command {
 	 */
 	public static boolean onFlagCommand(CommandSender sender, String[] args) {
 		if (args.length < 1) { return false; }
-		final FCommandType command = FCommandType.get(args[0]);
+		final EFlagCommand command = EFlagCommand.get(args[0]);
 
 		if(command == null) { return false;	}
 
@@ -42,16 +42,16 @@ public class Command {
 		}
 
 		// Check the command location for those that apply
-		CommandLocation location = null;
+		ECommandLocation location = null;
 		if(command.requiresLocation) {
-			location = CommandLocation.get(args[1]);
+			location = ECommandLocation.get(args[1]);
 			if(location == null) {
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
 			
 			// Make sure we can set flags at that location
-			if (Director.getSystem() == LandSystem.NONE && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+			if (Director.getSystem() == LandSystem.NONE && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}
@@ -59,7 +59,7 @@ public class Command {
 		
 		// Location based commands require the player to be in the world
 		// Inherit is a special case, doesn't require a location but assumes one exists
-		if((location != null || command == FCommandType.INHERIT) && !(sender instanceof Player)) {
+		if((location != null || command == EFlagCommand.INHERIT) && !(sender instanceof Player)) {
 			sender.sendMessage(Message.NoConsoleError.get());
 			return true;
 		}
@@ -80,32 +80,32 @@ public class Command {
 
 		// Process the command
 		boolean success = false;
-		if(command == FCommandType.HELP) {
+		if(command == EFlagCommand.HELP) {
 			success = FlagCmd.help(sender, getPage(args), getGroup(args));
-		} else if(command == FCommandType.INHERIT) {
+		} else if(command == EFlagCommand.INHERIT) {
 			success = FlagCmd.inherit((Player)sender, getValue(args, 1));
-		} else if(command == FCommandType.GET) {
+		} else if(command == EFlagCommand.GET) {
 			success = FlagCmd.get((Player)sender, location, flag);
-		} else if(command == FCommandType.SET) {
+		} else if(command == EFlagCommand.SET) {
 			success = FlagCmd.set((Player)sender, location, flag, getValue(args, 3));
-		} else if (command == FCommandType.REMOVE) {
+		} else if (command == EFlagCommand.REMOVE) {
 			success = FlagCmd.remove((Player)sender, location, flag);
-		} else if (command == FCommandType.VIEWTRUST) {
+		} else if (command == EFlagCommand.VIEWTRUST) {
 			success = FlagCmd.viewTrust((Player)sender, location, flag);
-		} else if (command == FCommandType.TRUST) {
+		} else if (command == EFlagCommand.TRUST) {
 			// List of players for trust
 			Set<String> players = getPlayers(args, command.requiredArgs - 1);
 			
 			success = FlagCmd.trust((Player)sender, location, flag, players);
-		} else if (command == FCommandType.DISTRUST) {
+		} else if (command == EFlagCommand.DISTRUST) {
 			// List of players for distrust
 			Set<String> players = new HashSet<String>();
 			if(args.length > command.requiredArgs) { players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
 	    	
 			success = FlagCmd.distrust((Player)sender, location, flag, players);
-		} else if (command == FCommandType.PRESENTMESSAGE) {
+		} else if (command == EFlagCommand.PRESENTMESSAGE) {
 			success = FlagCmd.presentMessage((Player)sender, location, flag);
-		} else if (command == FCommandType.MESSAGE) {
+		} else if (command == EFlagCommand.MESSAGE) {
 	  		// Build the message from the remaining arguments
 			StringBuilder message = new StringBuilder();
 			for (int x = 3; x < args.length; x++) {
@@ -116,9 +116,9 @@ public class Command {
 			}
 			
 			success = FlagCmd.message((Player)sender, location, flag, message.toString());
-		} else if (command == FCommandType.ERASEMESSAGE) {
+		} else if (command == EFlagCommand.ERASEMESSAGE) {
 			success = FlagCmd.erase((Player)sender, location, flag);
-		} else if (command == FCommandType.CHARGE) {
+		} else if (command == EFlagCommand.CHARGE) {
 			final PurchaseType t = PurchaseType.get(args[1]);
 			if (t == null) { 
 				success = false; 
@@ -144,7 +144,7 @@ public class Command {
 	 */
 	public static boolean onBundleCommand(CommandSender sender, String[] args) {
 		if (args.length < 1) { return false; }
-		final BCommandType command = BCommandType.get(args[0]);
+		final EBundleCommand command = EBundleCommand.get(args[0]);
 
 		if(command == null) { return false;	}
 		
@@ -156,9 +156,9 @@ public class Command {
 		}
 
 		// Check the command location for those that apply
-		CommandLocation location = null;
+		ECommandLocation location = null;
 		if(command.requiresLocation) {
-			location = CommandLocation.get(args[1]);
+			location = ECommandLocation.get(args[1]);
 			if(location == null) {
 				sender.sendMessage(command.getHelp());
 				return true;
@@ -171,7 +171,7 @@ public class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (Director.getSystem() == LandSystem.NONE && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+			if (Director.getSystem() == LandSystem.NONE && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}
@@ -190,34 +190,34 @@ public class Command {
 		
 		// Process the command
 		boolean success = false;
-		if(command == BCommandType.HELP) {
+		if(command == EBundleCommand.HELP) {
 			success = BundleCmd.help(sender, getPage(args));
-		} else if(command == BCommandType.GET) {
+		} else if(command == EBundleCommand.GET) {
 			success = BundleCmd.get((Player)sender, location, bundle);
-		} else if(command == BCommandType.SET) {
+		} else if(command == EBundleCommand.SET) {
 			Boolean value = getValue(args, 3);
 			if(value == null) {
 				success = false;
 			} else {
 				success = BundleCmd.set((Player)sender, location, bundle, getValue(args, 3));
 			}
-		} else if (command == BCommandType.REMOVE) {
+		} else if (command == EBundleCommand.REMOVE) {
 			success = BundleCmd.remove((Player)sender, location, bundle);
-		} else if(command == BCommandType.ADD) {
+		} else if(command == EBundleCommand.ADD) {
 			Set<String> flags = new HashSet<String>();
 			for (int x = 2; x < args.length; x++) {
 				flags.add(args[x]);
 			}
 			
 			success = BundleCmd.add((Player)sender, bundle, flags);
-		} else if(command == BCommandType.DELETE) {
+		} else if(command == EBundleCommand.DELETE) {
 			Set<String> flags = new HashSet<String>();
 			for (int x = 2; x < args.length; x++) {
 				flags.add(args[x]);
 			}
 			
 			success = BundleCmd.delete(sender, bundle, flags);
-		} else if (command == BCommandType.ERASE) {
+		} else if (command == EBundleCommand.ERASE) {
 			success = BundleCmd.erase(sender, bundle);
 		}
 		

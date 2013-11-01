@@ -23,7 +23,7 @@ abstract class FlagCmd extends Common {
 	/*
 	 * Value Command Handlers
 	 */
-	protected static boolean get(Player player, CommandLocation location, Flag flag) {
+	protected static boolean get(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
 		if(!Validate.notNull(player, area)) { return false; };
@@ -69,7 +69,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean set(Player player, CommandLocation location, Flag flag, Boolean value) {
+	protected static boolean set(Player player, ECommandLocation location, Flag flag, Boolean value) {
 		// Acquire the area
 		Area area = getArea(player, location);
 		if(!Validate.notNull(player, area)
@@ -90,7 +90,7 @@ abstract class FlagCmd extends Common {
         return true;
 	}
 	
-	protected static boolean remove(Player player, CommandLocation location, Flag flag) {
+	protected static boolean remove(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
 		if(!Validate.notNull(player, area) || !Validate.isPermitted(player, area)) { return true; }
@@ -128,7 +128,7 @@ abstract class FlagCmd extends Common {
 	/*
 	 * Trust Command Handlers
 	 */
-	protected static boolean viewTrust(Player player, CommandLocation location, Flag flag) {
+	protected static boolean viewTrust(Player player, ECommandLocation location, Flag flag) {
 		boolean first = true;
 		StringBuilder message;
 		Area area = getArea(player, location);
@@ -157,7 +157,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+	protected static boolean trust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
 		if(playerList.size() == 0) { return false; }
 		
 		Area area = getArea(player, location);
@@ -181,7 +181,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean distrust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+	protected static boolean distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
 		boolean success = true;
 		String p;
 		Iterator<String> iter;
@@ -217,7 +217,7 @@ abstract class FlagCmd extends Common {
 	/*
 	 * Message Command Handlers
 	 */
-	protected static boolean presentMessage(Player player, CommandLocation location, Flag flag) {
+	protected static boolean presentMessage(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the flag
 		if(!flag.isPlayerFlag()) {
 			player.sendMessage(Message.PlayerFlagError.get()
@@ -234,7 +234,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 
-	protected static boolean message(Player player, CommandLocation location, Flag flag, String message) {
+	protected static boolean message(Player player, ECommandLocation location, Flag flag, String message) {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
@@ -249,7 +249,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 
-	protected static boolean erase(Player player, CommandLocation location, Flag flag) {
+	protected static boolean erase(Player player, ECommandLocation location, Flag flag) {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
@@ -269,7 +269,7 @@ abstract class FlagCmd extends Common {
 	 * Inheritance Command Handlers
 	 */
 	protected static boolean inherit(Player player, Boolean value) {
-		Area area = getArea(player, CommandLocation.AREA);
+		Area area = getArea(player, ECommandLocation.AREA);
 		if(!Validate.notNull(player, area) || !Validate.isSubdivision(player, area)) { return true; }
 	
 		((Subdivision)area).setInherited(value);
@@ -293,7 +293,7 @@ abstract class FlagCmd extends Common {
 	
 	protected static boolean setPrice(CommandSender sender, PurchaseType type, Flag flag, String price) {
 		if(Flags.getEconomy() == null) { return false; }
-		if((sender instanceof Player) && !((Player)sender).hasPermission("flags.command.flag.charge")) { return false; }
+		if((sender instanceof Player) && !Validate.canEditPrice((Player)sender)) { return true; }
 
 		double p;
 		try { p = Double.valueOf(price); } 

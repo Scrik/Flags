@@ -17,186 +17,121 @@ import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 
 abstract class BundleCmd extends Common {
-	protected static boolean areaPermitted(Area area, Player player) {
-		// Check that the player can set a bundle at this location
-		if (!area.hasBundlePermission(player)) {
-			player.sendMessage(Message.AreaPermError.get()
-					.replaceAll("\\{AreaType\\}", area.getOwners().toArray()[0].toString())
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return false;
-		}
-		return true;
-	}
-	
-	protected static boolean bundleEditPermitted(Player player) {
-			if (player.hasPermission("flags.command.bundle.edit")) {
-			return true;
-		}
-		player.sendMessage(Message.BundlePermError.get());
-		return false;
-	}
-	
-	protected static boolean get(CommandSender sender, CommandLocation location, String bundleName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
-		// Acquire the area
-		Area area = getArea(sender, location);
-		if(area == null) { return false; }
-		
-		// Acquire the bundle type requested in the command
-		Set<String> bundle = Bundle.getBundle(bundleName);
-		if (bundle == null || bundle.isEmpty()) { 
-			sender.sendMessage(Message.InvalidFlagError.get()
-					.replaceAll("\\{RequestedName\\}", bundleName)
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true; 
-		}
-
-		Iterator<String> iter = bundle.iterator();
+	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
 		String f;
 		Flag flag;
+		Iterator<String> iter;
+		Area area = getArea(player, location);
+		Set<String> bundle = Bundle.getBundle(bundleName);
+		
+		if(!Validate.notNull(player, area)
+				|| !Validate.isBundle(player, bundle, bundleName)
+				|| !Validate.isBundlePermitted(player, area)
+				|| !Validate.isBundlePermitted(player, bundleName))
+		{ return true; }
+
+		iter = bundle.iterator();
 		while(iter.hasNext()) {
 			f = iter.next();
         	flag = Flags.getRegistrar().getFlag(f);
         	if (flag == null) {
-        		sender.sendMessage("Invald bundle.yml entry: " + f);
+        		player.sendMessage("Invald bundle.yml entry: " + f);
         		continue;
         	}
-    		sender.sendMessage(Message.GetBundle.get()
+
+    		player.sendMessage(Message.GetBundle.get()
     				.replaceAll("\\{Bundle\\}", f)
     				.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false))));
 		}
 		return true;
 	}
 	
-	protected static boolean set(CommandSender sender, CommandLocation location, String bundleName, Boolean value) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-			return true;
-		}
-		
-		// Acquire the player
-		Player player = (Player)sender;
-		
-		// Acquire the area
-		Area area = getArea(sender, location);
-		if(area == null) { return false; }
-		if(!areaPermitted(area, player)) { return true; }
-		
-		// Acquire the bundle type requested in the command
-		Set<String> bundle = Bundle.getBundle(bundleName);
-		if (bundle == null || bundle.size() == 0) { 
-			sender.sendMessage(Message.InvalidFlagError.get()
-					.replaceAll("\\{RequestedName\\}", bundleName)
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true; 
-		}
-		
-		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundle." + bundleName)) {
-			sender.sendMessage(Message.FlagPermError.get()
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true;
-		}
-		
+	protected static boolean set(Player player, ECommandLocation location, String bundleName, Boolean value) {
 		boolean success = true;
-
-		// Set the flags
-        for (String f : bundle) {
-        	Flag flag = Flags.getRegistrar().getFlag(f);
-        	if (flag != null) {
-        		if(!area.setValue(flag, value, player)) {
-        			success = false;
-        		}
+		Flag flag;
+		String f;
+		Iterator<String> iter;
+		Area area = getArea(player, location);
+		Set<String> bundle = Bundle.getBundle(bundleName);
+		
+		if(!Validate.notNull(player, area)
+				|| !Validate.isBundle(player, bundle, bundleName)
+				|| !Validate.isBundlePermitted(player, area)
+				|| !Validate.isBundlePermitted(player, bundleName))
+		{ return true; }
+		
+		iter = bundle.iterator();
+		while(iter.hasNext()) {
+			f = iter.next();
+        	flag = Flags.getRegistrar().getFlag(f);
+        	if (flag == null) {
+            	success = false;
+            	player.sendMessage("Invald bundle.yml entry: " + f);
         		continue;
         	}
-        	success = false;
-        	sender.sendMessage("Invald bundle.yml entry: " + f);
+        	if(!area.setValue(flag, value, player)) { success = false; }
         }
         
-        if(success) {
-        	sender.sendMessage(Message.SetBundle.get()
-        			.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
-        			.replaceAll("\\{Bundle\\}", bundleName)
-        			.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
-        } else {
-        	sender.sendMessage(Message.SetMultipleFlagsError.get());
-        }
+		player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
+    			.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+    			.replaceAll("\\{Bundle\\}", bundleName)
+    			.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
         return true;
 	}
 	
-	protected static boolean remove(CommandSender sender, CommandLocation location, String bundleName) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Message.NoConsoleError.get());
-		}
-		
-		// Acquire the player
-		Player player = (Player)sender;
-		
-		// Acquire the area
-		Area area = getArea(sender, location);
-		if(area == null) { return false; }
-		if(!areaPermitted(area, player)) { return true; }
-		
-		// Acquire the bundle type requested in the command
-		Set<String> bundle = Bundle.getBundle(bundleName);
-		if (bundle == null || bundle.size() == 0) { 
-			sender.sendMessage(Message.InvalidFlagError.get()
-					.replaceAll("\\{RequestedName\\}", bundleName)
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true; 
-		}
-		
-		// Check that the player can set the bundle type at this location
-		if (!player.hasPermission("flags.bundle" + bundleName)) {
-			sender.sendMessage(Message.FlagPermError.get()
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true;
-		}
-		
+	protected static boolean remove(Player player, ECommandLocation location, String bundleName) {
 		boolean success = true;
+		String f;
+		Iterator<String> iter;
+		Flag flag;
+		Area area = getArea(player, location);
+		Set<String> bundle = Bundle.getBundle(bundleName);
 		
-		// Removing all flags
-		for (String f : bundle) {
-        	Flag flag = Flags.getRegistrar().getFlag(f);
-        	if (flag != null) {
-        		if (!area.setValue(flag, null, player)) {
-        			success = false;
-        		}
+		if(!Validate.notNull(player, area)
+				|| !Validate.isBundle(player, bundle, bundleName)
+				|| !Validate.isBundlePermitted(player, area)
+				|| !Validate.isBundlePermitted(player, bundleName))
+		{ return true; }
+		
+		iter = bundle.iterator();
+		while(iter.hasNext()) {
+			f = iter.next();
+        	flag = Flags.getRegistrar().getFlag(f);
+        	if (flag == null) {
+            	success = false;
+           		player.sendMessage("Invald bundle.yml entry: " + f);
         		continue;
         	}
-        	success = false;
-       		sender.sendMessage("Invald bundle.yml entry: " + f);
+    		if (!area.setValue(flag, null, player)) { success = false; }
 		}
 		
-		if (success) {
-			sender.sendMessage(Message.RemoveBundle.get()
-					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
-					.replaceAll("\\{Bundle\\}", bundleName));
-		} else {
-			sender.sendMessage(Message.RemoveAllFlagsError.get());
-		}
+		player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
+				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+				.replaceAll("\\{Bundle\\}", bundleName));
     	return true;
 	}
 	
 	protected static boolean add(CommandSender sender, String bundleName, Set<String> flags) {
-		if(sender instanceof Player && !bundleEditPermitted((Player)sender)){ return true; }
+		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
+		String f;
+		Flag flag;
+		Iterator<String> iter;
 		Set<String> bundle = Bundle.getBundle(bundleName);
-		if (bundle == null || bundle.size() == 0) { 
-			if(bundle == null) {
-				Permission perm = new Permission("flags.bundle." + bundleName, "Grants ability to use the bundle " + bundleName, PermissionDefault.FALSE);
-				perm.addParent("flags.bundle", true);
-				Bukkit.getServer().getPluginManager().addPermission(perm);
-			}
+		
+		if(bundle == null) {
+			Permission perm = new Permission("flags.bundle." + bundleName, 
+					"Grants ability to use the bundle " + bundleName, PermissionDefault.FALSE);
+			perm.addParent("flags.bundle", true);
+			Bukkit.getServer().getPluginManager().addPermission(perm);
+			
 			bundle = new HashSet<String>();
 		}
 		
-		for (String f : flags) {
-        	Flag flag = Flags.getRegistrar().getFlagIgnoreCase(f);
+		iter = flags.iterator();
+		while(iter.hasNext()) {
+			f = iter.next();
+			flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
         		return true;
@@ -211,44 +146,38 @@ abstract class BundleCmd extends Common {
 	}
 	
 	protected static boolean delete(CommandSender sender, String bundleName, Set<String> flags) {
-		if(sender instanceof Player && !bundleEditPermitted((Player)sender)){ return true; }
-		
-		Set<String> bundle = Bundle.getBundle(bundleName.toLowerCase());
-		if (bundle == null || bundle.size() == 0) { 
-			sender.sendMessage(Message.InvalidFlagError.get()
-					.replaceAll("\\{RequestedName\\}", bundleName)
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			return true;
-		}
+		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
 		boolean success = true;
-		for (String f : flags) {
-        	Flag flag = Flags.getRegistrar().getFlagIgnoreCase(f);
-        	if (flag != null) {
-        		if (!bundle.remove(flag.getName())) {
-        			success = false;
-        		}
+		String f;
+		Flag flag;
+		Iterator<String> iter;
+		Set<String> bundle = Bundle.getBundle(bundleName.toLowerCase());
+		
+		if(!Validate.isBundle(sender, bundle, bundleName)) { return true; }
+
+		iter = flags.iterator();
+		while(iter.hasNext()) {
+			f = iter.next();
+        	flag = Flags.getRegistrar().getFlagIgnoreCase(f);
+        	if (flag == null) {
+            	success = false;
         		continue;
         	}
-        	success = false;
+    		if (!bundle.remove(flag.getName())) { success = false; }
 		}
-		
 		Bundle.setBundle(bundleName, bundle);
 		
-		if (success) {
-			sender.sendMessage(Message.UpdateBundle.get()
-					.replaceAll("\\{Bundle\\}", bundleName));
-		} else {
-			sender.sendMessage(Message.RemoveAllFlagsError.get());
-		}
+		sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlags.get())
+				.replaceAll("\\{Bundle\\}", bundleName));
 		return true;
 	}
 	
 	protected static boolean erase(CommandSender sender, String bundleName) {
-		if(sender instanceof Player && !bundleEditPermitted((Player)sender)){ return true; }
+		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
-		Set<String> bundle = Bundle.getBundleNames();
-		if (bundle == null || bundle.size() == 0 || !bundle.contains(bundleName)) {
+		Set<String> bundles = Bundle.getBundleNames();
+		if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
 			sender.sendMessage(Message.EraseBundleError.get());
 			return true;
 		}

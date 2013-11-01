@@ -12,7 +12,7 @@ public enum Message {
 	NoConsoleError,	InvalidFlagError, InvalidTrustError, NoFlagFound,
 	SetTrustError, RemoveTrustError, RemoveAllFlagsError, SetMultipleFlagsError, AddBundleError,
 	FlagPermError,	AreaPermError, WorldPermError, NoAreaError, EraseBundleError, BundlePermError,
-	SubdivisionError, NoSystemError, PlayerFlagError,
+	PricePermError, SubdivisionError, NoSystemError, PlayerFlagError,
 	// Commands
 	SetFlag, GetFlag, RemoveFlag, InheritedFlag,
 	SetTrust, GetTrust, RemoveTrust,
