@@ -1,6 +1,7 @@
 package alshain01.Flags.commands;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -47,22 +48,26 @@ abstract class BundleCmd extends Common {
 		
 		// Acquire the bundle type requested in the command
 		Set<String> bundle = Bundle.getBundle(bundleName);
-		if (bundle == null || bundle.size() == 0) { 
+		if (bundle == null || bundle.isEmpty()) { 
 			sender.sendMessage(Message.InvalidFlagError.get()
 					.replaceAll("\\{RequestedName\\}", bundleName)
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			return true; 
 		}
 
-		for (String f : bundle) {
-        	Flag flag = Flags.getRegistrar().getFlag(f);
-        	if (flag != null) {
-        		sender.sendMessage(Message.GetBundle.get()
-        				.replaceAll("\\{Bundle\\}", f)
-        				.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false))));
+		Iterator<String> iter = bundle.iterator();
+		String f;
+		Flag flag;
+		while(iter.hasNext()) {
+			f = iter.next();
+        	flag = Flags.getRegistrar().getFlag(f);
+        	if (flag == null) {
+        		sender.sendMessage("Invald bundle.yml entry: " + f);
         		continue;
         	}
-        	sender.sendMessage("Invald bundle.yml entry: " + f);
+    		sender.sendMessage(Message.GetBundle.get()
+    				.replaceAll("\\{Bundle\\}", f)
+    				.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false))));
 		}
 		return true;
 	}
@@ -266,8 +271,7 @@ abstract class BundleCmd extends Common {
 		
 		int total = 1;
 		
-		//Get total pages
-		//1 header per page
+		//Get total pages: 1 header per page
 		//9 flags per page, except on the first which has a usage line and 8 flags
 		total = ((bundles.size() + 1) / 9);
 		if ((bundles.size() + 1) % 9 != 0) { 
