@@ -40,9 +40,7 @@ public enum BaseValue {
 	public boolean isSet() {
 		String message = Flags.getInstance().getConfig().getString("Flags.Economy.BaseValue");
 		
-		if (message.equalsIgnoreCase(this.toString())) {
-			return true;
-		}
+		if (message.equalsIgnoreCase(this.toString())) { return true; }
 		return false;
 	}
 }

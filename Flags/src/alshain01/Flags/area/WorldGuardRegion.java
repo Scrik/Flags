@@ -1,6 +1,5 @@
 package alshain01.Flags.area;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -28,9 +27,7 @@ public class WorldGuardRegion extends Area implements Removable {
 		else {
 			int currentPriority = -2147483648;
 			
-			Iterator<ProtectedRegion> iter = regionSet.iterator();
-			while(iter.hasNext()) {
-				ProtectedRegion region = iter.next();
+			for(ProtectedRegion region : regionSet) {
 				if(region.getPriority() >= currentPriority) {
 					this.region = region;
 					currentPriority = region.getPriority();

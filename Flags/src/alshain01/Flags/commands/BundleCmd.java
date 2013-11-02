@@ -1,7 +1,6 @@
 package alshain01.Flags.commands;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -18,9 +17,7 @@ import alshain01.Flags.area.Area;
 
 abstract class BundleCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
-		String f;
 		Flag flag;
-		Iterator<String> iter;
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
@@ -30,9 +27,7 @@ abstract class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 
-		iter = bundle.iterator();
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(String f : bundle) {
         	flag = Flags.getRegistrar().getFlag(f);
         	if (flag == null) {
         		player.sendMessage("Invald bundle.yml entry: " + f);
@@ -49,8 +44,6 @@ abstract class BundleCmd extends Common {
 	protected static boolean set(Player player, ECommandLocation location, String bundleName, Boolean value) {
 		boolean success = true;
 		Flag flag;
-		String f;
-		Iterator<String> iter;
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
@@ -60,9 +53,7 @@ abstract class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 		
-		iter = bundle.iterator();
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(String f : bundle) {
         	flag = Flags.getRegistrar().getFlag(f);
         	if (flag == null) {
             	success = false;
@@ -81,8 +72,6 @@ abstract class BundleCmd extends Common {
 	
 	protected static boolean remove(Player player, ECommandLocation location, String bundleName) {
 		boolean success = true;
-		String f;
-		Iterator<String> iter;
 		Flag flag;
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
@@ -93,9 +82,7 @@ abstract class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 		
-		iter = bundle.iterator();
-		while(iter.hasNext()) {
-			f = iter.next();
+		for (String f : bundle) {
         	flag = Flags.getRegistrar().getFlag(f);
         	if (flag == null) {
             	success = false;
@@ -113,10 +100,8 @@ abstract class BundleCmd extends Common {
 	
 	protected static boolean add(CommandSender sender, String bundleName, Set<String> flags) {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
-		
-		String f;
+	
 		Flag flag;
-		Iterator<String> iter;
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
 		if(bundle == null) {
@@ -128,9 +113,7 @@ abstract class BundleCmd extends Common {
 			bundle = new HashSet<String>();
 		}
 		
-		iter = flags.iterator();
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(String f : flags) {
 			flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
@@ -149,16 +132,12 @@ abstract class BundleCmd extends Common {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
 		boolean success = true;
-		String f;
 		Flag flag;
-		Iterator<String> iter;
 		Set<String> bundle = Bundle.getBundle(bundleName.toLowerCase());
 		
 		if(!Validate.isBundle(sender, bundle, bundleName)) { return true; }
 
-		iter = flags.iterator();
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(String f : bundle) {
         	flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
             	success = false;

@@ -84,7 +84,6 @@ public class Flags extends JavaPlugin{
 		saveDefaultConfig();
 		debug = getConfig().getBoolean("Flags.Debug");
 		
-		// Update script
 		updatePlugin();
 
 		// Create the specific implementation of DataStore
@@ -105,14 +104,13 @@ public class Flags extends JavaPlugin{
 		
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		if (currentSystem == LandSystem.NONE) {
-			getLogger().info("No system detected. Only world flags will be available.");
-		} else {
-			getLogger().info(currentSystem.getDisplayName() + " detected. Enabling integrated support.");
-		}
-		
+		getLogger().info(currentSystem == LandSystem.NONE ?
+			"No system detected. Only world flags will be available." :
+			currentSystem.getDisplayName() + " detected. Enabling integrated support.");
+				
 		// Check for older database and import as necessary.
-		if(currentSystem == LandSystem.GRIEF_PREVENTION && !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
+		if(currentSystem == LandSystem.GRIEF_PREVENTION 
+				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
 		}
 		
@@ -129,7 +127,6 @@ public class Flags extends JavaPlugin{
 		
 		// Schedule tasks to perform after server is running
 		new onServerEnabledTask().runTask(this);
-		
 		getLogger().info("Flags Has Been Enabled.");
 	}
 	
@@ -273,9 +270,7 @@ public class Flags extends JavaPlugin{
 	 */
 	private class onServerEnabledTask extends BukkitRunnable {
 		public void run() {
-			Iterator<String> iter = Bundle.getBundleNames().iterator();
-			while(iter.hasNext()) {
-				String b = iter.next();
+			for(String b : Bundle.getBundleNames()) {
 				Debug("Registering Bundle Permission:" + b);
 				Permission perm = new Permission("flags.bundle." + b, "Grants ability to use the bundle " + b, PermissionDefault.FALSE);
 				perm.addParent("flags.bundle", true);

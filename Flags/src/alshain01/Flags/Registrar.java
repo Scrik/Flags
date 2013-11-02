@@ -3,7 +3,6 @@ package alshain01.Flags;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -99,11 +98,7 @@ public class Registrar {
 	 * @return The flag requested or null if it does not exist.
 	 */
 	public Flag getFlagIgnoreCase(String flag) {
-		Iterator<Flag> iter = getFlags().iterator();
-		Flag f;
-		
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(Flag f : getFlags()) {
 			if(f.getName().equalsIgnoreCase(flag)) { return f; }
 		}
 		return null;
@@ -133,12 +128,9 @@ public class Registrar {
 	 * @return A list of names of all the flags registered.
 	 */
 	public Set<String> getFlagGroups() {
-		Iterator<Flag> iter = flagStore.values().iterator();
 		Set<String> groups = new HashSet<String>();
-		Flag flag;		
 
-		while(iter.hasNext()) {
-			flag = iter.next();
+		for(Flag flag : flagStore.values()) {
 			if(!groups.contains(flag.getGroup())) {
 				groups.add(flag.getGroup());
 			}

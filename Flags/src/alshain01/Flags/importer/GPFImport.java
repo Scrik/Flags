@@ -30,9 +30,7 @@ public final class GPFImport {
 				importData(world, "world");
 			}
 			File gpFolder = new File(dataFolder);
-			for(File file : gpFolder.listFiles()) {
-				file.delete();
-			}
+			for(File file : gpFolder.listFiles()) { file.delete(); }
 			new File(dataFolder).delete();
 		}
 	}
@@ -124,10 +122,7 @@ public final class GPFImport {
 		if(listData == null) { return null; }
 		
 		List<String> stringData = new ArrayList<String>();
-		
-		for (int o = 0; o < listData.size(); o++) {
-			stringData.add(((String)listData.get(o)).toLowerCase());
-		}
+		for (Object o : listData) { stringData.add(((String)o).toLowerCase()); }
 		return stringData;
 	}
 

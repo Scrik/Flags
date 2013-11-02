@@ -1,7 +1,6 @@
 package alshain01.Flags;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -173,23 +172,16 @@ public final class Director {
 		
 		if(getSystem() == LandSystem.WORLDGUARD) {
 			Set<String> worlds = Flags.getDataStore().readKeys("WorldGuardData");
-			Set<String> areas = new HashSet<String>();
+			Set<String> wgAreas = new HashSet<String>();
 			Set<String> localAreas;
-			String world, localArea;
 			
-			Iterator<String> areaIter, worldIter = worlds.iterator();
-			while(worldIter.hasNext()) {
-				world = worldIter.next();
+			for(String world : worlds) {
 				localAreas = Flags.getDataStore().readKeys("WorldGuardData." + world);
-				
-				areaIter = localAreas.iterator();
-				while(areaIter.hasNext()) {
-					localArea = areaIter.next();
-					areas.add(world + "." + localArea);
+				for(String area : localAreas) {
+					wgAreas.add(world + "." + area);
 				}
 			}
-			
-			return areas;
+			return wgAreas;
 		}
 		
 		if(getSystem() == LandSystem.INFINITEPLOTS) {
@@ -338,9 +330,8 @@ public final class Director {
 	private static class FactionsCleaner implements Listener {
 		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
-			Iterator<org.bukkit.World> iter = Bukkit.getWorlds().iterator();
-			while(iter.hasNext()) {
-				new FactionsTerritory(iter.next().getName(), e.getFaction().getId()).remove();
+			for(org.bukkit.World world : Bukkit.getWorlds()) {
+				new FactionsTerritory(world.getName(), e.getFaction().getId()).remove();
 			}
 		}
 	}

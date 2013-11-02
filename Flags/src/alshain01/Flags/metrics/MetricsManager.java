@@ -1,7 +1,6 @@
 package alshain01.Flags.metrics;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import alshain01.Flags.Director;
 import alshain01.Flags.Flags;
@@ -29,10 +28,7 @@ public class MetricsManager {
 		    
 		    // Flag groups installed
 		    Graph groupGraph = metrics.createGraph("Flag Groups");
-		    String group;
-		    Iterator<String> iter = Flags.getRegistrar().getFlagGroups().iterator();
-		    while(iter.hasNext()) {
-		    	group = iter.next();
+		    for(String group : Flags.getRegistrar().getFlagGroups()) {
 		    	groupGraph.addPlotter(new Metrics.Plotter(group) {
 		            @Override
 		            public int getValue() {

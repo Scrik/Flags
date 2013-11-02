@@ -3,7 +3,6 @@ package alshain01.Flags.data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -66,10 +65,7 @@ public class YamlDataStore implements DataStore {
 	@Override
 	public void write(String path, Set<String> set) {
 		List<String> list = new ArrayList<String>();
-		Iterator<String> iter = set.iterator();
-		while(iter.hasNext()) {
-			list.add(iter.next());
-		}
+		for(String s : set) { list.add(s); }
 		
 		CustomYML cYml = getYml(path);
 		cYml.getConfig().set(path, list);
@@ -89,10 +85,7 @@ public class YamlDataStore implements DataStore {
 		if(listData == null) { return null; }
 		
 		List<String> stringData = new ArrayList<String>();
-		Iterator<?> iter = listData.iterator();
-		while(iter.hasNext()) {
-			stringData.add((String)iter.next());
-		}
+		for(Object o : listData) { stringData.add((String)o); }
 		return stringData;
 	}
 	
@@ -102,20 +95,14 @@ public class YamlDataStore implements DataStore {
 		if(setData == null) { return null; }
 		
 		Set<String> stringData = new HashSet<String>();
-		Iterator<?> iter = setData.iterator();
-		while(iter.hasNext()) {
-			stringData.add((String)iter.next());
-		}
+		for(Object o : setData) { stringData.add((String)o); }
 		return stringData;
 	}
 
 	@Override
 	public Set<String> readKeys(String path) {
-		if (read(path) != null) {
-			return getYml(path).getConfig().getConfigurationSection(path).getKeys(false);
-		} else {
-			return new HashSet<String>();
-		}
+		return read(path) != null 
+				? getYml(path).getConfig().getConfigurationSection(path).getKeys(false) : new HashSet<String>();
 	}
 
 	@Override

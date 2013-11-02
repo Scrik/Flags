@@ -3,7 +3,6 @@ package alshain01.Flags.commands;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -42,23 +41,17 @@ abstract class FlagCmd extends Common {
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));	
 		boolean first = true; // Governs whether we insert a comma or not (true means no)
 		Boolean value;
-		Flag f;
 		Area defaultArea = new Default(player.getWorld());
-		Iterator<Flag> iter = Flags.getRegistrar().getFlags().iterator();
 		
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(Flag f : Flags.getRegistrar().getFlags()) {
 			value = area.getValue(f, true);
 			
 			// Output the flag name
 			if (value != null) {
 				if ((area instanceof Default && value != f.getDefault()) 
 						|| (!(area instanceof Default) && value != defaultArea.getValue(f, false))){
-					if (!first) {
-						message.append(", ");
-					} else {
-						first = false;
-					}
+					if (!first) { message.append(", ");	} 
+					else { first = false; }
 					message.append(f.getName());
 				}
 			}
@@ -109,10 +102,7 @@ abstract class FlagCmd extends Common {
 		
 		// Removing all flags if the player has permission
 		boolean success = true;
-		Iterator<Flag> iter = Flags.getRegistrar().getFlags().iterator();
-		Flag f;
-		while(iter.hasNext()) {
-			f = iter.next();
+		for(Flag f : Flags.getRegistrar().getFlags()) {
 			if(area.getValue(f, true) != null) {
 				if (!player.hasPermission(f.getPermission()) || !area.setValue(f, null, player)) {
 					success = false;
@@ -143,10 +133,7 @@ abstract class FlagCmd extends Common {
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName()));
 		
-		Iterator<String> iter = trustList.iterator();
-		String p;
-		while(iter.hasNext()) {
-			p = iter.next();
+		for (String p : trustList) {
 			if (!first) { message.append(", ");	} 
 			else { first = false; }
 			message.append(p);
@@ -168,10 +155,7 @@ abstract class FlagCmd extends Common {
 			{ return true; }
 	
 		boolean success = true;
-		String p;
-		Iterator<String> iter = playerList.iterator();
-		while(iter.hasNext()) {
-			p = iter.next();
+		for(String p : playerList) {
 			if(!area.setTrust(flag, p, true, player)) {	success = false; }
 		}
 		
@@ -183,8 +167,6 @@ abstract class FlagCmd extends Common {
 	
 	protected static boolean distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
 		boolean success = true;
-		String p;
-		Iterator<String> iter;
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
@@ -196,14 +178,7 @@ abstract class FlagCmd extends Common {
 		Set<String> trustList = area.getTrustList(flag);
 		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return true; }
 		
-		if (playerList.size() == 0) {
-			iter = trustList.iterator();		// Remove all players
-		} else {
-			iter = playerList.iterator();		// Remove 1 or more players
-		}
-		
-		while(iter.hasNext()) {
-			p = iter.next();
+		for(String p : playerList.size() != 0 ? playerList : trustList) {
 			if (area.getOwners().contains(p)) { continue; }
 			if (!area.setTrust(flag, p, false, player)) { success = false; }
 		}
