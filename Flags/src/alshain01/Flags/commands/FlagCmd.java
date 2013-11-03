@@ -25,7 +25,7 @@ abstract class FlagCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
-		if(!Validate.notNull(player, area)) { return false; };
+		if(!Validate.isArea(player, area)) { return false; };
 
 		// Return the single flag requested
 		if (flag != null) {
@@ -65,7 +65,7 @@ abstract class FlagCmd extends Common {
 	protected static boolean set(Player player, ECommandLocation location, Flag flag, Boolean value) {
 		// Acquire the area
 		Area area = getArea(player, location);
-		if(!Validate.notNull(player, area)
+		if(!Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag) 
 				|| !Validate.isPermitted(player, area))
 			{ return true; }
@@ -86,7 +86,7 @@ abstract class FlagCmd extends Common {
 	protected static boolean remove(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
-		if(!Validate.notNull(player, area) || !Validate.isPermitted(player, area)) { return true; }
+		if(!Validate.isArea(player, area) || !Validate.isPermitted(player, area)) { return true; }
 		
 		// Removing single flag type
 		if (flag != null) {
@@ -125,7 +125,7 @@ abstract class FlagCmd extends Common {
 		Set<String> trustList = area.getTrustList(flag);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
-				|| !Validate.notNull(player, area)
+				|| !Validate.isArea(player, area)
 				|| !Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return true; }
 
 		// List all set flags
@@ -149,7 +149,7 @@ abstract class FlagCmd extends Common {
 		
 		Area area = getArea(player, location);
 		if(!Validate.isPlayerFlag(player, flag) 
-				|| !Validate.notNull(player, area)
+				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag)
 				|| !Validate.isPermitted(player, area))
 			{ return true; }
@@ -170,7 +170,7 @@ abstract class FlagCmd extends Common {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
-				|| !Validate.notNull(player, area)
+				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag)
 				|| !Validate.isPermitted(player, area))
 			{ return true; }
@@ -213,7 +213,7 @@ abstract class FlagCmd extends Common {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
-				|| !Validate.notNull(player, area)
+				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, area)
 				|| !Validate.isPermitted(player, flag))
 		{ return true; }
@@ -228,7 +228,7 @@ abstract class FlagCmd extends Common {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
-				|| !Validate.notNull(player, area)
+				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, area)
 				|| !Validate.isPermitted(player, flag))
 		{ return true; }
@@ -245,7 +245,7 @@ abstract class FlagCmd extends Common {
 	 */
 	protected static boolean inherit(Player player, Boolean value) {
 		Area area = getArea(player, ECommandLocation.AREA);
-		if(!Validate.notNull(player, area) || !Validate.isSubdivision(player, area)) { return true; }
+		if(!Validate.isArea(player, area) || !Validate.isSubdivision(player, area)) { return true; }
 	
 		((Subdivision)area).setInherited(value);
 		player.sendMessage(Message.SetInherited.get()

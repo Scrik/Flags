@@ -21,7 +21,7 @@ abstract class BundleCmd extends Common {
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
-		if(!Validate.notNull(player, area)
+		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))
@@ -47,7 +47,7 @@ abstract class BundleCmd extends Common {
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
-		if(!Validate.notNull(player, area)
+		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))
@@ -76,7 +76,7 @@ abstract class BundleCmd extends Common {
 		Area area = getArea(player, location);
 		Set<String> bundle = Bundle.getBundle(bundleName);
 		
-		if(!Validate.notNull(player, area)
+		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))

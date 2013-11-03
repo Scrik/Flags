@@ -16,12 +16,10 @@ import alshain01.Flags.area.World;
 public class Validate {
 	private Validate() {}
 	
-	protected static boolean notNull(CommandSender cs, Object o) {
-		if(o == null) {
-			if (o instanceof Area) {
-				cs.sendMessage(Message.NoAreaError.get()
-						.replaceAll("\\{AreaType\\}", Director.getSystemAreaType().toLowerCase()));
-			}
+	protected static boolean isArea(CommandSender cs, Area a) {
+		if(a == null || !a.isArea()) {
+			cs.sendMessage(Message.NoAreaError.get()
+					.replaceAll("\\{AreaType\\}", Director.getSystemAreaType().toLowerCase()));
 			return false;
 		}
 		return true;
@@ -88,7 +86,7 @@ public class Validate {
 			}
 			return false;
 		}
-		return true;
+		return false;
 	}
 	
 	protected static boolean isBundlePermitted(Permissible p, Object o) {
@@ -113,7 +111,7 @@ public class Validate {
 			}
 			return false;
 		}
-		return true;
+		return false;
 	}
 	
 	protected static boolean canEditBundle(Permissible p) {
