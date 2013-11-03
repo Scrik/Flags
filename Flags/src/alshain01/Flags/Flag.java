@@ -1,5 +1,8 @@
 package alshain01.Flags;	
 
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import alshain01.Flags.economy.PurchaseType;
 
 /**
@@ -116,8 +119,10 @@ public class Flag {
 	 * 
 	 * @return The permission string (flags.flagtype.flagname)
 	 */
-	public String getPermission() {
-		return "flags.flag." + name;
+	public Permission getPermission() {
+		Permission perm = new Permission("flags.flag." + name, "Grants ability to use the flag " + name, PermissionDefault.FALSE);
+		perm.addParent("flags.flag", true);
+		return perm;
 	}
 	
     /**
@@ -125,8 +130,10 @@ public class Flag {
      * 
      * @return The bypass permission string (flags.bypass.flagname)
 	 */
-	public String getBypassPermission() {
-		return "flags.bypass." + name;
+	public Permission getBypassPermission() {
+		Permission perm = new Permission("flags.bypass." + name, "Grants ability to bypass the effects of the flag " + name, PermissionDefault.FALSE);
+		perm.addParent("flags.bypass", true);
+		return perm;
 	}
 	
     /**

@@ -15,7 +15,7 @@ import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
 public class PlotMePlot extends Area implements Removable {
-	protected final static String dataHeader = "PlotMeData";
+	protected final static String dataHeader = "PlotMeData.";
 	protected Plot plot = null;
 	
 	// ******************************
@@ -74,10 +74,13 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(!(a instanceof PlotMePlot)) { return 0; }
-		return super.compareTo(a);
+		return (a instanceof PlotMePlot && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

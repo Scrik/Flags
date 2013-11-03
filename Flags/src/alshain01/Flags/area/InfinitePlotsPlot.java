@@ -15,7 +15,7 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
 public class InfinitePlotsPlot extends Area implements Removable {
-	protected final static String dataHeader = "InfinitePlotsData";
+	protected final static String dataHeader = "InfinitePlotsData.";
 	protected Plot plot = null;
 	
 	// ******************************
@@ -76,10 +76,13 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(!(a instanceof InfinitePlotsPlot)) { return 0; }
-		return super.compareTo(a);
+		return (a instanceof InfinitePlotsPlot && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

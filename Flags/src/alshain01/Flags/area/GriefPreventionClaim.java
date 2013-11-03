@@ -76,10 +76,13 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(!(a instanceof GriefPreventionClaim)) { return 0; }
-		return super.compareTo(a);
+		return (a instanceof GriefPreventionClaim && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

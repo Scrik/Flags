@@ -69,12 +69,7 @@ public class Command {
 		if(command.requiresFlag != null) {
 			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
 				flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
-				if(flag == null) {
-					sender.sendMessage(Message.InvalidFlagError.get()
-							.replaceAll("\\{RequestedName\\}", args[2])
-							.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-					return true;
-				}
+				if (!Validate.isFlag(sender, flag, args[2])) { return true; }
 			}
 		}
 

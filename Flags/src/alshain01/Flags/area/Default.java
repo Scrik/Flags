@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
@@ -76,13 +76,13 @@ public class Default extends Area {
 	}
 	
 	@Override
-	public boolean hasPermission(Player player) {
-		return player.hasPermission("flags.area.flag.default");
+	public boolean hasPermission(Permissible p) {
+		return p.hasPermission("flags.area.flag.default");
 	}
 
 	@Override
-	public boolean hasBundlePermission(Player player) {
-		return player.hasPermission("flags.area.bundle.default");
+	public boolean hasBundlePermission(Permissible p) {
+		return p.hasPermission("flags.area.bundle.default");
 	}
 
 	@Override
@@ -125,9 +125,12 @@ public class Default extends Area {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(!(a instanceof Default)) { return 0; }
-		return super.compareTo(a);
+		return (a instanceof Default && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 }

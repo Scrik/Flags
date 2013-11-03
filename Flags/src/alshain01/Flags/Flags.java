@@ -122,6 +122,7 @@ public class Flags extends JavaPlugin{
 		
 		// Load Border Patrol
 		if (getConfig().getBoolean("Flags.BorderPatrol.Enable")) {
+			Debug("Registering for PlayerMoveEvent");
 			getServer().getPluginManager().registerEvents(new BorderPatrol(), this);
 		}
 		

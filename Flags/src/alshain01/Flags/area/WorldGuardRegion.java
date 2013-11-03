@@ -77,10 +77,13 @@ public class WorldGuardRegion extends Area implements Removable {
 	// ******************************
 	// Comparable Interface
 	// ******************************
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * @return The value of the comparison.
+	 */
 	@Override
 	public int compareTo(Area a) {
-		if(!(a instanceof WorldGuardRegion)) { return 0; }
-		return super.compareTo(a);
+		return (a instanceof WorldGuardRegion && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
 	}
 	
 	// ******************************

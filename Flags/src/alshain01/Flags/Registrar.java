@@ -7,8 +7,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 
 import alshain01.Flags.Flag;
 
@@ -30,10 +28,7 @@ public class Registrar {
 		if(flagStore.containsKey(name)) { return null; }
 		Flag flag = new Flag(name, description, def, group, false, null, null);
 		
-		//Add the permission for the flag to the server
-		Permission perm = new Permission(flag.getPermission(), "Grants ability to use the flag " + flag.getName(), PermissionDefault.FALSE);
-		perm.addParent("flags.flag", true);
-		Bukkit.getServer().getPluginManager().addPermission(perm);
+		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
 		
 		flagStore.put(name, flag);
 		return flag;
@@ -53,16 +48,9 @@ public class Registrar {
 	public Flag register(String name, String description, boolean def, String group, String areaMessage, String worldMessage) {
 		if(flagStore.containsKey(name)) { return null; }
 		Flag flag = new Flag(name, description, def, group, true, areaMessage, worldMessage);
-		
-		//Add the permission for the flag to the server
-		Permission perm = new Permission(flag.getPermission(), "Grants ability to use the flag " + flag.getName(), PermissionDefault.FALSE);
-		perm.addParent("flags.flag", true);
-		Bukkit.getServer().getPluginManager().addPermission(perm);
-		
-		//Add the permission for the flag bypass to the server
-		perm = new Permission(flag.getBypassPermission(), "Grants ability to bypass the effects of the flag " + flag.getName(), PermissionDefault.FALSE);
-		perm.addParent("flags.bypass", true);
-		Bukkit.getServer().getPluginManager().addPermission(perm);
+
+		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
+		Bukkit.getServer().getPluginManager().addPermission(flag.getBypassPermission());
 		
 		flagStore.put(name, flag);
 		return flag;

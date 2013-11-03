@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import alshain01.Flags.area.Area;
-import alshain01.Flags.area.Subdivision;
 import alshain01.Flags.events.PlayerChangedAreaEvent;
 
 /**
@@ -51,7 +50,6 @@ class BorderPatrol implements Listener {
 	@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private static void onPlayerJoin(PlayerJoinEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
-
 			moveStore.remove(event.getPlayer().getName());
 		}
 	}
@@ -98,23 +96,15 @@ class BorderPatrol implements Listener {
 				Area areaFrom = Director.getAreaAt(playerPrevMove.location);
 				
 				// If they are the same area, don't bother.
-				int comparison = areaFrom.compareTo(areaTo);
-				//TODO Still not working right
-				if (comparison != 0) {
-					if (comparison > 1 
-							// We can safely assume instanceof Subdivison if the comparison is 1 or -1
-						|| (comparison == -1 && !((Subdivision)areaFrom).isInherited())
-						|| (comparison == 1 && !((Subdivision)areaTo).isInherited())) {
-						
-						playerPrevMove.ignore = false;
-		
-						// Call the event
-						PlayerChangedAreaEvent event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
-						Bukkit.getServer().getPluginManager().callEvent(event);
-						
-						if(event.isCancelled()) {
-							e.getPlayer().teleport(playerPrevMove.location, TeleportCause.PLUGIN);
-						}
+				if (areaFrom.compareTo(areaTo) != 0) {
+					playerPrevMove.ignore = false;
+	
+					// Call the event
+					PlayerChangedAreaEvent event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					
+					if(event.isCancelled()) {
+						e.getPlayer().teleport(playerPrevMove.location, TeleportCause.PLUGIN);
 					}
 				}
 				

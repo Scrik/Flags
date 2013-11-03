@@ -3,7 +3,7 @@ package alshain01.Flags.commands;
 import java.util.Set;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Director;
 import alshain01.Flags.Flag;
@@ -49,7 +49,15 @@ public class Validate {
 				.replaceAll("\\{Flag\\}", f));
 		return false;
 	}
-		
+
+	protected static boolean isFlag(CommandSender cs, Flag f, String n) {
+		if(f != null) { return true; }
+		cs.sendMessage(Message.InvalidFlagError.get()
+				.replaceAll("\\{RequestedName\\}", n)
+				.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+		return false;
+	}
+	
 	protected static boolean isBundle(CommandSender cs, Set<String> b, String n) {
 		if (b != null && !b.isEmpty()) { return true; }
 		cs.sendMessage(Message.InvalidFlagError.get()
@@ -58,57 +66,69 @@ public class Validate {
 		return false; 
 	}
 	
-	protected static boolean isPermitted(Player p, Object o) {
+	protected static boolean isPermitted(Permissible p, Object o) {
 		if(o instanceof Flag) {
 			if(p.hasPermission(((Flag)o).getPermission())) { return true; }
-			p.sendMessage(Message.FlagPermError.get()
-					.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+			if(p instanceof CommandSender) {
+				((CommandSender)p).sendMessage(Message.FlagPermError.get()
+						.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+			}
 			return false;
 		}
 		
 		if(o instanceof Area) {
 			Area area = (Area)o;
 			if (area.hasPermission(p)) { return true; }
-			p.sendMessage(((area instanceof World || area instanceof Default) 
-					? Message.WorldPermError.get() : Message.AreaPermError.get())
-						.replaceAll("\\{AreaType\\}", area.getAreaType())
-						.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
-						.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+			if(p instanceof CommandSender) {
+				((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default) 
+						? Message.WorldPermError.get() : Message.AreaPermError.get())
+							.replaceAll("\\{AreaType\\}", area.getAreaType())
+							.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
+							.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
+			}
 			return false;
 		}
 		return true;
 	}
 	
-	protected static boolean isBundlePermitted(Player p, Object o) {
+	protected static boolean isBundlePermitted(Permissible p, Object o) {
 		if(o instanceof String) {
 			if(p.hasPermission("flags.bundle." + (String)o)) { return true; }
-			p.sendMessage(Message.FlagPermError.get()
-					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			if(p instanceof CommandSender) {
+				((CommandSender)p).sendMessage(Message.FlagPermError.get()
+						.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			}
 			return false;
 		}
 		
 		if(o instanceof Area) {
 			Area area = (Area)o;
 			if (area.hasBundlePermission(p)) { return true; }
-			p.sendMessage(((area instanceof World || area instanceof Default) 
-					? Message.WorldPermError.get() : Message.AreaPermError.get())
-						.replaceAll("\\{AreaType\\}", area.getAreaType())
-						.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
-						.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			if(p instanceof CommandSender) {
+				((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default)
+						? Message.WorldPermError.get() : Message.AreaPermError.get())
+							.replaceAll("\\{AreaType\\}", area.getAreaType())
+							.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
+							.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+			}
 			return false;
 		}
 		return true;
 	}
 	
-	protected static boolean canEditBundle(Player player) {
-		if (player.hasPermission("flags.command.bundle.edit")) { return true; }
-		player.sendMessage(Message.BundlePermError.get());
+	protected static boolean canEditBundle(Permissible p) {
+		if (p.hasPermission("flags.command.bundle.edit")) { return true; }
+		if(p instanceof CommandSender) {
+			((CommandSender)p).sendMessage(Message.BundlePermError.get());
+		}
 		return false;
 	}
 	
-	protected static boolean canEditPrice(Player player) {
-		if (player.hasPermission("flags.command.flag.charge")) { return true; }
-		player.sendMessage(Message.PricePermError.get());
+	protected static boolean canEditPrice(Permissible p) {
+		if (p.hasPermission("flags.command.flag.charge")) { return true; }
+		if(p instanceof CommandSender) {
+			((CommandSender)p).sendMessage(Message.PricePermError.get());
+		}
 		return false;
 	}
 }

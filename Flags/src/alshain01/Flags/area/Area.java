@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
@@ -69,46 +71,46 @@ public abstract class Area implements Comparable<Area> {
 	/**
 	 * Checks the players permission to set flags at this location.
 	 * 
-	 * @param player The player to check.
+	 * @param p The player to check.
 	 * @return true if the player has permissions.
 	 */
-	public boolean hasPermission(Player player) {
+	public boolean hasPermission(Permissible p) {
 		if(!isArea()) { return false; }
 		
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.command.flag.set")) { return true; }
+		if (p instanceof HumanEntity && getOwners().contains(((HumanEntity)p).getName())) {
+			if (p.hasPermission("flags.command.flag.set")) { return true; }
 			return false;
 		}
 		
 		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
-			if (player.hasPermission("flags.area.flag.admin")) {	return true; }
+			if (p.hasPermission("flags.area.flag.admin")) {	return true; }
 			return false;
 		}
 		
-		if (player.hasPermission("flags.area.flag.others")) { return true; }
+		if (p.hasPermission("flags.area.flag.others")) { return true; }
 		return false;
 	}
 	
 	/**
 	 * Checks the players permission to set bundles at this location
 	 * 
-	 * @param player The player to check.
+	 * @param p The player to check.
 	 * @return true if the player has permissions.
 	 */
-	public boolean hasBundlePermission(Player player) {
+	public boolean hasBundlePermission(Permissible p) {
 		if(!isArea()) { return false; }
 		
-		if (getOwners().contains(player.getName())) {
-			if (player.hasPermission("flags.command.bundle.set")) {	return true; }
+		if (p instanceof HumanEntity &&  getOwners().contains(((HumanEntity)p).getName())) {
+			if (p.hasPermission("flags.command.bundle.set")) {	return true; }
 			return false;
 		}
 		
 		if(this instanceof Administrator && ((Administrator)this).isAdminArea()) {
-			if (player.hasPermission("flags.area.bundle.admin")) { return true; }
+			if (p.hasPermission("flags.area.bundle.admin")) { return true; }
 			return false;
 		}
 		
-		if (player.hasPermission("flags.area.bundle.others")) { return true; }
+		if (p.hasPermission("flags.area.bundle.others")) { return true; }
 		return false;
 	}
 	
@@ -353,14 +355,6 @@ public abstract class Area implements Comparable<Area> {
 		if(message != null) { message = message.replaceAll("§", "&"); }
 		Flags.getDataStore().write(getDataPath() + "." + flag.getName() + messageFooter, message);
 		return true;
-	}
-	
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * @return The value of the comparison.
-	 */
-	public int compareTo(Area a) {
-		return (a.getSystemID().equalsIgnoreCase(this.getSystemID())) ? 0 : 3;
 	}
 	
 	/*
