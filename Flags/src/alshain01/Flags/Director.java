@@ -123,7 +123,7 @@ public final class Director {
 	 * GriefPrevention = ID number
 	 * WorldGuard = worldname.regionname
 	 * Residence = Residence name OR ResidenceName.SubzoneName
-	 * InifitePlots = worldname.PlotLoc (X:Z)
+	 * InifitePlots = worldname.PlotLoc (X;Z)
 	 * Factions = worldname.FactionID
 	 * PlotMe = worldname.PlotID
 	 * 

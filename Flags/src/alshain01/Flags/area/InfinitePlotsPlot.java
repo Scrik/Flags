@@ -35,7 +35,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 * @param ID The Plot Location (not Bukkit location)
 	 */
 	public InfinitePlotsPlot(String worldName, String plotLocation) {
-		String[] plotLocData = plotLocation.split(":");
+		String[] plotLocData = plotLocation.split(";");
 		this.plot = InfinitePlots.getInstance().getPlotManager()
 				.getPlotAt(new PlotLocation(worldName, Integer.valueOf(plotLocData[0]), Integer.valueOf(plotLocData[1])));
 	}
@@ -50,7 +50,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public String getSystemID() {
-		return (isArea()) ? plot.getLocation().getX() + ":" + plot.getLocation().getZ() : null;
+		return (isArea()) ? plot.getLocation().getX() + ";" + plot.getLocation().getZ() : null;
 	}
 
 	@Override
