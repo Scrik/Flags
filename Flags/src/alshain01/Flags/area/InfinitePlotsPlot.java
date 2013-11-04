@@ -3,6 +3,7 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +17,9 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
 public class InfinitePlotsPlot extends Area implements Removable {
 	protected final static String dataHeader = "InfinitePlotsData.";
-	protected Plot plot = null;
+	int plotX, plotZ;
+	UUID worldUID = null;
+	//protected Plot plot = null;
 	
 	// ******************************
 	// Constructors
@@ -26,7 +29,10 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 * @param location The Bukkit location
 	 */
 	public InfinitePlotsPlot(Location location) {
-		this.plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
+		Plot plot = InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location));
+		plotX = plot.getLocation().getX();
+		plotZ = plot.getLocation().getZ();
+		worldUID = plot.getLocation().getWorld().getUID();
 	}
 	
 	/**
@@ -34,10 +40,16 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 * @param worldName The Bukkit world name
 	 * @param ID The Plot Location (not Bukkit location)
 	 */
-	public InfinitePlotsPlot(String worldName, String plotLocation) {
-		String[] plotLocData = plotLocation.split(";");
-		this.plot = InfinitePlots.getInstance().getPlotManager()
-				.getPlotAt(new PlotLocation(worldName, Integer.valueOf(plotLocData[0]), Integer.valueOf(plotLocData[1])));
+	public InfinitePlotsPlot(World world, int X, int Z) {
+		plotX = X;
+		plotZ = Z;
+		worldUID = world.getUID();
+		//this.plot = InfinitePlots.getInstance().getPlotManager()
+		//		.getPlotAt(new PlotLocation(worldName, Integer.valueOf(plotLocData[0]), Integer.valueOf(plotLocData[1])));
+	}
+	
+	public Plot getPlot() {
+		return InfinitePlots.getInstance().getPlotManager().getPlotAt(new PlotLocation(Bukkit.getWorld(worldUID).getName(), plotX, plotZ));
 	}
 	
 	// ******************************
@@ -45,12 +57,12 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + plot.getLocation().getWorldName() + "." + getSystemID();
+		return dataHeader + Bukkit.getWorld(worldUID).getName() + "." + getSystemID();
 	}
 
 	@Override
 	public String getSystemID() {
-		return (isArea()) ? plot.getLocation().getX() + ";" + plot.getLocation().getZ() : null;
+		return (isArea()) ? plotX + ";" + plotZ : null;
 	}
 
 	@Override
@@ -60,17 +72,20 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(plot.getAdmin()));
+		return new HashSet<String>(Arrays.asList(getPlot().getAdmin()));
 	}
 
 	@Override
 	public World getWorld() {
-		return Bukkit.getServer().getWorld(plot.getLocation().getWorldName());
+		return Bukkit.getServer().getWorld(Bukkit.getWorld(worldUID).getName());
 	}
 
 	@Override
 	public boolean isArea() {
-		return plot != null && plot.getAdmin() != null;
+		return worldUID != null
+				&& getPlot() != null
+				&& getPlot().getAdmin() != null 
+				&& getPlot().getAdmin().isEmpty();
 	}
 	
 	// ******************************

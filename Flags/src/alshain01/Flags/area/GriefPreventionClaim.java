@@ -13,7 +13,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
 	protected final static String dataHeader = "GriefPreventionData.";
-	protected Claim claim = null;
+	protected long claimID;
 	
 	// ******************************
 	// Constructors
@@ -23,7 +23,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	 * @param location The Bukkit location
 	 */
 	public GriefPreventionClaim(Location location) {
-		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+		this.claimID = GriefPrevention.instance.dataStore.getClaimAt(location, false, null).getID();
 	}
 
 	/**
@@ -31,7 +31,11 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	 * @param ID The claim ID
 	 */
 	public GriefPreventionClaim(long ID) {
-		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
+		this.claimID = ID;
+	}
+	
+	public Claim getClaim() {
+		return GriefPrevention.instance.dataStore.getClaim(claimID);
 	}
 	
 	// ******************************
@@ -44,10 +48,10 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	@Override
 	public String getSystemID() {
-		if(isArea() && claim.parent != null) {
-			return String.valueOf(claim.parent.getID());
+		if(isArea() && getClaim().parent != null) {
+			return String.valueOf(getClaim().parent.getID());
 		} else if(isArea()) {
-			return String.valueOf(claim.getID());
+			return String.valueOf(getClaim().getID());
 		} else {
 			return null;
 		}
@@ -60,17 +64,17 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
+		return new HashSet<String>(Arrays.asList(getClaim().getOwnerName()));
 	}
 	
 	@Override
 	public org.bukkit.World getWorld() {
-		return claim.getGreaterBoundaryCorner().getWorld();
+		return getClaim().getGreaterBoundaryCorner().getWorld();
 	}
 	
 	@Override
 	public boolean isArea() {
-		return claim != null;
+		return getClaim() != null;
 	}
     
 	// ******************************
@@ -98,7 +102,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	@Override
 	public boolean isUnderSiege() {
-		return !(claim == null || claim.siegeData == null);
+		return !(getClaim() == null || getClaim().siegeData == null);
 	}
 
 	// ******************************
@@ -106,7 +110,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	// ******************************
 	@Override
 	public boolean isAdminArea() {
-		return claim.isAdminClaim();
+		return getClaim().isAdminClaim();
 	}
 }
 

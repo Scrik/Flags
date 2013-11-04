@@ -3,6 +3,7 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +17,9 @@ import com.worldcretornica.plotme.PlotManager;
 
 public class PlotMePlot extends Area implements Removable {
 	protected final static String dataHeader = "PlotMeData.";
-	protected Plot plot = null;
+	protected String plotID = null;
+	protected UUID worldUID = null;
+	//protected Plot plot = null;
 	
 	// ******************************
 	// Constructors
@@ -26,7 +29,8 @@ public class PlotMePlot extends Area implements Removable {
 	 * @param location The Bukkit location
 	 */
 	public PlotMePlot(Location location) {
-		this.plot = PlotManager.getPlotById(location);
+		this.plotID = PlotManager.getPlotById(location).id;
+		this.worldUID = location.getWorld().getUID();
 	}
 	
 	/**
@@ -34,8 +38,14 @@ public class PlotMePlot extends Area implements Removable {
 	 * @param ID The claim ID
 	 * @param worldName The Bukkit world
 	 */
-	public PlotMePlot(String worldName, String plotID) {
-		this.plot = PlotManager.getPlotById(Bukkit.getServer().getWorld(worldName), plotID);
+	public PlotMePlot(World world, String plotID) {
+		this.plotID = plotID;
+		this.worldUID = world.getUID();
+		//this.plot = PlotManager.getPlotById(Bukkit.getServer().getWorld(worldName), plotID);
+	}
+	
+	public Plot getPlot() {
+		return PlotManager.getPlotById(Bukkit.getWorld(worldUID), plotID);
 	}
 	
 	// ******************************
@@ -43,12 +53,12 @@ public class PlotMePlot extends Area implements Removable {
 	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + plot.world + "." + getSystemID();
+		return dataHeader + Bukkit.getWorld(worldUID).getName() + "." + getSystemID();
 	}
 	
 	@Override
 	public String getSystemID() {
-		return (isArea()) ? plot.id : null;
+		return (isArea()) ? plotID : null;
 	}
 	
 	@Override
@@ -58,17 +68,21 @@ public class PlotMePlot extends Area implements Removable {
 	
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(plot.owner));
+		return new HashSet<String>(Arrays.asList(getPlot().owner));
 	}
 	
 	@Override
 	public World getWorld() {
-		return Bukkit.getServer().getWorld(plot.world);
+		return Bukkit.getWorld(worldUID);
 	}
 	
 	@Override
 	public boolean isArea() {
-		return plot != null && !plot.owner.isEmpty();
+		return plotID != null
+				&& worldUID != null
+				&& getPlot() != null 
+				&& getPlot().owner != null 
+				&& !getPlot().owner.isEmpty();
 	}
 	
 	// ******************************

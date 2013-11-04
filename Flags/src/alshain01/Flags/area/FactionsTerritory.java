@@ -3,6 +3,7 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,8 +24,8 @@ import com.massivecraft.mcore.ps.PS;
  */
 public class FactionsTerritory extends Area implements Removable{
 	protected final static String dataHeader = "FactionsData.";
-	Faction faction = null;
-	String worldName = null;
+	String factionID = null;
+	UUID worldUID = null;
 	
 	// ******************************
 	// Constructors
@@ -34,9 +35,9 @@ public class FactionsTerritory extends Area implements Removable{
 	 * @param factionID The faction ID
 	 * @param worldName The Bukkit world
 	 */
-	public FactionsTerritory (String worldName, String factionID) {
-		this.faction = FactionColls.get().getForWorld(worldName).get(factionID);
-		this.worldName = worldName;
+	public FactionsTerritory (World world, String factionID) {
+		this.factionID = factionID;
+		this.worldUID = world.getUID();
 	}
 	
 	/**
@@ -44,8 +45,12 @@ public class FactionsTerritory extends Area implements Removable{
 	 * @param location The Bukkit location
 	 */
 	public FactionsTerritory (Location location) {
-		this.faction = BoardColls.get().getFactionAt(PS.valueOf(location));
-		this.worldName = location.getWorld().getName();
+		this.factionID = BoardColls.get().getFactionAt(PS.valueOf(location)).getId();
+		this.worldUID = location.getWorld().getUID();
+	}
+	
+	public Faction getFaction() {
+		return FactionColls.get().getForWorld(Bukkit.getWorld(worldUID).getName()).get(factionID);
 	}
 	
 	// ******************************
@@ -53,12 +58,12 @@ public class FactionsTerritory extends Area implements Removable{
 	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + worldName + "." + getSystemID();
+		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override
 	public String getSystemID() {
-		return (isArea()) ? faction.getId() : null;
+		return (isArea()) ? factionID : null;
 	}
 
 	@Override
@@ -68,17 +73,19 @@ public class FactionsTerritory extends Area implements Removable{
 
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(faction.getLeader().getName()));
+		return new HashSet<String>(Arrays.asList(FactionColls.get().getForWorld(Bukkit.getWorld(worldUID).getName()).get(factionID).getLeader().getName()));
 	}
 
 	@Override
 	public World getWorld() {
-		return Bukkit.getWorld(worldName);
+		return Bukkit.getWorld(worldUID);
 	}
 
 	@Override
 	public boolean isArea() {
-		return this.faction != null && this.worldName != null;
+		return this.factionID != null 
+				&& this.worldUID != null
+				&& getFaction() != null ;
 	}
 	
 	// ******************************

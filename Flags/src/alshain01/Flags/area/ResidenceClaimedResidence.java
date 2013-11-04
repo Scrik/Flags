@@ -15,7 +15,8 @@ import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
 public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
 	private final static String dataHeader = "ResidenceData.";
-	private ClaimedResidence residence = null;
+	private String residenceName;
+	//private ClaimedResidence residence = null;
 	
 	private String getInheritPath() {
 		return dataHeader + getSystemSubID() + "." + "InheritParent";
@@ -29,7 +30,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 * @param location The Bukkit location
 	 */
 	public ResidenceClaimedResidence(Location location) {
-		residence = Residence.getResidenceManager().getByLoc(location);
+		residenceName = Residence.getResidenceManager().getByLoc(location).getName();
 	}
 	
 	/**
@@ -37,7 +38,11 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 * @param ID The claim ID
 	 */
 	public ResidenceClaimedResidence(String name) {
-		residence = Residence.getResidenceManager().getByName(name);
+		residenceName = name;
+	}
+	
+	public ClaimedResidence getResidence() {
+		return Residence.getResidenceManager().getByName(residenceName);
 	}
 
 	// ******************************
@@ -50,7 +55,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	@Override
 	public String getSystemID() {
-		return (isSubdivision()) ? residence.getParent().getName() : residence.getName();
+		return (isSubdivision()) ? getResidence().getParent().getName() : residenceName;
 	}
 
 	@Override
@@ -60,17 +65,17 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(residence.getOwner()));
+		return new HashSet<String>(Arrays.asList(getResidence().getOwner()));
 	}
 	
 	@Override
 	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(residence.getWorld());
+		return Bukkit.getServer().getWorld(getResidence().getWorld());
 	}
 	
 	@Override
 	public boolean isArea() {
-		return residence != null;
+		return residenceName != null && getResidence() != null;
 	}
 	
 	// ******************************
@@ -84,7 +89,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 		
 		// Return a -1 if this is a subdivision of the provided area
 		if(a instanceof Subdivision && isSubdivision()
-				&& String.valueOf(residence.getParent().getName()).equalsIgnoreCase(a.getSystemID())) {
+				&& String.valueOf(getResidence().getParent().getName()).equalsIgnoreCase(a.getSystemID())) {
 			return -1;
 		}		
 		
@@ -108,12 +113,12 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	// ******************************
 	@Override
 	public boolean isSubdivision() {
-		return (isArea() && residence.getParent() != null);
+		return (isArea() && getResidence().getParent() != null);
 	}
 	
 	@Override
 	public String getSystemSubID() {
-		return (isSubdivision()) ? residence.getName() : null;
+		return (isSubdivision()) ? residenceName : null;
 	}
 	
 	@Override

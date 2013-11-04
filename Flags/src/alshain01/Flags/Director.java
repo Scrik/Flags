@@ -147,16 +147,17 @@ public final class Director {
 			return new ResidenceClaimedResidence(name);
 		} else if(getSystem() == LandSystem.WORLDGUARD) { 
 			String[] path = name.split("\\.");
-			return new WorldGuardRegion(path[0], path[1]);
+			return new WorldGuardRegion(Bukkit.getWorld(path[0]), path[1]);
 		} else if(getSystem() == LandSystem.INFINITEPLOTS) {
 			String[] path = name.split("\\.");
-			return new InfinitePlotsPlot(path[0], path[1]);
+			String[] coords = path[1].split(";");
+			return new InfinitePlotsPlot(Bukkit.getWorld(path[0]), Integer.valueOf(coords[0]), Integer.valueOf(coords[1]));
 		} else if(getSystem() == LandSystem.FACTIONS) { 
 			String[] path = name.split("\\.");
-			return new FactionsTerritory(path[0], path[1]);
+			return new FactionsTerritory(Bukkit.getWorld(path[0]), path[1]);
 		} else if(getSystem() == LandSystem.PLOTME) {
 			String[] path = name.split("\\.");
-			return new PlotMePlot(path[0], path[1]);
+			return new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
 		}
 		return null;
 	}
@@ -331,7 +332,7 @@ public final class Director {
 		@EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
 			for(org.bukkit.World world : Bukkit.getWorlds()) {
-				new FactionsTerritory(world.getName(), e.getFaction().getId()).remove();
+				new FactionsTerritory(world, e.getFaction().getId()).remove();
 			}
 		}
 	}

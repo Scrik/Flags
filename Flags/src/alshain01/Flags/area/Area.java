@@ -275,8 +275,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @param player The player name to insert into the messsage.
 	 * @return The message associated with the flag.
 	 */
-	public final String getMessage(Flag flag, String player) {
-		return getMessage(flag, true).replaceAll("\\{Player\\}", player);
+	public final String getMessage(Flag flag, String playerName) {
+		return getMessage(flag, true).replaceAll("\\{Player\\}", playerName);
 	}
 	
 	/**

@@ -1,9 +1,11 @@
 package alshain01.Flags.area;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
@@ -14,44 +16,50 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardRegion extends Area implements Removable {
 	private final static String dataHeader = "WorldGuardData.";
-	private ProtectedRegion region = null;
-	private String worldName = null;
+	//private ProtectedRegion region = null;
+	private String regionID = null;
+	private UUID worldUID = null;
+	//private String worldName = null;
 	
 	// ******************************
 	// Constructors
 	// ******************************
 	public WorldGuardRegion(Location location) {
-		this.worldName = location.getWorld().getName();
-		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(this.getWorld()).getApplicableRegions(location);
-		if(regionSet == null) { this.region = null; }
+		this.worldUID = location.getWorld().getUID();
+		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location);
+		if(regionSet == null) { this.regionID = null; }
 		else {
 			int currentPriority = -2147483648;
 			
 			for(ProtectedRegion region : regionSet) {
 				if(region.getPriority() >= currentPriority) {
-					this.region = region;
+					this.regionID = region.getId();
 					currentPriority = region.getPriority();
 				}
 			}
 		}
 	}
 	
-	public WorldGuardRegion(String worldName, String name) {
-		this.worldName = worldName;
-		region = WGBukkit.getRegionManager(this.getWorld()).getRegionExact(name);
+	public WorldGuardRegion(World world, String regionID) {
+		this.worldUID = world.getUID();
+		this.regionID = regionID;
+	}
+	
+	public ProtectedRegion getRegion() {
+		return WGBukkit.getRegionManager(getWorld()).getRegionExact(regionID);
 	}
 
 	// ******************************
 	// Area Interface
 	// ******************************
 	protected String getDataPath() {
-		return dataHeader + worldName + "." + getSystemID();
+		return dataHeader + Bukkit.getWorld(worldUID).getName() + "." + getSystemID();
 	}
 	
 	@Override
 	public String getSystemID() {
 		if (!isArea()) { return null; }
-		return region.getId();
+		return regionID;
 	}
 	
 	@Override
@@ -61,17 +69,19 @@ public class WorldGuardRegion extends Area implements Removable {
 
 	@Override
 	public Set<String> getOwners() {
-		return region.getOwners().getPlayers();
+		return getRegion().getOwners().getPlayers();
 	}
 
 	@Override
 	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(worldName);
+		return Bukkit.getServer().getWorld(worldUID);
 	}
 	
 	@Override
 	public boolean isArea() {
-		return region != null && worldName != null;
+		return regionID != null 
+				&& worldUID != null
+				&& getRegion() != null;
 	}
 
 	// ******************************

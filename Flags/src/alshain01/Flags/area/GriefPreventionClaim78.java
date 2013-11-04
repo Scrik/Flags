@@ -1,11 +1,16 @@
 package alshain01.Flags.area;
 
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
 
 public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subdivision {
+	private long subID;
+	
 	private String getInheritPath() {
 		return dataHeader + getSystemID() + "." + getSystemSubID() + "." + "InheritParent";
 	}
@@ -19,6 +24,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	 */
 	public GriefPreventionClaim78(Location location) {
 		super(location);
+		this.subID = GriefPrevention.instance.dataStore.getClaimAt(location, false, null).getSubClaimID();
 	}
 	
 	/**
@@ -36,9 +42,16 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	 */
 	public GriefPreventionClaim78(long ID, long subID) {
 		super(ID);
-		if (this.claim != null) {
-			this.claim = claim.getSubClaim(subID);
+		if (this.getClaim() != null) {
+			this.subID = subID;
 		}
+	}
+	
+	@Override
+	public Claim getClaim() {
+		Claim claim = GriefPrevention.instance.dataStore.getClaim(claimID).getSubClaim(subID);
+		if(claim != null) { return claim; }
+		return GriefPrevention.instance.dataStore.getClaim(claimID);
 	}
 	
 	// ******************************
@@ -52,7 +65,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	
 	@Override
 	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(claim.getClaimWorldName());
+		return Bukkit.getServer().getWorld(getClaim().getClaimWorldName());
 	}
 	
 	// ******************************
@@ -103,12 +116,12 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subd
 	// ******************************
 	@Override
 	public boolean isSubdivision() {
-		return (isArea() && claim.parent != null);
+		return (isArea() && getClaim().parent != null);
 	}
 	
 	@Override
 	public String getSystemSubID() {
-		return (isSubdivision()) ? String.valueOf(claim.getSubClaimID()) : null;
+		return (isSubdivision()) ? String.valueOf(getClaim().getSubClaimID()) : null;
 	}
 	
 	@Override
