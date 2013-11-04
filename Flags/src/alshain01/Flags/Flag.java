@@ -3,7 +3,7 @@ package alshain01.Flags;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import alshain01.Flags.economy.PurchaseType;
+import alshain01.Flags.economy.EPurchaseType;
 
 /**
  * Represents a flag registered with the plug-in.
@@ -142,7 +142,7 @@ public class Flag {
      * @param type The PurchaseType to get for this flag
      * @return The price of the purchase.
      */
-    public final double getPrice(PurchaseType type) {
+    public final double getPrice(EPurchaseType type) {
     	return (!Flags.getDataStore().isSet("Price." + type.toString() + "." + name)) ? 0 :
     		Flags.getDataStore().readDouble("Price." + type.toString() + "." + name);
     }
@@ -153,7 +153,7 @@ public class Flag {
      * @param type The PurchaseType to set for this flag
      * @param price The new price of the purchase.
      */
-    public final void setPrice(PurchaseType type, double price) {
+    public final void setPrice(EPurchaseType type, double price) {
     	Flags.getDataStore().write("Price." + type.toString() + "." + name, price);
     }
 }

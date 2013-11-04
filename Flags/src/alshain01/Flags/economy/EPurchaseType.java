@@ -31,17 +31,17 @@ import alshain01.Flags.Flags;
  * 
  * @author Alshain01
  */
-public enum PurchaseType {
+public enum EPurchaseType {
 	Flag('f'), Message('m');
 	
 	char alias;
 	
-	PurchaseType(char alias) {
+	EPurchaseType(char alias) {
 		this.alias = alias;
 	}
 	
-	public static PurchaseType get(String name) {
-		for(PurchaseType p : PurchaseType.values()) {
+	public static EPurchaseType get(String name) {
+		for(EPurchaseType p : EPurchaseType.values()) {
 			if(name.toLowerCase().equals(p.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(p.alias))) {
 				return p;
 			}

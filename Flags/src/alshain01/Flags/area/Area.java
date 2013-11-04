@@ -16,9 +16,9 @@ import org.bukkit.permissions.Permissible;
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
-import alshain01.Flags.economy.BaseValue;
-import alshain01.Flags.economy.PurchaseType;
-import alshain01.Flags.economy.TransactionType;
+import alshain01.Flags.economy.EBaseValue;
+import alshain01.Flags.economy.EPurchaseType;
+import alshain01.Flags.economy.ETransactionType;
 import alshain01.Flags.events.FlagChangedEvent;
 import alshain01.Flags.events.MessageChangedEvent;
 import alshain01.Flags.events.TrustChangedEvent;
@@ -152,27 +152,27 @@ public abstract class Area implements Comparable<Area> {
 		if(!isArea()) { return false; }
 		
         // Check to see if this can be paid for
-		TransactionType transaction = null;
+		ETransactionType transaction = null;
         if(Flags.getEconomy() != null								// No economy 
         		&& (sender != null && (sender instanceof Player))	// Need a player to charge
         		&& value != getValue(flag, true)					// The flag isn't actually changing
-        		&& flag.getPrice(PurchaseType.Flag) != 0			// No defined price
+        		&& flag.getPrice(EPurchaseType.Flag) != 0			// No defined price
         		&& !(this instanceof World)							// No charge for world flags
         		&& !(this instanceof Default)						// No charge for defaults
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
         {
-    		if (value != null && (BaseValue.ALWAYS.isSet()
-    				|| (BaseValue.PLUGIN.isSet() && (getValue(flag, true) == null 
+    		if (value != null && (EBaseValue.ALWAYS.isSet()
+    				|| (EBaseValue.PLUGIN.isSet() && (getValue(flag, true) == null 
     					|| getValue(flag, true) != flag.getDefault())) 
-    				|| (BaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation().getWorld()).getValue(flag, true))))
+    				|| (EBaseValue.DEFAULT.isSet() && getValue(flag, true) != new Default(((Player)sender).getLocation().getWorld()).getValue(flag, true))))
     	    {
 	    		// The flag is being set, see if the player can afford it.
-    			if(!isFundingAvailable(PurchaseType.Flag, flag, (Player)sender)) { return false; }
-    			transaction = TransactionType.Withdraw;
+    			if(!isFundingAvailable(EPurchaseType.Flag, flag, (Player)sender)) { return false; }
+    			transaction = ETransactionType.Withdraw;
     	    } else {
         		// Check whether or not to refund the account for setting the flag value
-        		if (PurchaseType.Flag.isRefundable() && !BaseValue.ALWAYS.isSet()) {
-        			transaction = TransactionType.Deposit;
+        		if (EPurchaseType.Flag.isRefundable() && !EBaseValue.ALWAYS.isSet()) {
+        			transaction = ETransactionType.Deposit;
         		}
     	    }
         }
@@ -183,7 +183,7 @@ public abstract class Area implements Comparable<Area> {
         
         // Delay making the transaction in case the event is cancelled.
         if(transaction != null) {
-        	if(!makeTransaction(transaction, PurchaseType.Flag, flag, (Player)sender)) { return true; }
+        	if(!makeTransaction(transaction, EPurchaseType.Flag, flag, (Player)sender)) { return true; }
         }
         
         if(value == null) {
@@ -314,12 +314,12 @@ public abstract class Area implements Comparable<Area> {
 	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
 		if(!isArea()) { return false; }
 	 	
-		TransactionType transaction = null;
+		ETransactionType transaction = null;
 		
         // Check to see if this is a purchase or deposit
         if(Flags.getEconomy() != null								// No economy 
         		&& (sender != null && (sender instanceof Player))	// Need a player to charge
-        		&& flag.getPrice(PurchaseType.Message) != 0			// No defined price
+        		&& flag.getPrice(EPurchaseType.Message) != 0			// No defined price
         		&& !(this instanceof World)							// No charge for world flags
         		&& !(this instanceof Default)						// No charge for defaults
         		&& !(this instanceof Administrator && ((Administrator)this).isAdminArea())) // No charge for admin areas 
@@ -330,15 +330,15 @@ public abstract class Area implements Comparable<Area> {
     			// Check to make sure the message isn't identical to what we have
     			// (if they are just correcting caps, don't charge, I hate discouraging bad spelling & grammar)
     			if(!(getMessage(flag, false).equalsIgnoreCase(message))) { 
-    				if(!isFundingAvailable(PurchaseType.Message, flag, (Player)sender)) { return false;	}
-    				transaction = TransactionType.Withdraw;
+    				if(!isFundingAvailable(EPurchaseType.Message, flag, (Player)sender)) { return false;	}
+    				transaction = ETransactionType.Withdraw;
     			}
         	} else {
         		// Check whether or not to refund the account
-        		if(PurchaseType.Message.isRefundable()) {
+        		if(EPurchaseType.Message.isRefundable()) {
         			// Make sure the message we are refunding isn't identical to the default message
         			if (!(getMessage(flag, false).equals(flag.getDefaultAreaMessage()))) {
-    					transaction = TransactionType.Deposit;
+    					transaction = ETransactionType.Deposit;
         			}
         		}
         	}
@@ -350,7 +350,7 @@ public abstract class Area implements Comparable<Area> {
 
         // Delay making the transaction in case the event is cancelled.
 		if(transaction != null) {
-			if(!makeTransaction(transaction, PurchaseType.Message, flag, (Player)sender)) { return true; }
+			if(!makeTransaction(transaction, EPurchaseType.Message, flag, (Player)sender)) { return true; }
 		}
 		if(message != null) { message = message.replaceAll("§", "&"); }
 		Flags.getDataStore().write(getDataPath() + "." + flag.getName() + messageFooter, message);
@@ -361,7 +361,7 @@ public abstract class Area implements Comparable<Area> {
 	 * Checks to make sure the player can afford the item.
 	 * If false, the player is automatically notified.
 	 */
-	private static boolean isFundingAvailable(PurchaseType product, Flag flag, Player player) {
+	private static boolean isFundingAvailable(EPurchaseType product, Flag flag, Player player) {
 		double price = flag.getPrice(product);
 		
 		if (price > Flags.getEconomy().getBalance(player.getName())) {
@@ -377,11 +377,11 @@ public abstract class Area implements Comparable<Area> {
 	/*
 	 * Makes the final purchase transaction.
 	 */
-	private static boolean makeTransaction(TransactionType transaction, PurchaseType product, Flag flag, Player player) {
+	private static boolean makeTransaction(ETransactionType transaction, EPurchaseType product, Flag flag, Player player) {
 		double price = flag.getPrice(product);
 		
 		EconomyResponse r;
-		if (transaction == TransactionType.Withdraw) {
+		if (transaction == ETransactionType.Withdraw) {
 			// Withdrawal
 			r = Flags.getEconomy().withdrawPlayer(player.getName(), price);
 		} else {

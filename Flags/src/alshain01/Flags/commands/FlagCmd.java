@@ -16,7 +16,7 @@ import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
-import alshain01.Flags.economy.PurchaseType;
+import alshain01.Flags.economy.EPurchaseType;
 
 abstract class FlagCmd extends Common {
 	/*
@@ -256,7 +256,7 @@ abstract class FlagCmd extends Common {
 	/*
 	 * Price Command Handlers
 	 */
-	protected static boolean getPrice(CommandSender sender, PurchaseType type, Flag flag) {
+	protected static boolean getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
 		if(Flags.getEconomy() == null) { return false; }
 		
 		sender.sendMessage(Message.GetPrice.get()
@@ -266,7 +266,7 @@ abstract class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean setPrice(CommandSender sender, PurchaseType type, Flag flag, String price) {
+	protected static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
 		if(Flags.getEconomy() == null) { return false; }
 		if((sender instanceof Player) && !Validate.canEditPrice((Player)sender)) { return true; }
 

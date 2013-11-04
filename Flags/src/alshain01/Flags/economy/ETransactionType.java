@@ -29,7 +29,7 @@ package alshain01.Flags.economy;
  * 
  * @author Alshain01
  */
-public enum TransactionType {
+public enum ETransactionType {
 	Withdraw, Deposit;
 	
 	/**

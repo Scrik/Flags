@@ -31,7 +31,7 @@ import alshain01.Flags.Flags;
  * 
  * @author Alshain01
  */
-public enum BaseValue {
+public enum EBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;
 	
 	/**
