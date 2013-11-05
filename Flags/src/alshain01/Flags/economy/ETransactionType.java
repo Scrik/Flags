@@ -20,7 +20,7 @@
 
  Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
-*/
+ */
 
 package alshain01.Flags.economy;
 
@@ -31,11 +31,11 @@ package alshain01.Flags.economy;
  */
 public enum ETransactionType {
 	Withdraw, Deposit;
-	
+
 	/**
 	 * @return The localized message of the transaction type.
 	 */
 	public String getMessage() {
-		return alshain01.Flags.Message.valueOf(this.toString()).get();
+		return alshain01.Flags.Message.valueOf(toString()).get();
 	}
 }

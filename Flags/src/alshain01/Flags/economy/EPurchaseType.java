@@ -20,7 +20,7 @@
 
  Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
-*/
+ */
 
 package alshain01.Flags.economy;
 
@@ -33,33 +33,35 @@ import alshain01.Flags.Flags;
  */
 public enum EPurchaseType {
 	Flag('f'), Message('m');
-	
-	char alias;
-	
-	EPurchaseType(char alias) {
-		this.alias = alias;
-	}
-	
+
 	public static EPurchaseType get(String name) {
-		for(EPurchaseType p : EPurchaseType.values()) {
-			if(name.toLowerCase().equals(p.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(p.alias))) {
+		for (final EPurchaseType p : EPurchaseType.values()) {
+			if (name.toLowerCase().equals(p.toString().toLowerCase())
+					|| name.toLowerCase().equals(String.valueOf(p.alias))) {
 				return p;
 			}
 		}
 		return null;
 	}
-	
+
+	char alias;
+
+	EPurchaseType(char alias) {
+		this.alias = alias;
+	}
+
 	/**
 	 * @return The localized name of the purchase type
 	 */
 	public String getLocal() {
-		return alshain01.Flags.Message.valueOf(this.toString()).get();
+		return alshain01.Flags.Message.valueOf(toString()).get();
 	}
-	
+
 	/**
 	 * @return True if the refund setting is true for this type
 	 */
 	public boolean isRefundable() {
-		return Flags.getInstance().getConfig().getBoolean("Flags.Economy.Refund." + this.toString());
+		return Flags.getInstance().getConfig()
+				.getBoolean("Flags.Economy.Refund." + toString());
 	}
 }

@@ -20,7 +20,7 @@
 
  Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
-*/
+ */
 
 package alshain01.Flags.economy;
 
@@ -33,14 +33,13 @@ import alshain01.Flags.Flags;
  */
 public enum EBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;
-	
+
 	/**
 	 * @return True if the BaseFlagValue is set to this type.
 	 */
 	public boolean isSet() {
-		String message = Flags.getInstance().getConfig().getString("Flags.Economy.BaseValue");
-		
-		if (message.equalsIgnoreCase(this.toString())) { return true; }
-		return false;
+		final String message = Flags.getInstance().getConfig()
+				.getString("Flags.Economy.BaseValue");
+		return message.equalsIgnoreCase(toString()) ? true : false;
 	}
 }
