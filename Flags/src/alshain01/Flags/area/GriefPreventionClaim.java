@@ -13,7 +13,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
 	protected final static String dataHeader = "GriefPreventionData.";
-	protected long claimID;
+	protected Claim claim;
 	
 	// ******************************
 	// Constructors
@@ -23,7 +23,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	 * @param location The Bukkit location
 	 */
 	public GriefPreventionClaim(Location location) {
-		this.claimID = GriefPrevention.instance.dataStore.getClaimAt(location, false, null).getID();
+		this.claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 	}
 
 	/**
@@ -31,11 +31,11 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	 * @param ID The claim ID
 	 */
 	public GriefPreventionClaim(long ID) {
-		this.claimID = ID;
+		this.claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
 	
 	public Claim getClaim() {
-		return GriefPrevention.instance.dataStore.getClaim(claimID);
+		return claim;
 	}
 	
 	// ******************************
@@ -74,7 +74,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	@Override
 	public boolean isArea() {
-		return getClaim() != null;
+		return claim != null;
 	}
     
 	// ******************************
