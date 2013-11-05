@@ -77,8 +77,7 @@ public class MetricsManager {
 
 			// Border Patrol Status
 			final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
-			if (Flags.getInstance().getConfig()
-					.getBoolean("Flags.BorderPatrol.Enable")) {
+			if (Flags.getBorderPatrolEnabled()) {
 				bpGraph.addPlotter(new Metrics.Plotter("Enabled") {
 					@Override
 					public int getValue() {

@@ -38,6 +38,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -48,6 +49,7 @@ import alshain01.Flags.commands.Command;
 import alshain01.Flags.data.CustomYML;
 import alshain01.Flags.data.DataStore;
 import alshain01.Flags.data.YamlDataStore;
+import alshain01.Flags.events.PlayerChangedAreaEvent;
 import alshain01.Flags.importer.GPFImport;
 import alshain01.Flags.metrics.MetricsManager;
 
@@ -67,6 +69,7 @@ public class Flags extends JavaPlugin {
 	private static Economy economy = null;
 	private static Boolean debug = false;
 	private static final Registrar flagRegistrar = new Registrar();
+	private static boolean borderPatrol = false;
 
 	/**
 	 * Gets the static instance of Flags.
@@ -85,6 +88,16 @@ public class Flags extends JavaPlugin {
 	 */
 	public static DataStore getDataStore() {
 		return dataStore;
+	}
+	
+	/**
+	 * Gets the status of the border patrol event listener.
+	 * (i.e PlayerChangedAreaEvent)
+	 * 
+	 * @return The status of the border patrol listener
+	 */
+	public static boolean getBorderPatrolEnabled() {
+		return borderPatrol;
 	}
 
 	/**
@@ -117,6 +130,7 @@ public class Flags extends JavaPlugin {
 		debug = getConfig().getBoolean("Flags.Debug");
 
 		updatePlugin();
+		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
 
 		// Create the specific implementation of DataStore
 		// TODO: Add sub-interface for SQL
@@ -153,7 +167,7 @@ public class Flags extends JavaPlugin {
 		Director.enableMrClean(getServer().getPluginManager());
 
 		// Load Border Patrol
-		if (getConfig().getBoolean("Flags.BorderPatrol.Enable")) {
+		if (borderPatrol) {
 			Debug("Registering for PlayerMoveEvent");
 			getServer().getPluginManager().registerEvents(new BorderPatrol(), this);
 		}
@@ -328,6 +342,15 @@ public class Flags extends JavaPlugin {
 
 			if (!debug && checkAPI("1.3.2")) {
 				MetricsManager.StartMetrics();
+			}
+			
+			//Check the handlers to see if anything is registered for Border Patrol
+			RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
+			if (borderPatrol && (listeners == null || listeners.length == 0)) {
+				Bukkit.getServer().getConsoleSender()
+				.sendMessage("[Flags] "	+ ChatColor.RED
+						+ "No plugins have registered for Flags' Border Patrol listener. "
+						+ "Please consider disabling it in config.yml to increase performance.");
 			}
 		}
 	}
