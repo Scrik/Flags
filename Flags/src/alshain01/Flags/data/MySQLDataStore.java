@@ -12,7 +12,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MySQLDataStore implements SQLDataStore {
+public final class MySQLDataStore implements SQLDataStore {
 	Connection connection = null;
 	String url = null;
 	String user = null;

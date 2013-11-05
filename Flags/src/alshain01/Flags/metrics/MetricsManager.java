@@ -2,6 +2,8 @@ package alshain01.Flags.metrics;
 
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
+
 import alshain01.Flags.Director;
 import alshain01.Flags.Flags;
 import alshain01.Flags.metrics.Metrics.Graph;
@@ -21,6 +23,19 @@ public class MetricsManager {
 			            @Override
 			            public int getValue() {
 		            		return 1;
+			            }
+			    	});
+		    	}
+		    }
+		    
+		    // Land System by PlayersGraph
+		    Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
+		    for(Director.LandSystem system : Director.LandSystem.values()){
+		    	if(Director.getSystem() == system) {
+		    		systemPlayersGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
+			            @Override
+			            public int getValue() {
+		            		return Bukkit.getOnlinePlayers().length;
 			            }
 			    	});
 		    	}

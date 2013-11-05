@@ -22,6 +22,7 @@ public class Default extends Area {
 	private final static String dataHeader = "Default.";
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("default"));
 	private UUID worldUID = null;
+	private String worldName = null;
 	
 	// ******************************
 	// Constructors
@@ -40,6 +41,7 @@ public class Default extends Area {
 	 */
 	public Default(org.bukkit.World world) {
 		this.worldUID = world.getUID();
+		this.worldName = world.getName();
 	}
 	
 	// ******************************
@@ -52,7 +54,7 @@ public class Default extends Area {
 	
 	@Override
 	public String getSystemID() {
-		return Bukkit.getWorld(this.worldUID).getName();
+		return worldName;
 	}
 	
 	@Override

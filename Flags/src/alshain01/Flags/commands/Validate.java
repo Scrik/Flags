@@ -13,7 +13,7 @@ import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
 import alshain01.Flags.area.World;
 
-public class Validate {
+final class Validate {
 	private Validate() {}
 	
 	protected static boolean isArea(CommandSender cs, Area a) {

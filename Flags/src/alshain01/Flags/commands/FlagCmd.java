@@ -18,7 +18,7 @@ import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
 import alshain01.Flags.economy.EPurchaseType;
 
-abstract class FlagCmd extends Common {
+final class FlagCmd extends Common {
 	/*
 	 * Value Command Handlers
 	 */

@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.data.CustomYML;
 
-public class YamlDataStore implements DataStore {
+public final class YamlDataStore implements DataStore {
 	private static CustomYML data;
 	private static CustomYML def;
 	private static CustomYML world;

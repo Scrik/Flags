@@ -18,7 +18,7 @@ import alshain01.Flags.economy.EPurchaseType;
  * 
  * @author Alshain01
  */
-public class Command {
+public final class Command {
 	private Command(){}
 	
 	/**

@@ -18,6 +18,7 @@ public class World extends Area {
 	private final static String dataHeader = "World.";
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
 	private UUID worldUID = null;
+	private String worldName = null;
 	
 	// ******************************
 	// Constructors
@@ -27,7 +28,7 @@ public class World extends Area {
 	 * @param location The Bukkit location
 	 */
 	public World(Location location) {
-		this.worldUID = location.getWorld().getUID();
+		this(location.getWorld());
 	}
 	
 	/**
@@ -36,6 +37,7 @@ public class World extends Area {
 	 */
 	public World(org.bukkit.World world) {
 		this.worldUID = world.getUID();
+		this.worldName = world.getName();
 	}
 	
 	// ******************************
@@ -48,7 +50,7 @@ public class World extends Area {
 	
 	@Override
 	public String getSystemID() {
-		return Bukkit.getWorld(this.worldUID).getName();
+		return worldName;
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class World extends Area {
 		if (parse) {
 			message = message
 					.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", Bukkit.getWorld(this.worldUID).getName());
+					.replaceAll("\\{World\\}", worldName);
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;

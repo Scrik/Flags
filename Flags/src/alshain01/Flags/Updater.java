@@ -36,7 +36,7 @@ import org.json.simple.JSONValue;
 * @version 2.0
 */
 
-class Updater {
+final class Updater {
 
     private Plugin plugin;
     private UpdateType type;

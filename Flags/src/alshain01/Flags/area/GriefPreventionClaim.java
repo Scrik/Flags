@@ -74,7 +74,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	
 	@Override
 	public boolean isArea() {
-		return claim != null;
+		return getClaim() != null;
 	}
     
 	// ******************************

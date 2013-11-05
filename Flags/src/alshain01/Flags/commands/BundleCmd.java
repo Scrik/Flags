@@ -15,7 +15,7 @@ import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 
-abstract class BundleCmd extends Common {
+final class BundleCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
 		Flag flag;
 		Area area = getArea(player, location);
