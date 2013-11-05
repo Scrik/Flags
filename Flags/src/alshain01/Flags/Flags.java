@@ -24,7 +24,6 @@
 
 package alshain01.Flags;
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
@@ -60,24 +59,108 @@ import alshain01.Flags.metrics.MetricsManager;
  */
 public class Flags extends JavaPlugin {
 
+	/*
+	 * Contains event listeners required for plugin maintenance.
+	 */
+	private static class FlagsListener implements Listener {
+		// Update listener
+		@EventHandler(ignoreCancelled = true)
+		private void onPlayerJoin(PlayerJoinEvent e) {
+			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")
+					&& updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+				e.getPlayer()
+						.sendMessage(ChatColor.DARK_PURPLE
+								+ "The version of Flags that this server is running is out of date. "
+								+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+			}
+		}
+	}
+
+	/*
+	 * Tasks that must be run only after the entire sever has loaded. Runs on
+	 * first server tick.
+	 */
+	private class onServerEnabledTask extends BukkitRunnable {
+		@Override
+		public void run() {
+			for (final String b : Bundle.getBundleNames()) {
+				Debug("Registering Bundle Permission:" + b);
+				final Permission perm = new Permission("flags.bundle." + b,
+						"Grants ability to use the bundle " + b,
+						PermissionDefault.FALSE);
+				perm.addParent("flags.bundle", true);
+				Bukkit.getServer().getPluginManager().addPermission(perm);
+			}
+
+			if (!debug && checkAPI("1.3.2")) {
+				MetricsManager.StartMetrics();
+			}
+
+			// Check the handlers to see if anything is registered for Border
+			// Patrol
+			final RegisteredListener[] listeners = PlayerChangedAreaEvent
+					.getHandlerList().getRegisteredListeners();
+			if (borderPatrol && (listeners == null || listeners.length == 0)) {
+				Bukkit.getServer()
+						.getConsoleSender()
+						.sendMessage("[Flags] "	+ ChatColor.RED
+										+ "No plugins have registered for Flags' Border Patrol listener. "
+										+ "Please consider disabling it in config.yml to increase performance.");
+			}
+		}
+	}
+
 	protected static CustomYML messageStore;
 	protected static LandSystem currentSystem = LandSystem.NONE;
-
 	private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
 	private static Boolean debug = false;
+
 	private static final Registrar flagRegistrar = new Registrar();
+
 	private static boolean borderPatrol = false;
 
 	/**
-	 * Gets the static instance of Flags.
+	 * Checks if the provided string represents a version number that is equal
+	 * to or lower than the current Bukkit API version.
 	 * 
-	 * @return The vault economy.
+	 * String should be formatted with 3 numbers: x.y.z
+	 * 
+	 * @return true if the version provided is compatible
 	 */
-	public static Flags getInstance() {
-		return instance;
+	public static boolean checkAPI(String version) {
+		final float APIVersion = Float.valueOf(Bukkit.getServer().getBukkitVersion().substring(0, 3));
+		final float CompareVersion = Float.valueOf(version.substring(0, 3));
+		final int APIBuild = Integer.valueOf(Bukkit.getServer().getBukkitVersion().substring(4, 5));
+		final int CompareBuild = Integer.valueOf(version.substring(4, 5));
+
+		return (APIVersion > CompareVersion 
+				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild) ? true : false;
+	}
+
+	/**
+	 * Sends a debug message through the Flags logger if the plug-in is a
+	 * development build.
+	 * 
+	 * @param message
+	 *            The debug message
+	 */
+	public static final void Debug(String message) {
+		if (debug) {
+			instance.getLogger().info("DEBUG: " + message);
+		}
+	}
+
+	/**
+	 * Gets the status of the border patrol event listener. (i.e
+	 * PlayerChangedAreaEvent)
+	 * 
+	 * @return The status of the border patrol listener
+	 */
+	public static boolean getBorderPatrolEnabled() {
+		return borderPatrol;
 	}
 
 	/**
@@ -89,15 +172,23 @@ public class Flags extends JavaPlugin {
 	public static DataStore getDataStore() {
 		return dataStore;
 	}
-	
+
 	/**
-	 * Gets the status of the border patrol event listener.
-	 * (i.e PlayerChangedAreaEvent)
+	 * Gets the vault economy for this instance of Flags.
 	 * 
-	 * @return The status of the border patrol listener
+	 * @return The vault economy.
 	 */
-	public static boolean getBorderPatrolEnabled() {
-		return borderPatrol;
+	public static Economy getEconomy() {
+		return economy;
+	}
+
+	/**
+	 * Gets the static instance of Flags.
+	 * 
+	 * @return The vault economy.
+	 */
+	public static Flags getInstance() {
+		return instance;
 	}
 
 	/**
@@ -109,13 +200,55 @@ public class Flags extends JavaPlugin {
 		return flagRegistrar;
 	}
 
-	/**
-	 * Gets the vault economy for this instance of Flags.
-	 * 
-	 * @return The vault economy.
+	/*
+	 * Acquires the land management plugin.
 	 */
-	public static Economy getEconomy() {
-		return economy;
+	private LandSystem findSystem(PluginManager pm) {
+		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
+
+		for(Object o : pluginList) {
+			if (pm.isPluginEnabled((String) o)) {
+				return LandSystem.getByName((String) o);
+			}
+		}
+		return LandSystem.NONE;
+	}
+
+	/**
+	 * Executes the given command, returning its success
+	 * 
+	 * @param sender
+	 *            Source of the command
+	 * @param cmd
+	 *            Command which was executed
+	 * @param label
+	 *            Alias of the command which was used
+	 * @param args
+	 *            Passed command arguments
+	 * @return true if a valid command, otherwise false
+	 * 
+	 */
+	@Override
+	public boolean onCommand(CommandSender sender,
+			org.bukkit.command.Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("flag")) {
+			return Command.onFlagCommand(sender, args);
+		}
+
+		if (cmd.getName().equalsIgnoreCase("bundle")) {
+			return Command.onBundleCommand(sender, args);
+		}
+		return false;
+	}
+
+	/**
+	 * Called when this plug-in is disabled
+	 */
+	@Override
+	public void onDisable() {
+		// if(dataStore instanceof SQLDataStore) {
+		// ((SQLDataStore)dataStore).close(); }
+		getLogger().info("Flags Has Been Disabled.");
 	}
 
 	/**
@@ -150,8 +283,7 @@ public class Flags extends JavaPlugin {
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == LandSystem.NONE 
-				? "No system detected. Only world flags will be available."
+		getLogger().info(currentSystem == LandSystem.NONE ? "No system detected. Only world flags will be available."
 						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
 
 		// Check for older database and import as necessary.
@@ -177,77 +309,6 @@ public class Flags extends JavaPlugin {
 		getLogger().info("Flags Has Been Enabled.");
 	}
 
-	/**
-	 * Called when this plug-in is disabled
-	 */
-	@Override
-	public void onDisable() {
-		// if(dataStore instanceof SQLDataStore) {
-		// ((SQLDataStore)dataStore).close(); }
-		getLogger().info("Flags Has Been Disabled.");
-	}
-
-	/**
-	 * Executes the given command, returning its success
-	 * 
-	 * @param sender
-	 *            Source of the command
-	 * @param cmd
-	 *            Command which was executed
-	 * @param label
-	 *            Alias of the command which was used
-	 * @param args
-	 *            Passed command arguments
-	 * @return true if a valid command, otherwise false
-	 * 
-	 */
-	@Override
-	public boolean onCommand(CommandSender sender,
-			org.bukkit.command.Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("flag")) {
-			return Command.onFlagCommand(sender, args);
-		}
-
-		if (cmd.getName().equalsIgnoreCase("bundle")) {
-			return Command.onBundleCommand(sender, args);
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if the provided string represents a version number that is equal
-	 * to or lower than the current Bukkit API version.
-	 * 
-	 * String should be formatted with 3 numbers: x.y.z
-	 * 
-	 * @return true if the version provided is compatible
-	 */
-	public static boolean checkAPI(String version) {
-		final float APIVersion = Float.valueOf(Bukkit.getServer().getBukkitVersion().substring(0, 3));
-		final float CompareVersion = Float.valueOf(version.substring(0, 3));
-		final int APIBuild = Integer.valueOf(Bukkit.getServer().getBukkitVersion().substring(4, 5));
-		final int CompareBuild = Integer.valueOf(version.substring(4, 5));
-
-		if (APIVersion > CompareVersion 
-				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Sends a debug message through the Flags logger if the plug-in is a
-	 * development build.
-	 * 
-	 * @param message
-	 *            The debug message
-	 */
-	public static final void Debug(String message) {
-		if (debug) {
-			instance.getLogger().info("DEBUG: " + message);
-		}
-	}
-
 	/*
 	 * Register with the Vault economy plugin.
 	 * 
@@ -257,30 +318,14 @@ public class Flags extends JavaPlugin {
 		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
 			return false;
 		}
-		final RegisteredServiceProvider<Economy> economyProvider = 
-				Bukkit.getServer().getServicesManager()
-					.getRegistration(net.milkbowl.vault.economy.Economy.class);
+		final RegisteredServiceProvider<Economy> economyProvider = Bukkit
+				.getServer().getServicesManager()
+				.getRegistration(net.milkbowl.vault.economy.Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		}
 
 		return economy != null;
-	}
-
-	/*
-	 * Acquires the land management plugin.
-	 */
-	private LandSystem findSystem(PluginManager pm) {
-		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
-
-		final Iterator<?> iter = pluginList.iterator();
-		while (iter.hasNext()) {
-			final Object o = iter.next();
-			if (pm.isPluginEnabled((String) o)) {
-				return LandSystem.getByName((String) o);
-			}
-		}
-		return LandSystem.NONE;
 	}
 
 	/*
@@ -290,68 +335,19 @@ public class Flags extends JavaPlugin {
 		// Update script
 		if (getConfig().getBoolean("Flags.Update.Check")) {
 			final String key = getConfig().getString("Flags.Update.ServerModsAPIKey");
-			if (getConfig().getBoolean("Flags.Update.Download")) {
-				updater = new Updater(this, 65024, getFile(), Updater.UpdateType.DEFAULT, key, true);
-			} else {
-				updater = new Updater(this, 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
-			}
+			updater = (getConfig().getBoolean("Flags.Update.Download"))
+				? new Updater(this, 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
+				: new Updater(this, 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 
 			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 				Bukkit.getServer().getConsoleSender()
-					.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
-							+ "The version of Flags that this server is running is out of date. "
-							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+						.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
+										+ "The version of Flags that this server is running is out of date. "
+										+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			} else if (updater.getResult() == UpdateResult.SUCCESS) {
 				Bukkit.getServer().reload();
 			}
 		}
-		getServer().getPluginManager()
-				.registerEvents(new FlagsListener(), this);
-	}
-
-	/*
-	 * Contains event listeners required for plugin maintenance.
-	 */
-	private static class FlagsListener implements Listener {
-		// Update listener
-		@EventHandler(ignoreCancelled = true)
-		private void onPlayerJoin(PlayerJoinEvent e) {
-			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")
-					&& updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-				e.getPlayer().sendMessage(ChatColor.DARK_PURPLE
-						+ "The version of Flags that this server is running is out of date. "
-						+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
-			}
-		}
-	}
-
-	/*
-	 * Tasks that must be run only after the entire sever has loaded. Runs on
-	 * first server tick.
-	 */
-	private class onServerEnabledTask extends BukkitRunnable {
-		@Override
-		public void run() {
-			for (final String b : Bundle.getBundleNames()) {
-				Debug("Registering Bundle Permission:" + b);
-				final Permission perm = 
-						new Permission("flags.bundle." + b,	"Grants ability to use the bundle " + b, PermissionDefault.FALSE);
-				perm.addParent("flags.bundle", true);
-				Bukkit.getServer().getPluginManager().addPermission(perm);
-			}
-
-			if (!debug && checkAPI("1.3.2")) {
-				MetricsManager.StartMetrics();
-			}
-			
-			//Check the handlers to see if anything is registered for Border Patrol
-			RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
-			if (borderPatrol && (listeners == null || listeners.length == 0)) {
-				Bukkit.getServer().getConsoleSender()
-				.sendMessage("[Flags] "	+ ChatColor.RED
-						+ "No plugins have registered for Flags' Border Patrol listener. "
-						+ "Please consider disabling it in config.yml to increase performance.");
-			}
-		}
+		getServer().getPluginManager().registerEvents(new FlagsListener(), this);
 	}
 }
