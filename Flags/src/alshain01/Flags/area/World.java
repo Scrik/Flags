@@ -27,9 +27,7 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
@@ -40,14 +38,9 @@ import alshain01.Flags.Message;
 
 public class World extends Area {
 	private final static String dataHeader = "World.";
-	private final static HashSet<String> owners = 
-			new HashSet<String>(Arrays.asList("world"));
-	private UUID worldUID = null;
-	private String worldName = null;
+	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
+	private final org.bukkit.World world;
 
-	// ******************************
-	// Constructors
-	// ******************************
 	/**
 	 * Creates an instance of World based on a Bukkit Location
 	 * 
@@ -65,13 +58,9 @@ public class World extends Area {
 	 *            The Bukkit world
 	 */
 	public World(org.bukkit.World world) {
-		worldUID = world.getUID();
-		worldName = world.getName();
+		this.world = world;
 	}
 
-	// ******************************
-	// Comparable Interface
-	// ******************************
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.
 	 * 
@@ -79,7 +68,7 @@ public class World extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return a instanceof World && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+		return a instanceof World && a.getSystemID().equals(world.getName()) ? 0 : 3;
 	}
 
 	@Override
@@ -87,19 +76,15 @@ public class World extends Area {
 		return Message.World.get();
 	}
 
-	// ******************************
-	// Area Interface
-	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + getSystemID();
+		return dataHeader + world.getName();
 	}
 
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
 		String message = Flags.getDataStore()
-				.read(dataHeader + getSystemID() 
-						+ "." + flag.getName() + messageFooter);
+				.read(dataHeader + world.getName() + "." + flag.getName()	+ messageFooter);
 
 		if (message == null) {
 			message = flag.getDefaultWorldMessage();
@@ -107,8 +92,8 @@ public class World extends Area {
 
 		if (parse) {
 			message = message
-					.replaceAll("\\{AreaType\\}",  getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", worldName);
+					.replaceAll("\\{AreaType\\}", Message.World.get().toLowerCase())
+					.replaceAll("\\{World\\}", world.getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -121,13 +106,13 @@ public class World extends Area {
 
 	@Override
 	public String getSystemID() {
-		return worldName;
+		return world.getName();
 	}
 
 	@Override
 	public Set<String> getTrustList(Flag flag) {
 		final Set<String> trustedPlayers = Flags.getDataStore()
-				.readSet(dataHeader + getSystemID() + "." + flag.getName() + trustFooter);
+				.readSet(dataHeader + world.getName() + "." + flag.getName() + trustFooter);
 		return trustedPlayers != null ? trustedPlayers : new HashSet<String>();
 	}
 
@@ -136,9 +121,9 @@ public class World extends Area {
 		Boolean value = null;
 		if (isArea()) {
 			final String valueString = Flags.getDataStore()
-					.read(getDataPath() + "." + flag.getName() + valueFooter);
+					.read(dataHeader + world.getName() + "." + flag.getName() + valueFooter);
 
-			if(valueString != null) {
+			if (valueString != null) {
 				value = valueString.toLowerCase().contains("true") ? true : false;
 			}
 		}
@@ -151,7 +136,7 @@ public class World extends Area {
 
 	@Override
 	public org.bukkit.World getWorld() {
-		return Bukkit.getWorld(worldUID);
+		return world;
 	}
 
 	@Override
@@ -166,6 +151,6 @@ public class World extends Area {
 
 	@Override
 	public boolean isArea() {
-		return worldUID != null && Bukkit.getWorld(worldUID) != null;
+		return world != null;
 	}
 }

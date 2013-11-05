@@ -27,7 +27,6 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,92 +39,78 @@ import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
 public class PlotMePlot extends Area implements Removable {
-	protected final static String dataHeader = "PlotMeData.";
-	protected String plotID = null;
-	protected UUID worldUID = null;
-	//protected Plot plot = null;
-	
-	// ******************************
-	// Constructors
-	// ******************************
+	private final static String dataHeader = "PlotMeData.";
+	private final Plot plot;
+
 	/**
 	 * Creates an instance of PlotMePlot based on a Bukkit Location
-	 * @param location The Bukkit location
+	 * 
+	 * @param location
+	 *            The Bukkit location
 	 */
 	public PlotMePlot(Location location) {
-		this.plotID = PlotManager.getPlotById(location).id;
-		this.worldUID = location.getWorld().getUID();
+		plot = PlotManager.getPlotById(location);
 	}
-	
+
 	/**
 	 * Creates an instance of PlotMePlot based on a plot ID and Bukkit world
-	 * @param ID The claim ID
-	 * @param worldName The Bukkit world
+	 * 
+	 * @param ID
+	 *            The claim ID
+	 * @param worldName
+	 *            The Bukkit world
 	 */
 	public PlotMePlot(World world, String plotID) {
-		this.plotID = plotID;
-		this.worldUID = world.getUID();
-		//this.plot = PlotManager.getPlotById(Bukkit.getServer().getWorld(worldName), plotID);
+		plot = PlotManager.getPlotById(world, plotID);
 	}
-	
-	public Plot getPlot() {
-		return PlotManager.getPlotById(Bukkit.getWorld(worldUID), plotID);
-	}
-	
-	// ******************************
-	// Area Interface
-	// ******************************
-	@Override
-	protected String getDataPath() {
-		return dataHeader + Bukkit.getWorld(worldUID).getName() + "." + getSystemID();
-	}
-	
-	@Override
-	public String getSystemID() {
-		return (isArea()) ? plotID : null;
-	}
-	
-	@Override
-	public String getAreaType() {
-		return Message.PlotMe.get();
-	}
-	
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(getPlot().owner));
-	}
-	
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld(worldUID);
-	}
-	
-	@Override
-	public boolean isArea() {
-		return plotID != null
-				&& worldUID != null
-				&& getPlot() != null 
-				&& getPlot().owner != null 
-				&& !getPlot().owner.isEmpty();
-	}
-	
-	// ******************************
-	// Comparable Interface
-	// ******************************
+
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.
+	 * 
 	 * @return The value of the comparison.
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return (a instanceof PlotMePlot && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+		return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0
+				: 3;
 	}
-	
-	// ******************************
-	// Removable Interface
-	// ******************************
+
+	@Override
+	public String getAreaType() {
+		return Message.PlotMe.get();
+	}
+
+	@Override
+	protected String getDataPath() {
+		return dataHeader + getWorld().getName() + "." + getSystemID();
+	}
+
+	@Override
+	public Set<String> getOwners() {
+		return new HashSet<String>(Arrays.asList(getPlot().owner));
+	}
+
+	public Plot getPlot() {
+		return plot;
+	}
+
+	@Override
+	public String getSystemID() {
+		return isArea() ? getPlot().id : null;
+	}
+
+	@Override
+	public World getWorld() {
+		return Bukkit.getWorld(plot.world);
+	}
+
+	@Override
+	public boolean isArea() {
+		return plot != null;
+	}
+
 	@Override
 	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String)null);
+		Flags.getDataStore().write(getDataPath(), (String) null);
 	}
 }

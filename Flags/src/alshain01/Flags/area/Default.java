@@ -27,10 +27,9 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
@@ -44,14 +43,9 @@ import alshain01.Flags.Message;
  */
 public class Default extends Area {
 	private final static String dataHeader = "Default.";
-	private final static HashSet<String> owners = 
-			new HashSet<String>(Arrays.asList("default"));
-	private UUID worldUID = null;
-	private String worldName = null;
+	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("default"));
+	private final World world;
 
-	// ******************************
-	// Constructors
-	// ******************************
 	/**
 	 * Creates an instance of Default based on a Bukkit Location
 	 * 
@@ -68,14 +62,10 @@ public class Default extends Area {
 	 * @param world
 	 *            The Bukkit world
 	 */
-	public Default(org.bukkit.World world) {
-		worldUID = world.getUID();
-		worldName = world.getName();
+	public Default(World world) {
+		this.world = world;
 	}
 
-	// ******************************
-	// Comparable Interface
-	// ******************************
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.
 	 * 
@@ -83,7 +73,7 @@ public class Default extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return a instanceof Default && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+		return a instanceof Default && a.getSystemID().equals(world.getName()) ? 0 : 3;
 	}
 
 	@Override
@@ -91,12 +81,9 @@ public class Default extends Area {
 		return Message.Default.get();
 	}
 
-	// ******************************
-	// Area Interface
-	// ******************************
 	@Override
 	protected String getDataPath() {
-		return dataHeader + getSystemID();
+		return dataHeader + world.getName();
 	}
 
 	/**
@@ -112,7 +99,7 @@ public class Default extends Area {
 	public String getMessage(Flag flag, boolean parse) {
 		// We are ignore parse here. We just want to override it.
 		final String message = Flags.getDataStore()
-				.read(getDataPath() + "." + flag.getName() + messageFooter);
+				.read(dataHeader + world.getName() + "." + flag.getName() + messageFooter);
 		return message != null ? message : flag.getDefaultAreaMessage();
 	}
 
@@ -123,14 +110,13 @@ public class Default extends Area {
 
 	@Override
 	public String getSystemID() {
-		return worldName;
+		return world.getName();
 	}
 
 	@Override
 	public Set<String> getTrustList(Flag flag) {
 		final Set<String> trustedPlayers = Flags.getDataStore()
-				.readSet(dataHeader + getSystemID() 
-						+ "." + flag.getName() + trustFooter);
+				.readSet(dataHeader + world.getName() + "." + flag.getName() + trustFooter);
 		return trustedPlayers != null ? trustedPlayers : new HashSet<String>();
 	}
 
@@ -138,10 +124,10 @@ public class Default extends Area {
 	public Boolean getValue(Flag flag, boolean absolute) {
 		Boolean value = null;
 		if (isArea()) {
-			final String valueString = Flags.getDataStore().read(
-					getDataPath() + "." + flag.getName() + valueFooter);
+			final String valueString = Flags.getDataStore()
+					.read(dataHeader + world.getName() + "." + flag.getName() + valueFooter);
 
-			if(valueString != null) {
+			if (valueString != null) {
 				value = valueString.toLowerCase().contains("true") ? true : false;
 			}
 		}
@@ -153,8 +139,8 @@ public class Default extends Area {
 	}
 
 	@Override
-	public org.bukkit.World getWorld() {
-		return Bukkit.getWorld(worldUID);
+	public World getWorld() {
+		return world;
 	}
 
 	@Override
@@ -169,6 +155,6 @@ public class Default extends Area {
 
 	@Override
 	public boolean isArea() {
-		return worldUID != null && Bukkit.getWorld(worldUID) != null;
+		return world != null;
 	}
 }

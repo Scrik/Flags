@@ -27,9 +27,7 @@ package alshain01.Flags.area;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -46,48 +44,45 @@ import com.massivecraft.mcore.ps.PS;
  * 
  * @author Kevin Seiden
  */
-public class FactionsTerritory extends Area implements Removable{
-	protected final static String dataHeader = "FactionsData.";
-	String factionID = null;
-	UUID worldUID = null;
-	
-	// ******************************
-	// Constructors
-	// ******************************
-	/**
-	 * Creates an instance of FactionsTerritory based on a Bukkit World and faction ID
-	 * @param factionID The faction ID
-	 * @param worldName The Bukkit world
-	 */
-	public FactionsTerritory (World world, String factionID) {
-		this.factionID = factionID;
-		this.worldUID = world.getUID();
-	}
-	
+public class FactionsTerritory extends Area implements Removable {
+	private final static String dataHeader = "FactionsData.";
+	private final Faction faction;
+	private final World world;
+
 	/**
 	 * Creates an instance of FactionsTerritory based on a Bukkit Location
-	 * @param location The Bukkit location
+	 * 
+	 * @param location
+	 *            The Bukkit location
 	 */
-	public FactionsTerritory (Location location) {
-		this.factionID = BoardColls.get().getFactionAt(PS.valueOf(location)).getId();
-		this.worldUID = location.getWorld().getUID();
-	}
-	
-	public Faction getFaction() {
-		return FactionColls.get().getForWorld(Bukkit.getWorld(worldUID).getName()).get(factionID);
-	}
-	
-	// ******************************
-	// Area Interface
-	// ******************************
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
+	public FactionsTerritory(Location location) {
+		faction = BoardColls.get().getFactionAt(PS.valueOf(location));
+		world = location.getWorld();
 	}
 
+	/**
+	 * Creates an instance of FactionsTerritory based on a Bukkit World and
+	 * faction ID
+	 * 
+	 * @param factionID
+	 *            The faction ID
+	 * @param worldName
+	 *            The Bukkit world
+	 */
+	public FactionsTerritory(World world, String factionID) {
+		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
+		this.world = world;
+	}
+
+	/**
+	 * 0 if the the plots are the same, 3 if they are not.
+	 * 
+	 * @return The value of the comparison.
+	 */
 	@Override
-	public String getSystemID() {
-		return (isArea()) ? factionID : null;
+	public int compareTo(Area a) {
+		return a instanceof FactionsTerritory
+				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
 	}
 
 	@Override
@@ -96,39 +91,36 @@ public class FactionsTerritory extends Area implements Removable{
 	}
 
 	@Override
+	protected String getDataPath() {
+		return dataHeader + getWorld().getName() + "." + getSystemID();
+	}
+
+	public Faction getFaction() {
+		return faction;
+	}
+
+	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(FactionColls.get().getForWorld(Bukkit.getWorld(worldUID).getName()).get(factionID).getLeader().getName()));
+		return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
+	}
+
+	@Override
+	public String getSystemID() {
+		return isArea() ? getFaction().getId() : null;
 	}
 
 	@Override
 	public World getWorld() {
-		return Bukkit.getWorld(worldUID);
+		return world;
 	}
 
 	@Override
 	public boolean isArea() {
-		return this.factionID != null 
-				&& this.worldUID != null
-				&& getFaction() != null ;
+		return getWorld() != null && getFaction() != null;
 	}
-	
-	// ******************************
-	// Comparable Interface
-	// ******************************
-	/**
-	 * 0 if the the plots are the same, 3 if they are not.
-	 * @return The value of the comparison.
-	 */	
-	@Override
-	public int compareTo(Area a) {
-		return (a instanceof FactionsTerritory && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
-	}
-	
-	// ******************************
-	// Removable Interface
-	// ******************************
+
 	@Override
 	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String)null);
+		Flags.getDataStore().write(getDataPath(), (String) null);
 	}
 }

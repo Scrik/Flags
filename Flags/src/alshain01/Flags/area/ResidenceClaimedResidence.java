@@ -39,134 +39,133 @@ import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
 public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
 	private final static String dataHeader = "ResidenceData.";
-	private String residenceName;
-	//private ClaimedResidence residence = null;
-	
-	private String getInheritPath() {
-		return dataHeader + getSystemSubID() + "." + "InheritParent";
-	}	
-	
-	// ******************************
-	// Constructors
-	// ******************************
+	private final ClaimedResidence residence;
+
 	/**
-	 * Creates an instance of ResidenceClaimedResidence based on a Bukkit Location
-	 * @param location The Bukkit location
+	 * Creates an instance of ResidenceClaimedResidence based on a Bukkit
+	 * Location
+	 * 
+	 * @param location
+	 *            The Bukkit location
 	 */
 	public ResidenceClaimedResidence(Location location) {
-		residenceName = Residence.getResidenceManager().getByLoc(location).getName();
-	}
-	
-	/**
-	 * Creates an instance of ResidenceClaimedResidence based on a residence name
-	 * @param ID The claim ID
-	 */
-	public ResidenceClaimedResidence(String name) {
-		residenceName = name;
-	}
-	
-	public ClaimedResidence getResidence() {
-		return Residence.getResidenceManager().getByName(residenceName);
+		residence = Residence.getResidenceManager().getByLoc(location);
 	}
 
-	// ******************************
-	// Area Interface
-	// ******************************
-	@Override
-	protected String getDataPath() {
-		return (isSubdivision() && !isInherited()) ? dataHeader + getSystemSubID() : dataHeader + getSystemID();
+	/**
+	 * Creates an instance of ResidenceClaimedResidence based on a residence
+	 * name
+	 * 
+	 * @param ID
+	 *            The claim ID
+	 */
+	public ResidenceClaimedResidence(String name) {
+		residence = Residence.getResidenceManager().getByName(name);
 	}
-	
+
 	@Override
-	public String getSystemID() {
-		return (isSubdivision()) ? getResidence().getParent().getName() : residenceName;
+	public int compareTo(Area a) {
+		if (a instanceof ResidenceClaimedResidence
+				&& a.getSystemID().equals(getSystemID())) {
+			return 0;
+		}
+
+		// Return a -1 if this is a subdivision of the provided area
+		if (a instanceof Subdivision
+				&& isSubdivision()
+				&& String.valueOf(getResidence().getParent().getName())
+						.equalsIgnoreCase(a.getSystemID())) {
+			return -1;
+		}
+
+		return 3;
 	}
 
 	@Override
 	public String getAreaType() {
 		return Message.Residence.get();
 	}
-	
+
+	@Override
+	protected String getDataPath() {
+		return isSubdivision() && !isInherited() ? dataHeader
+				+ getSystemSubID() : dataHeader + getSystemID();
+	}
+
+	private String getInheritPath() {
+		return dataHeader + getSystemSubID() + "." + "InheritParent";
+	}
+
 	@Override
 	public Set<String> getOwners() {
 		return new HashSet<String>(Arrays.asList(getResidence().getOwner()));
 	}
-	
+
+	public ClaimedResidence getResidence() {
+		return residence;
+	}
+
+	@Override
+	public String getSystemID() {
+		return isSubdivision() ? getResidence().getParent().getName() : getResidence().getName();
+	}
+
+	@Override
+	public String getSystemSubID() {
+		return isSubdivision() ? getResidence().getName() : null;
+	}
+
 	@Override
 	public org.bukkit.World getWorld() {
 		return Bukkit.getServer().getWorld(getResidence().getWorld());
 	}
-	
+
 	@Override
 	public boolean isArea() {
-		return residenceName != null && getResidence() != null;
+		return getResidence() != null;
 	}
-	
-	// ******************************
-	// Comparable Interface
-	// ******************************
+
 	@Override
-	public int compareTo(Area a) {
-		if(a instanceof ResidenceClaimedResidence && a.getSystemID().equals(this.getSystemID())) {
-			return 0;
+	public boolean isInherited() {
+		if (!isSubdivision()) {
+			return false;
 		}
-		
-		// Return a -1 if this is a subdivision of the provided area
-		if(a instanceof Subdivision && isSubdivision()
-				&& String.valueOf(getResidence().getParent().getName()).equalsIgnoreCase(a.getSystemID())) {
-			return -1;
-		}		
-		
-		return 3;
+
+		final String value = Flags.getDataStore().read(getInheritPath());
+		if (value == null) {
+			return true;
+		}
+		return Boolean.valueOf(value);
 	}
-	
-	// ******************************
-	// Removable Interface
-	// ******************************
+
+	@Override
+	public boolean isSubdivision() {
+		return isArea() && getResidence().getParent() != null;
+	}
+
 	/**
-	 * Permanently removes the area from the data store
-	 * USE CAUTION!
+	 * Permanently removes the area from the data store USE CAUTION!
 	 */
 	@Override
 	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String)null);
+		Flags.getDataStore().write(getDataPath(), (String) null);
 	}
 
-	// ******************************
-	// Subdivision Interface
-	// ******************************
-	@Override
-	public boolean isSubdivision() {
-		return (isArea() && getResidence().getParent() != null);
-	}
-	
-	@Override
-	public String getSystemSubID() {
-		return (isSubdivision()) ? residenceName : null;
-	}
-	
-	@Override
-	public boolean isInherited() {
-		if(!isSubdivision()) { return false; }
-		
-    	String value = Flags.getDataStore().read(getInheritPath());
-    	if (value == null) { return true; }
-    	return Boolean.valueOf(value);
-	}
-	
 	@Override
 	public boolean setInherited(Boolean value) {
-		if(!isSubdivision()) { return false; }
-		String storedValue = Flags.getDataStore().read(getInheritPath());
-		
-		if(value == null) {
+		if (!isSubdivision()) {
+			return false;
+		}
+		final String storedValue = Flags.getDataStore().read(getInheritPath());
+
+		if (value == null) {
 			if (storedValue != null) {
-		    	value = !Boolean.valueOf(storedValue);
+				value = !Boolean.valueOf(storedValue);
 			} else {
 				value = false;
 			}
 		}
-		
+
 		Flags.getDataStore().write(getInheritPath(), String.valueOf(value));
 		return true;
 	}

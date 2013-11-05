@@ -29,8 +29,7 @@ import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
 
-public class GriefPreventionClaim78 extends GriefPreventionClaim implements
-		Subdivision {
+public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subdivision {
 
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a Bukkit Location
@@ -63,8 +62,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements
 	 */
 	public GriefPreventionClaim78(long ID, long subID) {
 		super(ID);
-
-		claim = claim == null ? null : claim.getSubClaim(subID);
+		this.claim = (claim == null) ? null : claim.getSubClaim(subID);
 	}
 
 	/**

@@ -25,9 +25,7 @@
 package alshain01.Flags.area;
 
 import java.util.Set;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -40,55 +38,51 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardRegion extends Area implements Removable {
 	private final static String dataHeader = "WorldGuardData.";
-	//private ProtectedRegion region = null;
-	private String regionID = null;
-	private UUID worldUID = null;
-	//private String worldName = null;
-	
-	// ******************************
-	// Constructors
-	// ******************************
+	private final ProtectedRegion region;
+	private final World world;
+
 	public WorldGuardRegion(Location location) {
-		this.worldUID = location.getWorld().getUID();
-		ApplicableRegionSet regionSet = WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location);
-		if(regionSet == null) { this.regionID = null; }
-		else {
+		world = location.getWorld();
+		ProtectedRegion tempRegion = null;
+		final ApplicableRegionSet regionSet = WGBukkit.getRegionManager(
+				location.getWorld()).getApplicableRegions(location);
+		if (regionSet != null) {
 			int currentPriority = -2147483648;
-			
-			for(ProtectedRegion region : regionSet) {
-				if(region.getPriority() >= currentPriority) {
-					this.regionID = region.getId();
+
+			for (final ProtectedRegion region : regionSet) {
+				if (region.getPriority() >= currentPriority) {
+					tempRegion = region;
 					currentPriority = region.getPriority();
 				}
 			}
 		}
-	}
-	
-	public WorldGuardRegion(World world, String regionID) {
-		this.worldUID = world.getUID();
-		this.regionID = regionID;
-	}
-	
-	public ProtectedRegion getRegion() {
-		return WGBukkit.getRegionManager(getWorld()).getRegionExact(regionID);
+		this.region = tempRegion;
 	}
 
-	// ******************************
-	// Area Interface
-	// ******************************
-	protected String getDataPath() {
-		return dataHeader + Bukkit.getWorld(worldUID).getName() + "." + getSystemID();
+	public WorldGuardRegion(World world, String regionID) {
+		this.world = world;
+		region = WGBukkit.getRegionManager(world).getRegionExact(regionID);
 	}
-	
+
+	/**
+	 * 0 if the the worlds are the same, 3 if they are not.
+	 * 
+	 * @return The value of the comparison.
+	 */
 	@Override
-	public String getSystemID() {
-		if (!isArea()) { return null; }
-		return regionID;
+	public int compareTo(Area a) {
+		return a instanceof WorldGuardRegion
+				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
 	}
-	
+
 	@Override
 	public String getAreaType() {
 		return Message.WorldGuard.get();
+	}
+
+	@Override
+	protected String getDataPath() {
+		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override
@@ -96,35 +90,30 @@ public class WorldGuardRegion extends Area implements Removable {
 		return getRegion().getOwners().getPlayers();
 	}
 
-	@Override
-	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(worldUID);
-	}
-	
-	@Override
-	public boolean isArea() {
-		return regionID != null 
-				&& worldUID != null
-				&& getRegion() != null;
+	public ProtectedRegion getRegion() {
+		return region;
 	}
 
-	// ******************************
-	// Comparable Interface
-	// ******************************
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * @return The value of the comparison.
-	 */
 	@Override
-	public int compareTo(Area a) {
-		return (a instanceof WorldGuardRegion && a.getSystemID().equals(this.getSystemID())) ? 0 : 3;
+	public String getSystemID() {
+		if (!isArea()) {
+			return null;
+		}
+		return region.getId();
 	}
-	
-	// ******************************
-	// Removable Interface
-	// ******************************
+
+	@Override
+	public org.bukkit.World getWorld() {
+		return world;
+	}
+
+	@Override
+	public boolean isArea() {
+		return region != null && world != null;
+	}
+
 	@Override
 	public void remove() {
- 	   Flags.getDataStore().write(getDataPath(), (String)null);
+		Flags.getDataStore().write(getDataPath(), (String) null);
 	}
 }
