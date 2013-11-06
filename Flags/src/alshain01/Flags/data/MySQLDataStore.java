@@ -254,11 +254,6 @@ public final class MySQLDataStore implements SQLDataStore {
 		executeStatement("INSERT INTO Bundle (bundle, value) VALUES " + values + ";");
 	}
 	
-	//TODO
-/*	private void writeTrust(String path, Set<String> names) {
-		
-	}*/
-	
 	@Override
 	public void write(String path, Set<String> set) {
 		// TODO Auto-generated method stub}
