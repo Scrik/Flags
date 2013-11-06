@@ -41,9 +41,6 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	protected final static String dataHeader = "GriefPreventionData.";
 	protected Claim claim;
 
-	// ******************************
-	// Constructors
-	// ******************************
 	/**
 	 * Creates an instance of GriefPreventionClaim based on a Bukkit Location
 	 * 
@@ -51,8 +48,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	 *            The Bukkit location
 	 */
 	public GriefPreventionClaim(Location location) {
-		claim = GriefPrevention.instance.dataStore.getClaimAt(location, false,
-				null);
+		claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 	}
 
 	/**

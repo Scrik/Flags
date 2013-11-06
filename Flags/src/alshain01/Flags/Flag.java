@@ -159,8 +159,7 @@ public final class Flag {
 	 * @return The price of the purchase.
 	 */
 	public double getPrice(EPurchaseType type) {
-		return !Flags.getDataStore().isSet("Price." + type.toString() + "." + name) 
-				? 0	: Flags.getDataStore().readDouble("Price." + type.toString() + "." + name);
+		return Flags.getDataStore().getPrice(name, type);
 	}
 
 	/**
@@ -181,7 +180,7 @@ public final class Flag {
 	 *            The new price of the purchase.
 	 */
 	public void setPrice(EPurchaseType type, double price) {
-		Flags.getDataStore().write("Price." + type.toString() + "." + name,	price);
+		Flags.getDataStore().setPrice(name, type, price);
 	}
 
 	/**

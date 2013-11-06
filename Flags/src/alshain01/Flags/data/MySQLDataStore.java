@@ -38,6 +38,8 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import alshain01.Flags.economy.EPurchaseType;
+
 public final class MySQLDataStore implements SQLDataStore {
 	Connection connection = null;
 	String url = null;
@@ -128,6 +130,7 @@ public final class MySQLDataStore implements SQLDataStore {
 			executeStatement("CREATE TABLE IF NOT EXISTS Default (world VARCHAR(50), flag VARCHAR(25), value BOOL, message VARCHAR(255));");
 			executeStatement("CREATE TABLE IF NOT EXISTS Data (id VARCHAR(100), flag VARCHAR(25), value BOOL);");
 			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (bundle VARCHAR(25), flag VARCHAR(25));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Price (flag VARCHAR(25), type VARCHAR(25), price DOUBLE);");
 			return true;
 	}
 	
@@ -302,14 +305,20 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public double readDouble(String path) {
+	public boolean isSet(String path) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public double getPrice(String flag, EPurchaseType type) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean isSet(String path) {
+	public void setPrice(String flag, EPurchaseType type, double price) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 }

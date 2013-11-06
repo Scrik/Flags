@@ -266,10 +266,9 @@ public class Flags extends JavaPlugin {
 		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
 
 		// Create the specific implementation of DataStore
-		// TODO: Add sub-interface for SQL
-		messageStore = new CustomYML(this, "message.yml");
-		messageStore.saveDefaultConfig();
+		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
 
+		// TODO: Add sub-interface for SQL
 		dataStore = new YamlDataStore(this);
 		if (!dataStore.exists(this)) {
 			// New installation

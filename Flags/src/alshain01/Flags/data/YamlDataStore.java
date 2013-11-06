@@ -30,7 +30,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import alshain01.Flags.economy.EPurchaseType;
 
 public final class YamlDataStore implements DataStore {
 	private static CustomYML data;
@@ -109,11 +112,6 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public double readDouble(String path) {
-		return getYml(path).getConfig().getDouble(path);
-	}
-
-	@Override
 	public int readInt(String path) {
 		return getYml(path).getConfig().getInt(path);
 	}
@@ -156,7 +154,44 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public void update(JavaPlugin plugin) {
-		// No update at this time.
+
+/*		if(getVersionMajor() <= 1 && getVersionMinor() < 3) {
+			if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
+				
+				final ConfigurationSection cSec = getYml("GriefPreventionData")
+						.getConfig().getConfigurationSection("GriefPreventionData");
+				Set<String> keys = cSec.getKeys(true);
+				for(String k : keys)
+					if(k.contains("Value") || k.contains("Message") 
+							|| k.contains("Trust") || k.contains("Inherit")) {
+						String id = k.split("//.")[0];
+						String world = GriefPrevention.instance.dataStore.getClaim(Long.valueOf(id)).getGreaterBoundaryCorner().getWorld().getName();
+						cSec.set(world + "." + k, cSec.get(k));
+						cSec.set(k, null);
+//						if(k.contains("Value") || k.contains("Inherit")) {
+//							cSec.set(world + "." + k, cSec.getBoolean(k));
+//						} else if (k.contains("Trust")) {
+//							cSec.set(world + "." + k, cSec.getList(k));
+//						} else if (k.contains("Message")) {
+//							cSec.set(world + "." + k, cSec.getString(k));
+//						}
+					}
+				
+			}
+		}*/
+	}
+	
+	@Override
+	public double getPrice(String flag, EPurchaseType type) {
+		final String path = "Price." + type.toString() + "." + flag;
+		final FileConfiguration cYml = getYml(path).getConfig();
+		return cYml.getString(path) != null ? cYml.getDouble(path) : 0;
+	}
+	
+	@Override
+	public void setPrice(String flag, EPurchaseType type, double price) {
+		final String path = "Price." + type.toString() + "." + flag;
+		getYml(path).getConfig().set(path, price);
 	}
 
 	@Override

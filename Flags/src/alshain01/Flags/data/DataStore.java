@@ -29,14 +29,14 @@ import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import alshain01.Flags.economy.EPurchaseType;
+
 public interface DataStore {
 	
 	// The old world order (to be phased out)
 	public boolean isSet(String path);
 
 	public String read(String path);
-
-	public double readDouble(String path);
 
 	public int readInt(String path);
 
@@ -77,4 +77,8 @@ public interface DataStore {
 	public void setBundle(String name, Set<String> flags);
 	
 	public void removeBundle(String name);
+	
+	public double getPrice(String flag, EPurchaseType type);
+	
+	public void setPrice(String flag, EPurchaseType type, double price);
 }
