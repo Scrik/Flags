@@ -29,6 +29,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -121,12 +123,11 @@ public final class MySQLDataStore implements SQLDataStore {
 	@Override
 	public boolean create(JavaPlugin plugin) {
 			executeStatement("CREATE TABLE version (major INT, minor INT, build INT);");
-			executeStatement("INSERT INTO version (major,minor,build) VALUES(0,0,0);");
-			executeStatement("CREATE TABLE IF NOT EXISTS world (world VARCHAR(50), flag VARCHAR(25), default BOOL, world BOOL);");
-			executeStatement("CREATE TABLE IF NOT EXISTS data (id BIGINT, subid BIGINT, flag VARCHAR(25), value BOOL);");
-			executeStatement("CREATE TABLE IF NOT EXISTS flag (flag VARCHAR(25), name VARCHAR(25), description VARCHAR(255), message VARCHAR(255), worldmessage VARCHAR(255));");
-			executeStatement("CREATE TABLE IF NOT EXISTS bundle (name VARCHAR(25), flag VARCHAR(25));");
-			executeStatement("CREATE TABLE IF NOT EXISTS messages (name VARCHAR(25), message VARCHAR(255));");
+			executeStatement("INSERT INTO version (major,minor,build) VALUES(1,0,0);");
+			executeStatement("CREATE TABLE IF NOT EXISTS World (world VARCHAR(50), flag VARCHAR(25), value BOOL, message VARCHAR(255));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Default (world VARCHAR(50), flag VARCHAR(25), value BOOL, message VARCHAR(255));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Data (id VARCHAR(100), flag VARCHAR(25), value BOOL);");
+			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (bundle VARCHAR(25), flag VARCHAR(25));");
 			return true;
 	}
 	
@@ -186,8 +187,78 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public void update(JavaPlugin plugin) {
-		// TODO Auto-generated method stub
+		// Nothing to update at this time
+	}
 
+	@Override
+	public Set<String> getBundles() {
+		final ResultSet results = executeQuery("SELECT DISTINCT bundle FROM Bundle");
+		Set<String> bundles = new HashSet<String>();
+
+		try {
+			while(results.next()) {
+				bundles.add(results.getString("bundle"));
+			}
+		} catch (SQLException ex){
+			//TODO Add Error
+			return null;
+		}
+		return bundles;
+	}
+	
+	@Override
+	public Set<String> getBundle(String name) {
+		final ResultSet results = executeQuery("SELECT * FROM Bundle WHERE bundle='" + name + "';");
+		HashSet<String> flags = new HashSet<String>();
+		
+		try {
+			while(results.next()) {
+				flags.add(results.getString("flag"));
+			}
+		} catch (SQLException ex){
+			//TODO Add Error
+			return null;
+		}
+		return flags;
+	}
+	
+	@Override
+	public void removeBundle(String name) {
+		executeStatement("DELETE FROM Bundle WHERE bundle='" + name + "';");
+	}
+	
+	@Override
+	public void setBundle(String name, Set<String> flags) {
+		if (flags == null || flags.size() == 0) {
+			removeBundle(name);
+			return;
+		}
+		
+		StringBuilder values = new StringBuilder();
+		
+		// Clear out any existing version of this bundle.
+		removeBundle(name);
+		
+		Iterator<String> iter = flags.iterator();
+		while(iter.hasNext()) {
+			String flag = iter.next();
+			values.append("(" + name + "," + flag + ")");
+			if(iter.hasNext()) {
+				values.append(",");
+			}
+		}
+			
+		executeStatement("INSERT INTO Bundle (bundle, value) VALUES " + values + ";");
+	}
+	
+	//TODO
+/*	private void writeTrust(String path, Set<String> names) {
+		
+	}*/
+	
+	@Override
+	public void write(String path, Set<String> set) {
+		// TODO Auto-generated method stub}
 	}
 	
 	@Override
@@ -199,6 +270,11 @@ public final class MySQLDataStore implements SQLDataStore {
 	public void write(String path, List<String> list) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void write(String path, double value) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -214,12 +290,6 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public List<String> readList(String path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Set<String> readKeys(String path) {
 		// TODO Auto-generated method stub
 		return null;
@@ -232,12 +302,6 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public void write(String path, Set<String> set) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public double readDouble(String path) {
 		// TODO Auto-generated method stub
 		return 0;
@@ -247,11 +311,5 @@ public final class MySQLDataStore implements SQLDataStore {
 	public boolean isSet(String path) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void write(String path, double value) {
-		// TODO Auto-generated method stub
-		
 	}
 }

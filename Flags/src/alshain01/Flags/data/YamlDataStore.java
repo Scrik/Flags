@@ -126,20 +126,6 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public List<String> readList(String path) {
-		final List<?> listData = getYml(path).getConfig().getList(path);
-		if (listData == null) {
-			return null;
-		}
-
-		final List<String> stringData = new ArrayList<String>();
-		for (final Object o : listData) {
-			stringData.add((String) o);
-		}
-		return stringData;
-	}
-
-	@Override
 	public Set<String> readSet(String path) {
 		final List<?> setData = getYml(path).getConfig().getList(path);
 		if (setData == null) {
@@ -188,15 +174,55 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
+	public final Set<String> getBundles() {
+		final String path = "Bundle";
+		return read(path) != null
+				? getYml(path).getConfig().getConfigurationSection(path).getKeys(false)
+				: new HashSet<String>();
+	}
+	
+	@Override
+	public final Set<String> getBundle(String bundle) {
+		final String path = "Bundle." + bundle;
+		HashSet<String> flags = new HashSet<String>();
+		if(read(path) == null) {
+			return flags;
+		}
+		
+		final List<?> list = getYml(path).getConfig().getList(path);
+		for(Object o : list) {
+			flags.add((String)o);
+		}
+		return flags;
+	}
+	
+	@Override
+	public final void setBundle(String name, Set<String> flags) {
+		if (flags == null || flags.size() == 0) {
+			removeBundle(name);
+			return;
+		}
+		
+		final List<String> list = new ArrayList<String>();
+		for (final String s : flags) {
+			list.add(s);
+		}
+		
+		write("Bundle." + name, list);
+	}
+	
+	@Override
+	public void removeBundle(String name) {
+		write("Bundle." + name, (String)null);
+	}
+	
+	@Override
 	public void write(String path, Set<String> set) {
 		final List<String> list = new ArrayList<String>();
 		for (final String s : set) {
 			list.add(s);
 		}
-
-		final CustomYML cYml = getYml(path);
-		cYml.getConfig().set(path, list);
-		cYml.saveConfig();
+		write(path, list);
 	}
 
 	@Override

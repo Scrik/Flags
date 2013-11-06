@@ -83,7 +83,7 @@ public class Flags extends JavaPlugin {
 	private class onServerEnabledTask extends BukkitRunnable {
 		@Override
 		public void run() {
-			for (final String b : Bundle.getBundleNames()) {
+			for (final String b : Flags.getDataStore().getBundles()) {
 				Debug("Registering Bundle Permission:" + b);
 				final Permission perm = new Permission("flags.bundle." + b,
 						"Grants ability to use the bundle " + b,

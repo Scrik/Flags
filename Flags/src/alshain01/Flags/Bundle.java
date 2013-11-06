@@ -27,7 +27,7 @@ package alshain01.Flags;
 import java.util.Set;
 
 /**
- * Class for flag bundle management.
+ * API for bundle management.
  * 
  * @author Alshain01
  */
@@ -40,7 +40,7 @@ public final class Bundle {
 	 * @return A list containing the bundle. Null if it doesn't exist.
 	 */
 	public final static Set<String> getBundle(String bundle) {
-		return Flags.getDataStore().readSet("Bundle." + bundle.toLowerCase());
+		return Flags.getDataStore().getBundle(bundle);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public final class Bundle {
 	 * @return A set of bundles names configured on the server.
 	 */
 	public final static Set<String> getBundleNames() {
-		return Flags.getDataStore().readKeys("Bundle");
+		return Flags.getDataStore().getBundles();
 	}
 
 	/**
@@ -72,11 +72,7 @@ public final class Bundle {
 	 *            A list of flags in the bundle. (does not verify validity)
 	 */
 	public final static void setBundle(String name, Set<String> flags) {
-		if (flags == null || flags.size() == 0) {
-			Flags.getDataStore().write("Bundle." + name, (String) null);
-			return;
-		}
-		Flags.getDataStore().write("Bundle." + name, flags);
+		Flags.getDataStore().setBundle(name, flags);
 	}
 
 	private Bundle() {

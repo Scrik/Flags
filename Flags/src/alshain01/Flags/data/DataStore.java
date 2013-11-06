@@ -30,16 +30,8 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DataStore {
-	public boolean create(JavaPlugin plugin);
-
-	public boolean exists(JavaPlugin plugin);
-
-	public int getBuild();
-
-	public int getVersionMajor();
-
-	public int getVersionMinor();
-
+	
+	// The old world order (to be phased out)
 	public boolean isSet(String path);
 
 	public String read(String path);
@@ -50,15 +42,7 @@ public interface DataStore {
 
 	public Set<String> readKeys(String path);
 
-	public List<String> readList(String path);
-
 	public Set<String> readSet(String path);
-
-	public boolean reload(JavaPlugin plugin);
-
-	public void setVersion(String version);
-
-	public void update(JavaPlugin plugin);
 
 	public void write(String path, double value);
 
@@ -67,4 +51,30 @@ public interface DataStore {
 	public void write(String path, Set<String> set);
 
 	public void write(String path, String value);
+	
+	// The new world order (transitioned to SQL capability)
+	
+	public boolean create(JavaPlugin plugin);
+
+	public boolean exists(JavaPlugin plugin);
+	
+	public boolean reload(JavaPlugin plugin);
+	
+	public void update(JavaPlugin plugin);
+	
+	public void setVersion(String version);
+
+	public int getBuild();
+
+	public int getVersionMajor();
+
+	public int getVersionMinor();
+	
+	public Set<String> getBundles();
+	
+	public Set<String> getBundle(String bundle);
+
+	public void setBundle(String name, Set<String> flags);
+	
+	public void removeBundle(String name);
 }

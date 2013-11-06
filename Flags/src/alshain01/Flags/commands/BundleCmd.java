@@ -33,7 +33,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import alshain01.Flags.Bundle;
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
@@ -43,7 +42,7 @@ final class BundleCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
 		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Bundle.getBundle(bundleName);
+		Set<String> bundle = Flags.getDataStore().getBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -69,7 +68,7 @@ final class BundleCmd extends Common {
 		boolean success = true;
 		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Bundle.getBundle(bundleName);
+		Set<String> bundle = Flags.getDataStore().getBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -98,7 +97,7 @@ final class BundleCmd extends Common {
 		boolean success = true;
 		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Bundle.getBundle(bundleName);
+		Set<String> bundle = Flags.getDataStore().getBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -126,7 +125,7 @@ final class BundleCmd extends Common {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 	
 		Flag flag;
-		Set<String> bundle = Bundle.getBundle(bundleName);
+		Set<String> bundle = Flags.getDataStore().getBundle(bundleName);
 		
 		if(bundle == null) {
 			Permission perm = new Permission("flags.bundle." + bundleName, 
@@ -146,7 +145,7 @@ final class BundleCmd extends Common {
         	bundle.add(flag.getName());
 		}
        	
-		Bundle.setBundle(bundleName, bundle);
+		Flags.getDataStore().setBundle(bundleName, bundle);
 		sender.sendMessage(Message.UpdateBundle.get()
 				.replaceAll("\\{Bundle\\}", bundleName));
 		return true;
@@ -157,7 +156,7 @@ final class BundleCmd extends Common {
 		
 		boolean success = true;
 		Flag flag;
-		Set<String> bundle = Bundle.getBundle(bundleName.toLowerCase());
+		Set<String> bundle = Flags.getDataStore().getBundle(bundleName.toLowerCase());
 		
 		if(!Validate.isBundle(sender, bundle, bundleName)) { return true; }
 
@@ -169,7 +168,7 @@ final class BundleCmd extends Common {
         	}
     		if (!bundle.remove(flag.getName())) { success = false; }
 		}
-		Bundle.setBundle(bundleName, bundle);
+		Flags.getDataStore().setBundle(bundleName, bundle);
 		
 		sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlags.get())
 				.replaceAll("\\{Bundle\\}", bundleName));
@@ -179,13 +178,13 @@ final class BundleCmd extends Common {
 	protected static boolean erase(CommandSender sender, String bundleName) {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
-		Set<String> bundles = Bundle.getBundleNames();
+		Set<String> bundles = Flags.getDataStore().getBundles();
 		if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
 			sender.sendMessage(Message.EraseBundleError.get());
 			return true;
 		}
 		
-		Bundle.setBundle(bundleName, null);
+		Flags.getDataStore().setBundle(bundleName, null);
 		Bukkit.getServer().getPluginManager().removePermission("flags.bundle." + bundleName);
 		
 		sender.sendMessage(Message.EraseBundle.get()
@@ -194,7 +193,7 @@ final class BundleCmd extends Common {
 	}
 	
 	protected static boolean help (CommandSender sender, int page) {
-		Set<String> bundles = Bundle.getBundleNames();
+		Set<String> bundles = Flags.getDataStore().getBundles();
 		if (bundles == null || bundles.size() == 0) { 
 			sender.sendMessage(Message.NoFlagFound.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get()));
@@ -244,7 +243,7 @@ final class BundleCmd extends Common {
 		
 		// Show the flags
 		for (; loop < bundles.size(); loop++) {
-			Set<String> flags = Bundle.getBundle(bundleArray[loop]);
+			Set<String> flags = Flags.getDataStore().getBundle(bundleArray[loop]);
 			if (flags == null) { continue; }
 			StringBuilder description = new StringBuilder("");
 			boolean first = true;
