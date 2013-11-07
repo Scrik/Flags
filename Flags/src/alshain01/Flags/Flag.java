@@ -159,7 +159,7 @@ public final class Flag {
 	 * @return The price of the purchase.
 	 */
 	public double getPrice(EPurchaseType type) {
-		return Flags.getDataStore().getPrice(name, type);
+		return Flags.getDataStore().readPrice(name, type);
 	}
 
 	/**
@@ -180,7 +180,7 @@ public final class Flag {
 	 *            The new price of the purchase.
 	 */
 	public void setPrice(EPurchaseType type, double price) {
-		Flags.getDataStore().setPrice(name, type, price);
+		Flags.getDataStore().writePrice(name, type, price);
 	}
 
 	/**

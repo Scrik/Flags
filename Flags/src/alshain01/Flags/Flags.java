@@ -83,7 +83,7 @@ public class Flags extends JavaPlugin {
 	private class onServerEnabledTask extends BukkitRunnable {
 		@Override
 		public void run() {
-			for (final String b : Flags.getDataStore().getBundles()) {
+			for (final String b : Flags.getDataStore().readBundles()) {
 				Debug("Registering Bundle Permission:" + b);
 				final Permission perm = new Permission("flags.bundle." + b,
 						"Grants ability to use the bundle " + b,
@@ -270,13 +270,11 @@ public class Flags extends JavaPlugin {
 
 		// TODO: Add sub-interface for SQL
 		dataStore = new YamlDataStore(this);
-		if (!dataStore.exists(this)) {
-			// New installation
-			if (!dataStore.create(this)) {
-				getLogger().warning("Failed to create database schema. Shutting down Flags.");
-				getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
+		// New installation
+		if (!dataStore.create(this)) {
+			getLogger().warning("Failed to create database schema. Shutting down Flags.");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 
 		// Find the first available land management system

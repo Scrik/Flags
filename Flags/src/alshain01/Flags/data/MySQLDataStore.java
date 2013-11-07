@@ -31,7 +31,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -124,19 +123,20 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public boolean create(JavaPlugin plugin) {
-			executeStatement("CREATE TABLE version (major INT, minor INT, build INT);");
-			executeStatement("INSERT INTO version (major,minor,build) VALUES(1,0,0);");
+		if(!exists(plugin)) {
+			executeStatement("CREATE TABLE Version (major INT, minor INT, build INT);");
+			executeStatement("INSERT INTO Version (major, minor, build) VALUES (1,3,0);");
 			executeStatement("CREATE TABLE IF NOT EXISTS World (world VARCHAR(50), flag VARCHAR(25), value BOOL, message VARCHAR(255));");
 			executeStatement("CREATE TABLE IF NOT EXISTS Default (world VARCHAR(50), flag VARCHAR(25), value BOOL, message VARCHAR(255));");
 			executeStatement("CREATE TABLE IF NOT EXISTS Data (id VARCHAR(100), flag VARCHAR(25), value BOOL);");
 			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (bundle VARCHAR(25), flag VARCHAR(25));");
 			executeStatement("CREATE TABLE IF NOT EXISTS Price (flag VARCHAR(25), type VARCHAR(25), price DOUBLE);");
-			return true;
+		}
+		return true;
 	}
 	
-	@Override
 	public boolean exists(JavaPlugin plugin) {
-		ResultSet results = executeQuery("SHOW TABLES LIKE 'version';");
+		ResultSet results = executeQuery("SHOW TABLES LIKE 'Version';");
 	
 		try {
 			return results.next();
@@ -147,45 +147,19 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 	
 	@Override
-	public int getVersionMajor() {
-		ResultSet results = executeQuery("SELECT * FROM version;");
+	public DBVersion readVersion() {
+		ResultSet results = executeQuery("SELECT * FROM Version;");
 		try {
 			results.next();
-			return results.getInt("major");
-		} catch (SQLException e) {
-			SqlError(e.getMessage());
+			return new DBVersion(results.getInt("major"), results.getInt("minor"), results.getInt("build"));
+		} catch (SQLException ex) {
+			SqlError(ex.getMessage());
 		}
-		return 0;
+		return new DBVersion(0,0,0);
 	}
 
-	@Override
-	public int getVersionMinor() {
-		ResultSet results = executeQuery("SELECT * FROM version;");
-		try {
-			results.next();
-			return results.getInt("minor");
-		} catch (SQLException e) {
-			SqlError(e.getMessage());
-		}
-		return 0;
-	}
-
-	@Override
-	public int getBuild() {
-		ResultSet results = executeQuery("SELECT * FROM version;");
-		try {
-			results.next();
-			return results.getInt("build");
-		} catch (SQLException e) {
-			SqlError(e.getMessage());
-		}
-		return 0;
-	}
-
-	@Override
-	public void setVersion(String version) {
-		String[] ver = version.split("//.");
-		executeQuery("UPDATE version SET major=" + ver[0] + ", minor=" + ver[1] + ", build=" + ver[2] + ";");
+	public void writeVersion(DBVersion version) {
+		executeQuery("UPDATE Version SET major=" + version.major + ", minor=" + version.minor + ", build=" + version.build + ";");
 	}
 	
 	@Override
@@ -194,7 +168,7 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public Set<String> getBundles() {
+	public Set<String> readBundles() {
 		final ResultSet results = executeQuery("SELECT DISTINCT bundle FROM Bundle");
 		Set<String> bundles = new HashSet<String>();
 
@@ -203,14 +177,14 @@ public final class MySQLDataStore implements SQLDataStore {
 				bundles.add(results.getString("bundle"));
 			}
 		} catch (SQLException ex){
-			//TODO Add Error
+			SqlError(ex.getMessage());
 			return null;
 		}
 		return bundles;
 	}
 	
 	@Override
-	public Set<String> getBundle(String name) {
+	public Set<String> readBundle(String name) {
 		final ResultSet results = executeQuery("SELECT * FROM Bundle WHERE bundle='" + name + "';");
 		HashSet<String> flags = new HashSet<String>();
 		
@@ -219,28 +193,28 @@ public final class MySQLDataStore implements SQLDataStore {
 				flags.add(results.getString("flag"));
 			}
 		} catch (SQLException ex){
-			//TODO Add Error
+			SqlError(ex.getMessage());
 			return null;
 		}
 		return flags;
 	}
 	
 	@Override
-	public void removeBundle(String name) {
+	public void deleteBundle(String name) {
 		executeStatement("DELETE FROM Bundle WHERE bundle='" + name + "';");
 	}
 	
 	@Override
-	public void setBundle(String name, Set<String> flags) {
+	public void writeBundle(String name, Set<String> flags) {
 		if (flags == null || flags.size() == 0) {
-			removeBundle(name);
+			deleteBundle(name);
 			return;
 		}
 		
 		StringBuilder values = new StringBuilder();
 		
 		// Clear out any existing version of this bundle.
-		removeBundle(name);
+		deleteBundle(name);
 		
 		Iterator<String> iter = flags.iterator();
 		while(iter.hasNext()) {
@@ -255,6 +229,24 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 	
 	@Override
+	public boolean isSet(String path) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public double readPrice(String flag, EPurchaseType type) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writePrice(String flag, EPurchaseType type, double price) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void write(String path, Set<String> set) {
 		// TODO Auto-generated method stub}
 	}
@@ -265,21 +257,9 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public void write(String path, List<String> list) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
 	public String read(String path) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public int readInt(String path) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -294,23 +274,6 @@ public final class MySQLDataStore implements SQLDataStore {
 		return null;
 	}
 
-	@Override
-	public boolean isSet(String path) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public double getPrice(String flag, EPurchaseType type) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setPrice(String flag, EPurchaseType type, double price) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public boolean readBoolean(String path) {

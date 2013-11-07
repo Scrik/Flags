@@ -64,11 +64,12 @@ public final class YamlDataStore implements DataStore {
 	@Override
 	public boolean create(JavaPlugin plugin) {
 		// Don't change the version here, not needed (will change in update)
-		setVersion("1.0.0");
+		if(!exists(plugin)) {
+			writeVersion(new DBVersion(1,0,0));
+		}
 		return true;
 	}
 
-	@Override
 	public boolean exists(JavaPlugin plugin) {
 		final File fileObject = 
 				new File(plugin.getDataFolder()	+ "\\default.yml");
@@ -76,21 +77,10 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public int getBuild() {
-		return Integer
-				.valueOf(read("Default.Database.Version").split("\\.")[2]);
-	}
-
-	@Override
-	public int getVersionMajor() {
-		return Integer
-				.valueOf(read("Default.Database.Version").split("\\.")[0]);
-	}
-
-	@Override
-	public int getVersionMinor() {
-		return Integer
-				.valueOf(read("Default.Database.Version").split("\\.")[1]);
+	public DBVersion readVersion() {
+		if(!isSet("Default.Database.Version")) { return new DBVersion(0,0,0); }
+		String[] ver = read("Default.Database.Version").split("\\.");
+		return new DBVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]), Integer.valueOf(ver[2]));
 	}
 
 	private CustomYML getYml(String path) {
@@ -117,11 +107,6 @@ public final class YamlDataStore implements DataStore {
 	@Override
 	public String read(String path) {
 		return getYml(path).getConfig().getString(path);
-	}
-
-	@Override
-	public int readInt(String path) {
-		return getYml(path).getConfig().getInt(path);
 	}
 
 	@Override
@@ -155,14 +140,14 @@ public final class YamlDataStore implements DataStore {
 		return true;
 	}
 
-	@Override
-	public void setVersion(String version) {
-		write("Default.Database.Version", version);
+	public void writeVersion(DBVersion version) {
+		write("Default.Database.Version", version.major + "." + version.minor + "." + version.build);
 	}
 
 	@Override
 	public void update(JavaPlugin plugin) {
-		if(getVersionMajor() <= 1 && getVersionMinor() <= 2 && getBuild() < 2) {
+		DBVersion ver = readVersion();
+		if(ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
 			if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
@@ -224,7 +209,7 @@ public final class YamlDataStore implements DataStore {
 			}
 			cYml.saveConfig();
 			
-			setVersion("1.2.2");
+			writeVersion(new DBVersion(1,2,2));
 		}
 		
 	}
@@ -235,23 +220,16 @@ public final class YamlDataStore implements DataStore {
 	}
 	
 	@Override
-	public double getPrice(String flag, EPurchaseType type) {
+	public double readPrice(String flag, EPurchaseType type) {
 		final String path = "Price." + type.toString() + "." + flag;
 		final FileConfiguration cYml = getYml(path).getConfig();
 		return cYml.getString(path) != null ? cYml.getDouble(path) : 0;
 	}
 	
 	@Override
-	public void setPrice(String flag, EPurchaseType type, double price) {
+	public void writePrice(String flag, EPurchaseType type, double price) {
 		final String path = "Price." + type.toString() + "." + flag;
 		getYml(path).getConfig().set(path, price);
-	}
-
-	@Override
-	public void write(String path, List<String> list) {
-		final CustomYML cYml = getYml(path);
-		cYml.getConfig().set(path, list);
-		cYml.saveConfig();
 	}
 	
 	@Override
@@ -262,7 +240,7 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public final Set<String> getBundles() {
+	public final Set<String> readBundles() {
 		final String path = "Bundle";
 		return read(path) != null
 				? getYml(path).getConfig().getConfigurationSection(path).getKeys(false)
@@ -270,7 +248,7 @@ public final class YamlDataStore implements DataStore {
 	}
 	
 	@Override
-	public final Set<String> getBundle(String bundle) {
+	public final Set<String> readBundle(String bundle) {
 		final String path = "Bundle." + bundle;
 		HashSet<String> flags = new HashSet<String>();
 		if(read(path) == null) {
@@ -285,9 +263,11 @@ public final class YamlDataStore implements DataStore {
 	}
 	
 	@Override
-	public final void setBundle(String name, Set<String> flags) {
+	public final void writeBundle(String name, Set<String> flags) {
+		final String path = "Bundle." + name;
+		final CustomYML cYml = getYml(path);
 		if (flags == null || flags.size() == 0) {
-			removeBundle(name);
+			deleteBundle(name);
 			return;
 		}
 		
@@ -296,21 +276,26 @@ public final class YamlDataStore implements DataStore {
 			list.add(s);
 		}
 		
-		write("Bundle." + name, list);
+		cYml.getConfig().set(path, list);
+		cYml.saveConfig();
 	}
 	
 	@Override
-	public void removeBundle(String name) {
+	public void deleteBundle(String name) {
 		write("Bundle." + name, (String)null);
 	}
 	
 	@Override
 	public void write(String path, Set<String> set) {
+		final CustomYML cYml = getYml(path);
+
 		final List<String> list = new ArrayList<String>();
 		for (final String s : set) {
 			list.add(s);
 		}
-		write(path, list);
+		
+		cYml.getConfig().set(path, list);
+		cYml.saveConfig();
 	}
 
 	@Override

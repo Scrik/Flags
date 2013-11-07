@@ -24,7 +24,6 @@
 
 package alshain01.Flags.data;
 
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,19 +33,13 @@ import alshain01.Flags.economy.EPurchaseType;
 public interface DataStore {
 	
 	// The old world order (to be phased out)
-	public boolean isSet(String path);
-
 	public String read(String path);
 
-	public int readInt(String path);
-	
 	public boolean readBoolean(String path);
 
 	public Set<String> readKeys(String path);
 
 	public Set<String> readSet(String path);
-
-	public void write(String path, List<String> list);
 
 	public void write(String path, Set<String> set);
 
@@ -55,32 +48,25 @@ public interface DataStore {
 	public void write(String path, Boolean value);
 	
 	// The new world order (transitioned to SQL capability)
+	public boolean isSet(String path);
 	
 	public boolean create(JavaPlugin plugin);
 
-	public boolean exists(JavaPlugin plugin);
-	
 	public boolean reload(JavaPlugin plugin);
 	
 	public void update(JavaPlugin plugin);
 	
-	public void setVersion(String version);
+	public DBVersion readVersion();
+	
+	public Set<String> readBundles();
+	
+	public Set<String> readBundle(String bundle);
 
-	public int getBuild();
-
-	public int getVersionMajor();
-
-	public int getVersionMinor();
+	public void writeBundle(String name, Set<String> flags);
 	
-	public Set<String> getBundles();
+	public void deleteBundle(String name);
 	
-	public Set<String> getBundle(String bundle);
-
-	public void setBundle(String name, Set<String> flags);
+	public double readPrice(String flag, EPurchaseType type);
 	
-	public void removeBundle(String name);
-	
-	public double getPrice(String flag, EPurchaseType type);
-	
-	public void setPrice(String flag, EPurchaseType type, double price);
+	public void writePrice(String flag, EPurchaseType type, double price);
 }
