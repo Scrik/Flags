@@ -82,56 +82,6 @@ public final class Director {
 		}
 	}
 
-	public enum LandSystem {
-		NONE(null, null),
-		GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention"),
-		WORLDGUARD("WorldGuard", "WorldGuard"),
-		RESIDENCE("Residence", "Residence"),
-		INFINITEPLOTS("InfinitePlots", "InfinitePlots"),
-		FACTIONS("Factions", "Factions"),
-		PLOTME("PlotMe", "PlotMe");
-
-		/**
-		 * Gets the enumeration that matches the case sensitive plugin.yml name.
-		 * 
-		 * @return The enumeration. LandSystem.NONE if no matches found.
-		 */
-		public static LandSystem getByName(String name) {
-			for (final LandSystem p : LandSystem.values()) {
-				if (name.equals(p.pluginName)) {
-					return p;
-				}
-			}
-			return LandSystem.NONE;
-		}
-
-		private String pluginName = null, displayName = null;
-
-		private LandSystem(String name, String displayName) {
-			pluginName = name;
-			this.displayName = displayName;
-		}
-
-		/**
-		 * Gets a user friendly string, including spaces, for the plug-in.
-		 * 
-		 * @return The user friendly name of the plugin
-		 */
-		public String getDisplayName() {
-			return displayName;
-		}
-
-		/**
-		 * Gets the plug-in name as indicated in it's plugin.yml
-		 * 
-		 * @return The case sensitive plugin.yml name for the enumerated value
-		 */
-		@Override
-		public String toString() {
-			return pluginName;
-		}
-	}
-
 	private static class ResidenceCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onResidenceDelete(ResidenceDeleteEvent e) {
@@ -144,9 +94,9 @@ public final class Director {
 	 * Database cleanup monitors
 	 */
 	protected static void enableMrClean(PluginManager pm) {
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
-			if (Float.valueOf(pm.getPlugin(getSystem().toString())
+			if (Float.valueOf(pm.getPlugin(LandSystem.getActive().toString())
 					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
 				pm.registerEvents(new GriefPreventionCleaner(),	Flags.getInstance());
@@ -167,7 +117,7 @@ public final class Director {
 	 * Gets the area at a specific location if one exists, otherwise null
 	 */
 	private static Area getArea(Location location) {
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
 					.getPluginManager().getPlugin("GriefPrevention");
@@ -213,7 +163,7 @@ public final class Director {
 	 */
 	public static Area getArea(String name) {
 		String[] path;
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
 					.getPluginManager().getPlugin("GriefPrevention");
@@ -278,7 +228,7 @@ public final class Director {
 	public static Set<String> getAreaNames() {
 		Set<String> worlds, localAreas;
 		final Set<String> allAreas = new HashSet<String>();
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
 			return Flags.getDataStore().readKeys("GriefPreventionData");
 		case RESIDENCE:
@@ -327,15 +277,6 @@ public final class Director {
 	}
 
 	/**
-	 * Gets the current land system in use by Flags.
-	 * 
-	 * @return The current Land Management System in use by Flags.
-	 */
-	public static LandSystem getSystem() {
-		return Flags.currentSystem;
-	}
-
-	/**
 	 * Gets a user friendly name of the area type of the configured system,
 	 * capitalized. For use when the name is required even though an area does
 	 * not exist (such as error messages). If you have an area instance, use
@@ -344,7 +285,7 @@ public final class Director {
 	 * @return The user friendly name.
 	 */
 	public static String getSystemAreaType() {
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
 			return Message.GriefPrevention.get();
 		case WORLDGUARD:
@@ -366,7 +307,7 @@ public final class Director {
 	 * Performs a fast check to see if an area is defined at a location
 	 */
 	private static boolean hasArea(Location location) {
-		switch (getSystem()) {
+		switch (LandSystem.getActive()) {
 		case GRIEF_PREVENTION:
 			return GriefPrevention.instance.dataStore.getClaimAt(location,
 					false) != null;
@@ -396,7 +337,7 @@ public final class Director {
 	 *         unsupported.
 	 */
 	public static boolean inPvpCombat(Player player) {
-		return getSystem() != LandSystem.GRIEF_PREVENTION ? false
+		return LandSystem.getActive() != LandSystem.GRIEF_PREVENTION ? false
 				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 

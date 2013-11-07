@@ -216,7 +216,7 @@ public abstract class Area implements Comparable<Area> {
 			final String path = getDataPath() + "." + flag.getName() + valueFooter;
 
 			if(Flags.getDataStore().isSet(path)) {
-				value = Flags.getDataStore().readBoolean(getDataPath() + "." + flag.getName() + valueFooter);
+				value = Flags.getDataStore().readBoolean(path);
 			}
 		}
 

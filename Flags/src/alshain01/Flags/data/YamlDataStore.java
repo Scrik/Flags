@@ -39,8 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bekvon.bukkit.residence.Residence;
 
-import alshain01.Flags.Director;
-import alshain01.Flags.Director.LandSystem;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.economy.EPurchaseType;
 
 public final class YamlDataStore implements DataStore {
@@ -150,9 +149,9 @@ public final class YamlDataStore implements DataStore {
 		if(ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
-			if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
+			if(LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
 				cSec = cYml.getConfig().getConfigurationSection("GriefPreventionData");
-			} else if(Director.getSystem() == LandSystem.RESIDENCE) {
+			} else if(LandSystem.getActive() == LandSystem.RESIDENCE) {
 				cSec = cYml.getConfig().getConfigurationSection("ResidenceData");
 			}
 			if(cSec != null) {
@@ -165,7 +164,7 @@ public final class YamlDataStore implements DataStore {
 						String id = k.split("\\.")[0];
 						String world;
 						
-						if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
+						if(LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
 							world = GriefPrevention.instance.dataStore.getClaim(Long.valueOf(id)).getGreaterBoundaryCorner().getWorld().getName();
 						} else {
 							world = Residence.getResidenceManager().getByName(id).getWorld();

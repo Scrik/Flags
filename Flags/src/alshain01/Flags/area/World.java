@@ -120,11 +120,10 @@ public class World extends Area {
 	public Boolean getValue(Flag flag, boolean absolute) {
 		Boolean value = null;
 		if (isArea()) {
-			final String valueString = Flags.getDataStore()
-					.read(dataHeader + world.getName() + "." + flag.getName() + valueFooter);
+			final String path = dataHeader + world.getName() + "." + flag.getName() + valueFooter;
 
-			if (valueString != null) {
-				value = valueString.toLowerCase().contains("true") ? true : false;
+			if(Flags.getDataStore().isSet(path)) {
+				value = Flags.getDataStore().readBoolean(path);
 			}
 		}
 

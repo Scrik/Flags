@@ -28,8 +28,8 @@ import java.io.IOException;
 
 import org.bukkit.Bukkit;
 
-import alshain01.Flags.Director;
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.metrics.Metrics.Graph;
 
 public class MetricsManager {
@@ -39,8 +39,8 @@ public class MetricsManager {
 
 			// Land System Graph
 			final Graph systemGraph = metrics.createGraph("Land System");
-			for (final Director.LandSystem system : Director.LandSystem.values()) {
-				if (Director.getSystem() == system) {
+			for (final LandSystem system : LandSystem.values()) {
+				if (LandSystem.getActive() == system) {
 					systemGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 						@Override
 						public int getValue() {
@@ -53,8 +53,8 @@ public class MetricsManager {
 			// Land System by PlayersGraph
 			final Graph systemPlayersGraph = metrics
 					.createGraph("Land System by Players");
-			for (final Director.LandSystem system : Director.LandSystem.values()) {
-				if (Director.getSystem() == system) {
+			for (final LandSystem system : LandSystem.values()) {
+				if (LandSystem.getActive() == system) {
 					systemPlayersGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 						@Override
 						public int getValue() {
