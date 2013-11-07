@@ -278,7 +278,6 @@ public class Flags extends JavaPlugin {
 				return;
 			}
 		}
-		dataStore.update(this);
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
@@ -290,7 +289,10 @@ public class Flags extends JavaPlugin {
 				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
 		}
-
+		
+		dataStore.update(this);
+		
+		
 		// Enable Vault support
 		setupEconomy();
 

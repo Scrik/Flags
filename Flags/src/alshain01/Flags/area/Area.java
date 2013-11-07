@@ -211,17 +211,12 @@ public abstract class Area implements Comparable<Area> {
 	 *         defaults if not defined.
 	 */
 	public Boolean getValue(Flag flag, boolean absolute) {
-		if (!isArea()) {
-			return false;
-		}
-
 		Boolean value = null;
 		if (isArea()) {
-			final String valueString = Flags.getDataStore()
-					.read(getDataPath() + "." + flag.getName() + valueFooter);
+			final String path = getDataPath() + "." + flag.getName() + valueFooter;
 
-			if(valueString != null) {
-				value = valueString.toLowerCase().contains("true") ? true : false;
+			if(Flags.getDataStore().isSet(path)) {
+				value = Flags.getDataStore().readBoolean(getDataPath() + "." + flag.getName() + valueFooter);
 			}
 		}
 
@@ -484,7 +479,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,	value);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;
 		}
@@ -496,7 +491,7 @@ public abstract class Area implements Comparable<Area> {
 			}
 		}
 
-		String val = (value == null) ? (String) null : String.valueOf(value);
+		Boolean val = (value == null) ? null : value;
 		Flags.getDataStore().write(getDataPath() + "." + flag.getName() + valueFooter, val);
 		return true;
 	}

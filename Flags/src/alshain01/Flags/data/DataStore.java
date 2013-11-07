@@ -39,18 +39,20 @@ public interface DataStore {
 	public String read(String path);
 
 	public int readInt(String path);
+	
+	public boolean readBoolean(String path);
 
 	public Set<String> readKeys(String path);
 
 	public Set<String> readSet(String path);
-
-	public void write(String path, double value);
 
 	public void write(String path, List<String> list);
 
 	public void write(String path, Set<String> set);
 
 	public void write(String path, String value);
+	
+	public void write(String path, Boolean value);
 	
 	// The new world order (transitioned to SQL capability)
 	

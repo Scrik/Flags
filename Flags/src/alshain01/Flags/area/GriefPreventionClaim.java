@@ -83,7 +83,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	protected String getDataPath() {
-		return dataHeader + getSystemID();
+		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override

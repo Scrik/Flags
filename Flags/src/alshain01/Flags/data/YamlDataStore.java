@@ -30,9 +30,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.bekvon.bukkit.residence.Residence;
+
+import alshain01.Flags.Director;
+import alshain01.Flags.Director.LandSystem;
 import alshain01.Flags.economy.EPurchaseType;
 
 public final class YamlDataStore implements DataStore {
@@ -55,7 +63,7 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public boolean create(JavaPlugin plugin) {
-		// Don't change the version here, not needed
+		// Don't change the version here, not needed (will change in update)
 		setVersion("1.0.0");
 		return true;
 	}
@@ -70,19 +78,19 @@ public final class YamlDataStore implements DataStore {
 	@Override
 	public int getBuild() {
 		return Integer
-				.valueOf(read("Default.Database.Version").split("//.")[2]);
+				.valueOf(read("Default.Database.Version").split("\\.")[2]);
 	}
 
 	@Override
 	public int getVersionMajor() {
 		return Integer
-				.valueOf(read("Default.Database.Version").split("//.")[0]);
+				.valueOf(read("Default.Database.Version").split("\\.")[0]);
 	}
 
 	@Override
 	public int getVersionMinor() {
 		return Integer
-				.valueOf(read("Default.Database.Version").split("//.")[1]);
+				.valueOf(read("Default.Database.Version").split("\\.")[1]);
 	}
 
 	private CustomYML getYml(String path) {
@@ -154,31 +162,76 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public void update(JavaPlugin plugin) {
-
-/*		if(getVersionMajor() <= 1 && getVersionMinor() < 3) {
+		if(getVersionMajor() <= 1 && getVersionMinor() <= 2 && getBuild() < 2) {
+			CustomYML cYml = getYml("data");
+			ConfigurationSection cSec = null;
 			if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
-				
-				final ConfigurationSection cSec = getYml("GriefPreventionData")
-						.getConfig().getConfigurationSection("GriefPreventionData");
+				cSec = cYml.getConfig().getConfigurationSection("GriefPreventionData");
+			} else if(Director.getSystem() == LandSystem.RESIDENCE) {
+				cSec = cYml.getConfig().getConfigurationSection("ResidenceData");
+			}
+			if(cSec != null) {
 				Set<String> keys = cSec.getKeys(true);
-				for(String k : keys)
+				for(String k : keys) {
+					
 					if(k.contains("Value") || k.contains("Message") 
 							|| k.contains("Trust") || k.contains("Inherit")) {
-						String id = k.split("//.")[0];
-						String world = GriefPrevention.instance.dataStore.getClaim(Long.valueOf(id)).getGreaterBoundaryCorner().getWorld().getName();
+						
+						String id = k.split("\\.")[0];
+						String world;
+						
+						if(Director.getSystem() == LandSystem.GRIEF_PREVENTION) {
+							world = GriefPrevention.instance.dataStore.getClaim(Long.valueOf(id)).getGreaterBoundaryCorner().getWorld().getName();
+						} else {
+							world = Residence.getResidenceManager().getByName(id).getWorld();
+						}
+						
 						cSec.set(world + "." + k, cSec.get(k));
-						cSec.set(k, null);
-//						if(k.contains("Value") || k.contains("Inherit")) {
-//							cSec.set(world + "." + k, cSec.getBoolean(k));
-//						} else if (k.contains("Trust")) {
-//							cSec.set(world + "." + k, cSec.getList(k));
-//						} else if (k.contains("Message")) {
-//							cSec.set(world + "." + k, cSec.getString(k));
-//						}
 					}
-				
+				}
+				// Remove the old
+				for(String k : keys) {
+					if(k.split("\\.").length == 1 && Bukkit.getWorld(k.split("\\.")[0]) == null) {
+						cSec.set(k, null);
+					}
+				}
+
 			}
-		}*/
+			
+			Set<String> keys = cYml.getConfig().getKeys(true);
+			for(String k : keys) {
+				if(k.contains("Value")) {
+					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+				}
+			}
+			cYml.saveConfig();
+			
+			cYml = getYml("default");
+			keys = cYml.getConfig().getKeys(true);
+			for(String k : keys) {
+				if(k.contains("Value")) {
+					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+				}
+			}
+			cYml.saveConfig();
+			
+			cYml = getYml("world");
+			keys = cYml.getConfig().getKeys(true);
+			for(String k : keys) {
+				if(k.contains("Value")) {
+					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+				}
+			}
+			cYml.saveConfig();
+			
+			setVersion("1.2.2");
+		}
+		
+	}
+	
+	@Override
+	public boolean readBoolean(String path) {
+		return getYml(path).getConfig().getBoolean(path);
 	}
 	
 	@Override
@@ -195,16 +248,16 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public void write(String path, double value) {
-		final CustomYML cYml = getYml(path);
-		cYml.getConfig().set(path, value);
-		cYml.saveConfig();
-	}
-
-	@Override
 	public void write(String path, List<String> list) {
 		final CustomYML cYml = getYml(path);
 		cYml.getConfig().set(path, list);
+		cYml.saveConfig();
+	}
+	
+	@Override
+	public void write(String path, Boolean value) {
+		final CustomYML cYml = getYml(path);
+		cYml.getConfig().set(path, value);
 		cYml.saveConfig();
 	}
 

@@ -271,11 +271,6 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 	
 	@Override
-	public void write(String path, double value) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public String read(String path) {
 		// TODO Auto-generated method stub
 		return null;
@@ -313,6 +308,18 @@ public final class MySQLDataStore implements SQLDataStore {
 
 	@Override
 	public void setPrice(String flag, EPurchaseType type, double price) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean readBoolean(String path) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void write(String path, Boolean value) {
 		// TODO Auto-generated method stub
 		
 	}
