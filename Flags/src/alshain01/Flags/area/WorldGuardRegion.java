@@ -38,7 +38,6 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardRegion extends Area implements Removable {
-	private final static String dataHeader = "WorldGuardData.";
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -79,11 +78,6 @@ public class WorldGuardRegion extends Area implements Removable {
 	@Override
 	public String getAreaType() {
 		return Message.WorldGuard.get();
-	}
-
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override

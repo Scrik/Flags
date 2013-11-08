@@ -39,7 +39,6 @@ import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 
 public class InfinitePlotsPlot extends Area implements Removable {
-	private final static String dataHeader = "InfinitePlotsData.";
 	private final Plot plot;
 
 	/**
@@ -81,11 +80,6 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	@Override
 	public String getAreaType() {
 		return Message.InfinitePlots.get();
-	}
-
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override

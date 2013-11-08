@@ -46,7 +46,6 @@ import com.massivecraft.mcore.ps.PS;
  * @author Kevin Seiden
  */
 public class FactionsTerritory extends Area implements Removable {
-	private final static String dataHeader = "FactionsData.";
 	private final Faction faction;
 	private final World world;
 
@@ -89,11 +88,6 @@ public class FactionsTerritory extends Area implements Removable {
 	@Override
 	public String getAreaType() {
 		return Message.Factions.get();
-	}
-
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	public Faction getFaction() {

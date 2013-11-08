@@ -24,8 +24,6 @@
 
 package alshain01.Flags.area;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -49,20 +47,19 @@ import alshain01.Flags.events.MessageChangedEvent;
 import alshain01.Flags.events.TrustChangedEvent;
 
 public abstract class Area implements Comparable<Area> {
-	protected final static String valueFooter = ".Value";
-	protected final static String trustFooter = ".Trust";
-	protected final static String messageFooter = ".Message";
-
 	/*
 	 * Checks to make sure the player can afford the item. If false, the player
 	 * is automatically notified.
 	 */
-	private static boolean isFundingAvailable(EPurchaseType product, Flag flag,	Player player) {
+	private static boolean isFundingAvailable(EPurchaseType product, Flag flag,
+			Player player) {
 		final double price = flag.getPrice(product);
 
 		if (price > Flags.getEconomy().getBalance(player.getName())) {
-			player.sendMessage(Message.LowFunds.get()
-					.replaceAll("\\{PurchaseType\\}", product.getLocal().toLowerCase())
+			player.sendMessage(Message.LowFunds
+					.get()
+					.replaceAll("\\{PurchaseType\\}",
+							product.getLocal().toLowerCase())
 					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
 					.replaceAll("\\{Flag\\}", flag.getName()));
 			return false;
@@ -77,21 +74,21 @@ public abstract class Area implements Comparable<Area> {
 			EPurchaseType product, Flag flag, Player player) {
 		final double price = flag.getPrice(product);
 
-		EconomyResponse r = 
-				(transaction == ETransactionType.Withdraw)
-					? Flags.getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
-							: Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
+		final EconomyResponse r = transaction == ETransactionType.Withdraw ? Flags
+				.getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
+				: Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
 
 		if (r.transactionSuccess()) {
-			player.sendMessage(transaction.getMessage()
-					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price)));
+			player.sendMessage(transaction.getMessage().replaceAll(
+					"\\{Price\\}", Flags.getEconomy().format(price)));
 			return true;
 		}
 
 		// Something went wrong if we made it this far.
 		Flags.getInstance().getLogger()
 				.severe(String.format("An error occured: %s", r.errorMessage));
-		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}", r.errorMessage));
+		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
+				r.errorMessage));
 		return false;
 	}
 
@@ -101,11 +98,6 @@ public abstract class Area implements Comparable<Area> {
 	 * @return the area's type as a user friendly name.
 	 */
 	public abstract String getAreaType();
-
-	/*
-	 * @return The data path of the data storage system for the area
-	 */
-	protected abstract String getDataPath();
 
 	/**
 	 * Gets the message associated with a player flag. Translates the color
@@ -140,9 +132,9 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		if (parse) {
-			message = message
-					.replaceAll("\\{AreaType\\}", getAreaType().toLowerCase())
-					.replaceAll("\\{Owner\\}", getOwners().toArray()[0].toString());
+			message = message.replaceAll("\\{AreaType\\}",
+					getAreaType().toLowerCase()).replaceAll("\\{Owner\\}",
+					getOwners().toArray()[0].toString());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -169,7 +161,7 @@ public abstract class Area implements Comparable<Area> {
 	 * @return the player name of the area owner.
 	 */
 	public abstract Set<String> getOwners();
-	
+
 	/**
 	 * Returns the system type that this object belongs to.
 	 * 
@@ -192,16 +184,16 @@ public abstract class Area implements Comparable<Area> {
 	 *            The flag to retrieve the trust list for.
 	 * @return The list of players
 	 */
-	public Set<String> getTrustList(Flag flag) {
+	public final Set<String> getTrustList(Flag flag) {
 		if (!isArea()) {
 			return null;
 		}
 
-		Set<String> trustedPlayers = Flags.getDataStore().readTrust(this, flag);
-		if (trustedPlayers == null) {
-			trustedPlayers = new HashSet<String>();
+		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,
+				flag);
+		if (!(this instanceof Default || this instanceof World)) {
+			trustedPlayers.addAll(getOwners());
 		}
-		trustedPlayers.addAll(getOwners());
 		return trustedPlayers;
 	}
 
@@ -218,14 +210,17 @@ public abstract class Area implements Comparable<Area> {
 	 */
 	public Boolean getValue(Flag flag, boolean absolute) {
 		Boolean value = null;
-		if (isArea()) {
-			value = Flags.getDataStore().readFlag(this, flag);
+		if (!isArea()) {
+			return value;
 		}
 
+		value = Flags.getDataStore().readFlag(this, flag);
 		if (absolute) {
 			return value;
 		}
-		return value != null ? value : new Default(getWorld()).getValue(flag, false);
+
+		return value != null ? value : new Default(getWorld()).getValue(flag,
+				false);
 	}
 
 	/**
@@ -249,15 +244,15 @@ public abstract class Area implements Comparable<Area> {
 
 		if (p instanceof HumanEntity
 				&& getOwners().contains(((HumanEntity) p).getName())) {
-			return (p.hasPermission("flags.command.bundle.set")) ? true : false;
+			return p.hasPermission("flags.command.bundle.set") ? true : false;
 		}
 
 		if (this instanceof Administrator
 				&& ((Administrator) this).isAdminArea()) {
-			return (p.hasPermission("flags.area.bundle.admin")) ? true : false;
+			return p.hasPermission("flags.area.bundle.admin") ? true : false;
 		}
 
-		return (p.hasPermission("flags.area.bundle.others")) ? true : false;
+		return p.hasPermission("flags.area.bundle.others") ? true : false;
 	}
 
 	/**
@@ -274,15 +269,15 @@ public abstract class Area implements Comparable<Area> {
 
 		if (p instanceof HumanEntity
 				&& getOwners().contains(((HumanEntity) p).getName())) {
-			return (p.hasPermission("flags.command.flag.set")) ? true : false;
+			return p.hasPermission("flags.command.flag.set") ? true : false;
 		}
 
 		if (this instanceof Administrator
 				&& ((Administrator) this).isAdminArea()) {
-			return (p.hasPermission("flags.area.flag.admin")) ? true : false;
+			return p.hasPermission("flags.area.flag.admin") ? true : false;
 		}
 
-		return (p.hasPermission("flags.area.flag.others")) ? true : false;
+		return p.hasPermission("flags.area.flag.others") ? true : false;
 	}
 
 	/**
@@ -304,7 +299,8 @@ public abstract class Area implements Comparable<Area> {
 	 *            or console.
 	 * @return True if successful
 	 */
-	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
+	public final boolean setMessage(Flag flag, String message,
+			CommandSender sender) {
 		if (!isArea()) {
 			return false;
 		}
@@ -318,8 +314,8 @@ public abstract class Area implements Comparable<Area> {
 				&& flag.getPrice(EPurchaseType.Message) != 0 // No defined price
 				&& !(this instanceof World) // No charge for world flags
 				&& !(this instanceof Default) // No charge for defaults
-				&& !(this instanceof Administrator 
-						&& ((Administrator) this).isAdminArea())) // No charge for admin areas
+				&& !(this instanceof Administrator && ((Administrator) this)
+						.isAdminArea())) // No charge for admin areas
 		{
 
 			// Check to make sure we aren't removing the message
@@ -329,7 +325,8 @@ public abstract class Area implements Comparable<Area> {
 				// (if they are just correcting caps, don't charge, I hate
 				// discouraging bad spelling & grammar)
 				if (!getMessage(flag, false).equalsIgnoreCase(message)) {
-					if (!isFundingAvailable(EPurchaseType.Message, flag, (Player) sender)) {
+					if (!isFundingAvailable(EPurchaseType.Message, flag,
+							(Player) sender)) {
 						return false;
 					}
 					transaction = ETransactionType.Withdraw;
@@ -339,15 +336,16 @@ public abstract class Area implements Comparable<Area> {
 				if (EPurchaseType.Message.isRefundable()) {
 					// Make sure the message we are refunding isn't identical to
 					// the default message
-					if (!getMessage(flag, false)
-							.equals(flag.getDefaultAreaMessage())) {
+					if (!getMessage(flag, false).equals(
+							flag.getDefaultAreaMessage())) {
 						transaction = ETransactionType.Deposit;
 					}
 				}
 			}
 		}
 
-		final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
+		final MessageChangedEvent event = new MessageChangedEvent(this, flag,
+				message, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;
@@ -355,7 +353,8 @@ public abstract class Area implements Comparable<Area> {
 
 		// Delay making the transaction in case the event is cancelled.
 		if (transaction != null) {
-			if (!makeTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
+			if (!makeTransaction(transaction, EPurchaseType.Message, flag,
+					(Player) sender)) {
 				return true;
 			}
 		}
@@ -380,26 +379,24 @@ public abstract class Area implements Comparable<Area> {
 	 *            or console.
 	 * @return True if successful.
 	 */
-	public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
+	public final boolean setTrust(Flag flag, String trustee, boolean trusted,
+			CommandSender sender) {
 		if (!isArea()) {
 			return false;
 		}
 
-		Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
+		final Set<String> trustList = Flags.getDataStore()
+				.readTrust(this, flag);
 
 		// Set player to trusted.
 		if (trusted) {
-			if (trustList == null) {
-				trustList = new HashSet<String>(Arrays.asList(trustee.toLowerCase()));
-			} else {
-				if (trustList.contains(trustee.toLowerCase())) {
-					// Player was already in the list!
-					return false;
-				}
-				trustList.add(trustee.toLowerCase());
+			if (trustList.contains(trustee.toLowerCase())) {
+				return false;
 			}
+			trustList.add(trustee.toLowerCase());
 
-			final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
+			final TrustChangedEvent event = new TrustChangedEvent(this, flag,
+					trustee, true, sender);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;
@@ -411,11 +408,12 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		// Remove player from trusted.
-		if (trustList == null || !trustList.contains(trustee.toLowerCase())) {
+		if (!trustList.contains(trustee.toLowerCase())) {
 			return false;
 		}
 
-		final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
+		final TrustChangedEvent event = new TrustChangedEvent(this, flag,
+				trustee, false, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;
@@ -453,32 +451,36 @@ public abstract class Area implements Comparable<Area> {
 				&& flag.getPrice(EPurchaseType.Flag) != 0 // No defined price
 				&& !(this instanceof World) // No charge for world flags
 				&& !(this instanceof Default) // No charge for defaults
-				&& !(this instanceof Administrator && 
-						((Administrator) this).isAdminArea())) // No charge for admin areas
+				&& !(this instanceof Administrator && ((Administrator) this)
+						.isAdminArea())) // No charge for admin areas
 		{
 			if (value != null
 					&& (EBaseValue.ALWAYS.isSet()
 							|| EBaseValue.PLUGIN.isSet()
-							&& (getValue(flag, true) == null 
-							|| getValue(flag, true) != flag.getDefault()) 
-							|| EBaseValue.DEFAULT.isSet()
-							&& getValue(flag, true) != new Default(((Player) sender)
-									.getLocation().getWorld()).getValue(flag, true))) {
+							&& (getValue(flag, true) == null || getValue(flag,
+									true) != flag.getDefault()) || EBaseValue.DEFAULT
+							.isSet()
+							&& getValue(flag, true) != new Default(
+									((Player) sender).getLocation().getWorld())
+									.getValue(flag, true))) {
 				// The flag is being set, see if the player can afford it.
-				if (!isFundingAvailable(EPurchaseType.Flag, flag, (Player) sender)) {
+				if (!isFundingAvailable(EPurchaseType.Flag, flag,
+						(Player) sender)) {
 					return false;
 				}
 				transaction = ETransactionType.Withdraw;
 			} else {
 				// Check whether or not to refund the account for setting the
 				// flag value
-				if (EPurchaseType.Flag.isRefundable() && !EBaseValue.ALWAYS.isSet()) {
+				if (EPurchaseType.Flag.isRefundable()
+						&& !EBaseValue.ALWAYS.isSet()) {
 					transaction = ETransactionType.Deposit;
 				}
 			}
 		}
 
-		final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,	value);
+		final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,
+				value);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;
@@ -486,12 +488,13 @@ public abstract class Area implements Comparable<Area> {
 
 		// Delay making the transaction in case the event is cancelled.
 		if (transaction != null) {
-			if (!makeTransaction(transaction, EPurchaseType.Flag, flag,	(Player) sender)) {
+			if (!makeTransaction(transaction, EPurchaseType.Flag, flag,
+					(Player) sender)) {
 				return true;
 			}
 		}
 
-		Boolean val = (value == null) ? null : value;
+		final Boolean val = value == null ? null : value;
 		Flags.getDataStore().writeFlag(this, flag, val);
 		return true;
 	}

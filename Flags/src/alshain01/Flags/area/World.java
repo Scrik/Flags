@@ -38,7 +38,6 @@ import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 
 public class World extends Area {
-	private final static String dataHeader = "World.";
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
 	private final org.bukkit.World world;
 
@@ -78,11 +77,6 @@ public class World extends Area {
 	}
 
 	@Override
-	protected String getDataPath() {
-		return dataHeader + world.getName();
-	}
-
-	@Override
 	public String getMessage(Flag flag, boolean parse) {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
@@ -107,12 +101,6 @@ public class World extends Area {
 	@Override
 	public String getSystemID() {
 		return world.getName();
-	}
-
-	@Override
-	public Set<String> getTrustList(Flag flag) {
-		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this, flag);
-		return trustedPlayers != null ? trustedPlayers : new HashSet<String>();
 	}
 
 	@Override

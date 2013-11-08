@@ -39,7 +39,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
 public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
-	private final static String dataHeader = "ResidenceData.";
 	private final ClaimedResidence residence;
 
 	/**
@@ -85,13 +84,6 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	@Override
 	public String getAreaType() {
 		return Message.Residence.get();
-	}
-
-	@Override
-	protected String getDataPath() {
-		return isSubdivision() && !isInherited() 
-				? dataHeader + residence.getWorld() + "." + getSystemSubID() 
-						: dataHeader + residence.getWorld() + "." +  getSystemID();
 	}
 
 	@Override

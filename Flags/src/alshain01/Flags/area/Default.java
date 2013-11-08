@@ -43,7 +43,6 @@ import alshain01.Flags.Message;
  * @author Kevin Seiden
  */
 public class Default extends Area {
-	private final static String dataHeader = "Default.";
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("default"));
 	private final World world;
 
@@ -82,11 +81,6 @@ public class Default extends Area {
 		return Message.Default.get();
 	}
 
-	@Override
-	protected String getDataPath() {
-		return dataHeader + world.getName();
-	}
-
 	/**
 	 * Gets the message associated with a player flag.
 	 * 
@@ -111,12 +105,6 @@ public class Default extends Area {
 	@Override
 	public String getSystemID() {
 		return world.getName();
-	}
-
-	@Override
-	public Set<String> getTrustList(Flag flag) {
-		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this, flag);
-		return trustedPlayers != null ? trustedPlayers : new HashSet<String>();
 	}
 
 	@Override

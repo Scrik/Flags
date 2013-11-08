@@ -39,7 +39,6 @@ import alshain01.Flags.Message;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege,
 		Administrator {
-	protected final static String dataHeader = "GriefPreventionData.";
 	protected Claim claim;
 
 	/**
@@ -80,11 +79,6 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	public Claim getClaim() {
 		return claim;
-	}
-
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override

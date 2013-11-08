@@ -37,8 +37,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.bekvon.bukkit.residence.Residence;
-
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.LandSystem;
@@ -47,6 +45,8 @@ import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
 import alshain01.Flags.area.World;
 import alshain01.Flags.economy.EPurchaseType;
+
+import com.bekvon.bukkit.residence.Residence;
 
 public final class YamlDataStore implements DataStore {
 	private static CustomYML data;
@@ -69,25 +69,44 @@ public final class YamlDataStore implements DataStore {
 	@Override
 	public boolean create(JavaPlugin plugin) {
 		// Don't change the version here, not needed (will change in update)
-		if(!exists(plugin)) {
-			writeVersion(new DBVersion(1,0,0));
+		if (!exists(plugin)) {
+			writeVersion(new DBVersion(1, 0, 0));
 		}
 		return true;
 	}
 
-	public boolean exists(JavaPlugin plugin) {
-		final File fileObject = 
-				new File(plugin.getDataFolder()	+ "\\default.yml");
+	@Override
+	public void deleteBundle(String name) {
+		final String path = "Bundle." + name;
+		final CustomYML cYml = getYml(path);
+		cYml.getConfig().set("Bundle." + name, (String) null);
+		cYml.saveConfig();
+	}
+
+	private boolean exists(JavaPlugin plugin) {
+		final File fileObject = new File(plugin.getDataFolder()
+				+ "\\default.yml");
 		return fileObject.exists();
 	}
 
-	@Override
-	public DBVersion readVersion() {
-		final String path = "Default.Database.Version";
-		FileConfiguration cYml = getYml(path).getConfig();
-		if(!cYml.isSet("Default.Database.Version")) { return new DBVersion(0,0,0); }
-		String[] ver = cYml.getString("Default.Database.Version").split("\\.");
-		return new DBVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]), Integer.valueOf(ver[2]));
+	private String getAreaPath(Area area) {
+		String path;
+		if (area.getSystem() == null) {
+			path = "Default." + area.getWorld().getName();
+		} else {
+			path = area.getSystem().getDataPath() + "."
+					+ area.getWorld().getName();
+		}
+
+		if (!(area instanceof World || area instanceof Default)) {
+			path += area.getSystemID();
+		}
+
+		if (area instanceof Subdivision && !isInheriting(area)) {
+			path += "." + ((Subdivision) area).getSystemSubID();
+		}
+
+		return path;
 	}
 
 	private CustomYML getYml(String path) {
@@ -107,6 +126,101 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
+	public boolean isInheriting(Area area) {
+		if (!(area instanceof Subdivision)
+				|| ((Subdivision) area).isSubdivision()) {
+			return true;
+		}
+
+		final String path = area.getSystem().getDataPath() + area.getSystemID()
+				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		if (!cYml.isSet(path)) {
+			return true;
+		}
+
+		return cYml.getBoolean(path);
+	}
+
+	@Override
+	public final Set<Flag> readBundle(String bundle) {
+		final String path = "Bundle." + bundle;
+		final FileConfiguration cYml = getYml(path).getConfig();
+		final HashSet<Flag> flags = new HashSet<Flag>();
+
+		if (!cYml.isSet(path)) {
+			return flags;
+		}
+
+		final List<?> list = getYml(path).getConfig().getList(path);
+		for (final Object o : list) {
+			if (Flags.getRegistrar().getFlag((String) o) != null) {
+				flags.add(Flags.getRegistrar().getFlag((String) o));
+			}
+		}
+		return flags;
+	}
+
+	@Override
+	public final Set<String> readBundles() {
+		final String path = "Bundle";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		return cYml.isSet(path) ? getYml(path).getConfig()
+				.getConfigurationSection(path).getKeys(false)
+				: new HashSet<String>();
+	}
+
+	@Override
+	public Boolean readFlag(Area area, Flag flag) {
+		final String path = getAreaPath(area) + "." + flag.getName() + ".Value";
+
+		final FileConfiguration cYml = getYml(path).getConfig();
+		return cYml.isSet(path) ? cYml.getBoolean(path) : null;
+	}
+
+	@Override
+	public String readMessage(Area area, Flag flag) {
+		final String path = getAreaPath(area) + "." + flag.getName()
+				+ ".Message";
+		return getYml(path).getConfig().getString(path);
+	}
+
+	@Override
+	public double readPrice(Flag flag, EPurchaseType type) {
+		final String path = "Price." + type.toString() + "." + flag.getName();
+		return getYml(path).getConfig().isSet(path) ? getYml(path).getConfig()
+				.getDouble(path) : 0;
+	}
+
+	@Override
+	public Set<String> readTrust(Area area, Flag flag) {
+		final String path = getAreaPath(area) + flag.getName() + ".Trust";
+		final List<?> setData = getYml(path).getConfig().getList(path);
+		if (setData == null) {
+			return new HashSet<String>();
+		}
+
+		final Set<String> stringData = new HashSet<String>();
+		for (final Object o : setData) {
+			stringData.add((String) o);
+		}
+		return stringData;
+	}
+
+	@Override
+	public DBVersion readVersion() {
+		final String path = "Default.Database.Version";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		if (!cYml.isSet("Default.Database.Version")) {
+			return new DBVersion(0, 0, 0);
+		}
+		final String[] ver = cYml.getString("Default.Database.Version").split(
+				"\\.");
+		return new DBVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]),
+				Integer.valueOf(ver[2]));
+	}
+
+	@Override
 	public boolean reload(JavaPlugin plugin) {
 		data.reload();
 		def.reload();
@@ -116,125 +230,105 @@ public final class YamlDataStore implements DataStore {
 		return true;
 	}
 
-	public void writeVersion(DBVersion version) {
-		final String path = "Default.Database.Version";
-		CustomYML cYml = getYml(path);
-		cYml.getConfig().set("Default.Database.Version", version.major + "." + version.minor + "." + version.build);
-		cYml.saveConfig();
+	@Override
+	public void remove(Area area) {
+		final String path = getAreaPath(area);
+		getYml(path).getConfig().set(path, null);
+	}
+
+	@Override
+	public void setInheriting(Area area, boolean value) {
+		if (!(area instanceof Subdivision)
+				|| ((Subdivision) area).isSubdivision()) {
+			return;
+		}
+
+		final String path = area.getSystem().getDataPath() + area.getSystemID()
+				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		cYml.set(path, value);
 	}
 
 	@Override
 	public void update(JavaPlugin plugin) {
-		DBVersion ver = readVersion();
-		if(ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
+		final DBVersion ver = readVersion();
+		if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
-			if(LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
-				cSec = cYml.getConfig().getConfigurationSection("GriefPreventionData");
-			} else if(LandSystem.getActive() == LandSystem.RESIDENCE) {
-				cSec = cYml.getConfig().getConfigurationSection("ResidenceData");
+			if (LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
+				cSec = cYml.getConfig().getConfigurationSection(
+						"GriefPreventionData");
+			} else if (LandSystem.getActive() == LandSystem.RESIDENCE) {
+				cSec = cYml.getConfig()
+						.getConfigurationSection("ResidenceData");
 			}
-			if(cSec != null) {
-				Set<String> keys = cSec.getKeys(true);
-				for(String k : keys) {
-					
-					if(k.contains("Value") || k.contains("Message") 
+			if (cSec != null) {
+				final Set<String> keys = cSec.getKeys(true);
+				for (final String k : keys) {
+
+					if (k.contains("Value") || k.contains("Message")
 							|| k.contains("Trust") || k.contains("Inherit")) {
-						
-						String id = k.split("\\.")[0];
+
+						final String id = k.split("\\.")[0];
 						String world;
-						
-						if(LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
-							world = GriefPrevention.instance.dataStore.getClaim(Long.valueOf(id)).getGreaterBoundaryCorner().getWorld().getName();
+
+						if (LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
+							world = GriefPrevention.instance.dataStore
+									.getClaim(Long.valueOf(id))
+									.getGreaterBoundaryCorner().getWorld()
+									.getName();
 						} else {
-							world = Residence.getResidenceManager().getByName(id).getWorld();
+							world = Residence.getResidenceManager()
+									.getByName(id).getWorld();
 						}
-						
+
 						cSec.set(world + "." + k, cSec.get(k));
 					}
 				}
 				// Remove the old
-				for(String k : keys) {
-					if(k.split("\\.").length == 1 && Bukkit.getWorld(k.split("\\.")[0]) == null) {
+				for (final String k : keys) {
+					if (k.split("\\.").length == 1
+							&& Bukkit.getWorld(k.split("\\.")[0]) == null) {
 						cSec.set(k, null);
 					}
 				}
 
 			}
-			
+
 			Set<String> keys = cYml.getConfig().getKeys(true);
-			for(String k : keys) {
-				if(k.contains("Value")) {
-					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+			for (final String k : keys) {
+				if (k.contains("Value")) {
+					cYml.getConfig().set(k,
+							Boolean.valueOf(cYml.getConfig().getString(k)));
 				}
 			}
 			cYml.saveConfig();
-			
+
 			cYml = getYml("default");
 			keys = cYml.getConfig().getKeys(true);
-			for(String k : keys) {
-				if(k.contains("Value")) {
-					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+			for (final String k : keys) {
+				if (k.contains("Value")) {
+					cYml.getConfig().set(k,
+							Boolean.valueOf(cYml.getConfig().getString(k)));
 				}
 			}
 			cYml.saveConfig();
-			
+
 			cYml = getYml("world");
 			keys = cYml.getConfig().getKeys(true);
-			for(String k : keys) {
-				if(k.contains("Value")) {
-					cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+			for (final String k : keys) {
+				if (k.contains("Value")) {
+					cYml.getConfig().set(k,
+							Boolean.valueOf(cYml.getConfig().getString(k)));
 				}
 			}
 			cYml.saveConfig();
-			
-			writeVersion(new DBVersion(1,2,2));
-		}
-		
-	}
-	
-	@Override
-	public double readPrice(Flag flag, EPurchaseType type) {
-		final String path = "Price." + type.toString() + "." + flag.getName();
-		return getYml(path).getConfig().isSet(path) ? getYml(path).getConfig().getDouble(path) : 0;
-	}
-	
-	@Override
-	public void writePrice(Flag flag, EPurchaseType type, double price) {
-		final String path = "Price." + type.toString() + "." + flag.getName();
-		CustomYML cYml = getYml(path);
-		cYml.getConfig().set(path, price);
-		cYml.saveConfig();
-	}
-	
-	@Override
-	public final Set<String> readBundles() {
-		final String path = "Bundle";
-		FileConfiguration cYml = getYml(path).getConfig();
-		return cYml.isSet(path)
-				? getYml(path).getConfig().getConfigurationSection(path).getKeys(false)
-				: new HashSet<String>();
-	}
-	
-	@Override
-	public final Set<Flag> readBundle(String bundle) {
-		final String path = "Bundle." + bundle;
-		FileConfiguration cYml = getYml(path).getConfig();
-		HashSet<Flag> flags = new HashSet<Flag>();
-		
-		if(!cYml.isSet(path)) {
-			return flags;
+
+			writeVersion(new DBVersion(1, 2, 2));
 		}
 
-		final List<?> list = getYml(path).getConfig().getList(path);
-		for(Object o : list) {
-			if(Flags.getRegistrar().getFlag((String)o) != null) {
-				flags.add(Flags.getRegistrar().getFlag((String)o));
-			}
-		}
-		return flags;
 	}
-	
+
 	@Override
 	public final void writeBundle(String name, Set<Flag> flags) {
 		final String path = "Bundle." + name;
@@ -243,135 +337,65 @@ public final class YamlDataStore implements DataStore {
 			deleteBundle(name);
 			return;
 		}
-		
+
 		final List<String> list = new ArrayList<String>();
 		for (final Flag f : flags) {
 			list.add(f.getName());
 		}
-		
+
 		cYml.getConfig().set(path, list);
 		cYml.saveConfig();
-	}
-	
-	@Override
-	public void deleteBundle(String name) {
-		final String path = "Bundle." + name;
-		CustomYML cYml = getYml(path);
-		cYml.getConfig().set("Bundle." + name, (String)null);
-        cYml.saveConfig();
-	}
-	
-	public Boolean readFlag(Area area, Flag flag) {
-		String path = getAreaPath(area) + "." + flag.getName() + ".Value";
-		
-		FileConfiguration cYml = getYml(path).getConfig();
-		return (cYml.isSet(path)) ? cYml.getBoolean(path) : null;
 	}
 
 	@Override
 	public void writeFlag(Area area, Flag flag, Boolean value) {
-		String path = getAreaPath(area) + "." + flag.getName() + ".Value";
-		CustomYML cYml = getYml(path);
-		
+		final String path = getAreaPath(area) + "." + flag.getName() + ".Value";
+		final CustomYML cYml = getYml(path);
+
 		if (value == null) {
-			cYml.getConfig().set(path, (String)null);
+			cYml.getConfig().set(path, (String) null);
 		} else {
 			cYml.getConfig().set(path, value);
 		}
-        cYml.saveConfig();
-	}
-	
-	private String getAreaPath(Area area) {
-		String path;
-		if(area.getSystem() == null) {
-			path = "Default." + area.getWorld().getName();
-		} else {
-			path = area.getSystem().getDataPath() + "." + area.getWorld().getName();
-		}
-		
-		if(!(area instanceof World || area instanceof Default)) {
-			path += area.getSystemID();
-		}
-		
-		if(area instanceof Subdivision && !isInheriting(area)) {
-			path += "." + ((Subdivision)area).getSystemSubID();
-		}
-		
-		return path;
-	}
-	
-	@Override
-	public boolean isInheriting(Area area) {
-		if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
-			return true;
-		}
-		
-		String path = area.getSystem().getDataPath() + area.getSystemID() + ((Subdivision)area).getSystemSubID() + ".Inherit";
-		FileConfiguration cYml = getYml(path).getConfig();
-		if(!cYml.isSet(path)) {
-			return true;
-		}
-
-		return cYml.getBoolean(path);
-	}
-
-	@Override
-	public void setInheriting(Area area, boolean value) {
-		if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
-			return;
-		}
-		
-		String path = area.getSystem().getDataPath() + area.getSystemID() + ((Subdivision)area).getSystemSubID() + ".Inherit";
-		FileConfiguration cYml = getYml(path).getConfig();
-		cYml.set(path, value);
-	}
-
-	@Override
-	public String readMessage(Area area, Flag flag) {
-		String path = getAreaPath(area) + "." + flag.getName() + ".Message";
-		return getYml(path).getConfig().getString(path);
+		cYml.saveConfig();
 	}
 
 	@Override
 	public void writeMessage(Area area, Flag flag, String message) {
-		String path = getAreaPath(area) + "." + flag.getName() + ".Message";
-		CustomYML cYml = getYml(path);
+		final String path = getAreaPath(area) + "." + flag.getName()
+				+ ".Message";
+		final CustomYML cYml = getYml(path);
 		cYml.getConfig().set(path, message);
-        cYml.saveConfig();
+		cYml.saveConfig();
 	}
 
 	@Override
-	public void remove(Area area) {
-		String path = getAreaPath(area);
-		getYml(path).getConfig().set(path, null);
+	public void writePrice(Flag flag, EPurchaseType type, double price) {
+		final String path = "Price." + type.toString() + "." + flag.getName();
+		final CustomYML cYml = getYml(path);
+		cYml.getConfig().set(path, price);
+		cYml.saveConfig();
 	}
 
 	@Override
 	public void writeTrust(Area area, Flag flag, Set<String> players) {
-		String path = getAreaPath(area) + flag.getName() + ".Trust";
-        final CustomYML cYml = getYml(path);
+		final String path = getAreaPath(area) + flag.getName() + ".Trust";
+		final CustomYML cYml = getYml(path);
 
-        final List<String> list = new ArrayList<String>();
-        for (final String s : players) {
-                list.add(s);
-        }
-        
-        cYml.getConfig().set(path, list);
-        cYml.saveConfig();
+		final List<String> list = new ArrayList<String>();
+		for (final String s : players) {
+			list.add(s);
+		}
+
+		cYml.getConfig().set(path, list);
+		cYml.saveConfig();
 	}
 
-	@Override
-	public Set<String> readTrust(Area area, Flag flag) {
-		String path = getAreaPath(area) + flag.getName() + ".Trust";
-        final List<?> setData = getYml(path).getConfig().getList(path);
-        if (setData == null) {
-        	return new HashSet<String>();
-        }
-
-        final Set<String> stringData = new HashSet<String>();
-        for (final Object o : setData) {
-                stringData.add((String) o);
-        }
-        return stringData;
+	private void writeVersion(DBVersion version) {
+		final String path = "Default.Database.Version";
+		final CustomYML cYml = getYml(path);
+		cYml.getConfig().set("Default.Database.Version",
+				version.major + "." + version.minor + "." + version.build);
+		cYml.saveConfig();
 	}
 }

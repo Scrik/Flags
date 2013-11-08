@@ -82,8 +82,8 @@ public final class CustomYML {
 		try {
 			getConfig().save(customConfigFile);
 		} catch (final IOException ex) {
-			plugin.getLogger()
-					.log(Level.SEVERE, "Could not save config to " + customConfigFile, ex);
+			plugin.getLogger().log(Level.SEVERE,
+					"Could not save config to " + customConfigFile, ex);
 		}
 	}
 

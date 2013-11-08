@@ -40,7 +40,6 @@ import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
 public class PlotMePlot extends Area implements Removable {
-	private final static String dataHeader = "PlotMeData.";
 	private final Plot plot;
 
 	/**
@@ -79,11 +78,6 @@ public class PlotMePlot extends Area implements Removable {
 	@Override
 	public String getAreaType() {
 		return Message.PlotMe.get();
-	}
-
-	@Override
-	protected String getDataPath() {
-		return dataHeader + getWorld().getName() + "." + getSystemID();
 	}
 
 	@Override
