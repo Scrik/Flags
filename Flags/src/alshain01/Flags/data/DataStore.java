@@ -35,15 +35,13 @@ import alshain01.Flags.economy.EPurchaseType;
 public interface DataStore {
 	public boolean create(JavaPlugin plugin);
 
-	public void deleteBundle(String bundleName);
-
-	public boolean isInheriting(Area area);
-
 	public Set<Flag> readBundle(String bundleName);
 
 	public Set<String> readBundles();
 
 	public Boolean readFlag(Area area, Flag flag);
+
+	public boolean readInheritance(Area area);
 
 	public String readMessage(Area area, Flag flag);
 
@@ -57,13 +55,13 @@ public interface DataStore {
 
 	public void remove(Area area);
 
-	public void setInheriting(Area area, boolean value);
-
 	public void update(JavaPlugin plugin);
 
 	public void writeBundle(String bundleName, Set<Flag> flags);
 
 	public void writeFlag(Area area, Flag flag, Boolean value);
+
+	public void writeInheritance(Area area, boolean value);
 
 	public void writeMessage(Area area, Flag flag, String message);
 

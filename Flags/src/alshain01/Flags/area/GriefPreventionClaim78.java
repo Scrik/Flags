@@ -128,7 +128,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 			return false;
 		}
 
-		return Flags.getDataStore().isInheriting(this);
+		return Flags.getDataStore().readInheritance(this);
 	}
 
 	@Override
@@ -143,10 +143,10 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		}
 
 		if (value == null) {
-			value = !Flags.getDataStore().isInheriting(this);
+			value = !Flags.getDataStore().readInheritance(this);
 		}
 
-		Flags.getDataStore().setInheriting(this, value);
+		Flags.getDataStore().writeInheritance(this, value);
 		return true;
 	}
 }

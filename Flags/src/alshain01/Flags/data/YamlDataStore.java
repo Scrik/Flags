@@ -56,12 +56,11 @@ public final class YamlDataStore implements DataStore {
 	private static CustomYML price;
 
 	public YamlDataStore(JavaPlugin plugin) {
-		data = new CustomYML(plugin, "data.yml");
-		world = new CustomYML(plugin, "world.yml");
-		bundle = new CustomYML(plugin, "bundle.yml");
 		def = new CustomYML(plugin, "default.yml");
+		world = new CustomYML(plugin, "world.yml");
+		data = new CustomYML(plugin, "data.yml");
+		bundle = new CustomYML(plugin, "bundle.yml");
 		price = new CustomYML(plugin, "price.yml");
-
 		price.saveDefaultConfig();
 		bundle.saveDefaultConfig();
 	}
@@ -75,8 +74,7 @@ public final class YamlDataStore implements DataStore {
 		return true;
 	}
 
-	@Override
-	public void deleteBundle(String name) {
+	private void deleteBundle(String name) {
 		final String path = "Bundle." + name;
 		final CustomYML cYml = getYml(path);
 		cYml.getConfig().set("Bundle." + name, (String) null);
@@ -102,7 +100,7 @@ public final class YamlDataStore implements DataStore {
 			path += area.getSystemID();
 		}
 
-		if (area instanceof Subdivision && !isInheriting(area)) {
+		if (area instanceof Subdivision && !readInheritance(area)) {
 			path += "." + ((Subdivision) area).getSystemSubID();
 		}
 
@@ -126,35 +124,12 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public boolean isInheriting(Area area) {
-		if (!(area instanceof Subdivision)
-				|| ((Subdivision) area).isSubdivision()) {
-			return true;
-		}
-
-		final String path = area.getSystem().getDataPath() + area.getSystemID()
-				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
-		final FileConfiguration cYml = getYml(path).getConfig();
-		if (!cYml.isSet(path)) {
-			return true;
-		}
-
-		return cYml.getBoolean(path);
-	}
-
-	@Override
 	public final Set<Flag> readBundle(String bundle) {
-		final String path = "Bundle." + bundle;
-		final FileConfiguration cYml = getYml(path).getConfig();
 		final HashSet<Flag> flags = new HashSet<Flag>();
-
-		if (!cYml.isSet(path)) {
-			return flags;
-		}
-
-		final List<?> list = getYml(path).getConfig().getList(path);
+		final List<?> list = getYml("Bundle").getConfig().getList("Bundle." + bundle, new ArrayList<String>());
+		
 		for (final Object o : list) {
-			if (Flags.getRegistrar().getFlag((String) o) != null) {
+			if (Flags.getRegistrar().isFlag((String) o)) {
 				flags.add(Flags.getRegistrar().getFlag((String) o));
 			}
 		}
@@ -163,11 +138,7 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public final Set<String> readBundles() {
-		final String path = "Bundle";
-		final FileConfiguration cYml = getYml(path).getConfig();
-		return cYml.isSet(path) ? getYml(path).getConfig()
-				.getConfigurationSection(path).getKeys(false)
-				: new HashSet<String>();
+		return getYml("Bundle").getConfig().getConfigurationSection("Bundle").getKeys(false);
 	}
 
 	@Override
@@ -176,6 +147,23 @@ public final class YamlDataStore implements DataStore {
 
 		final FileConfiguration cYml = getYml(path).getConfig();
 		return cYml.isSet(path) ? cYml.getBoolean(path) : null;
+	}
+
+	@Override
+	public boolean readInheritance(Area area) {
+		if (!(area instanceof Subdivision)
+				|| ((Subdivision) area).isSubdivision()) {
+			return true;
+		}
+
+		final String path = area.getSystem().getDataPath() + "." + area.getSystemID() + "."
+				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		if (!cYml.isSet(path)) {
+			return true;
+		}
+
+		return cYml.getBoolean(path);
 	}
 
 	@Override
@@ -195,12 +183,9 @@ public final class YamlDataStore implements DataStore {
 	@Override
 	public Set<String> readTrust(Area area, Flag flag) {
 		final String path = getAreaPath(area) + flag.getName() + ".Trust";
-		final List<?> setData = getYml(path).getConfig().getList(path);
-		if (setData == null) {
-			return new HashSet<String>();
-		}
-
+		final List<?> setData = getYml(path).getConfig().getList(path, new ArrayList<String>());
 		final Set<String> stringData = new HashSet<String>();
+		
 		for (final Object o : setData) {
 			stringData.add((String) o);
 		}
@@ -234,19 +219,6 @@ public final class YamlDataStore implements DataStore {
 	public void remove(Area area) {
 		final String path = getAreaPath(area);
 		getYml(path).getConfig().set(path, null);
-	}
-
-	@Override
-	public void setInheriting(Area area, boolean value) {
-		if (!(area instanceof Subdivision)
-				|| ((Subdivision) area).isSubdivision()) {
-			return;
-		}
-
-		final String path = area.getSystem().getDataPath() + area.getSystemID()
-				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
-		final FileConfiguration cYml = getYml(path).getConfig();
-		cYml.set(path, value);
 	}
 
 	@Override
@@ -358,6 +330,19 @@ public final class YamlDataStore implements DataStore {
 			cYml.getConfig().set(path, value);
 		}
 		cYml.saveConfig();
+	}
+
+	@Override
+	public void writeInheritance(Area area, boolean value) {
+		if (!(area instanceof Subdivision)
+				|| ((Subdivision) area).isSubdivision()) {
+			return;
+		}
+
+		final String path = area.getSystem().getDataPath() + area.getSystemID()
+				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
+		final FileConfiguration cYml = getYml(path).getConfig();
+		cYml.set(path, value);
 	}
 
 	@Override

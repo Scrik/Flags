@@ -207,8 +207,7 @@ public final class MySQLDataStore implements SQLDataStore {
 		return flags;
 	}
 	
-	@Override
-	public void deleteBundle(String name) {
+	private void deleteBundle(String name) {
 		executeStatement("DELETE FROM Bundle WHERE BundleName='" + name + "';");
 	}
 	
@@ -272,13 +271,13 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public boolean isInheriting(Area area) {
+	public boolean readInheritance(Area area) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void setInheriting(Area area, boolean value) {
+	public void writeInheritance(Area area, boolean value) {
 		// TODO Auto-generated method stub
 		return;
 	}
