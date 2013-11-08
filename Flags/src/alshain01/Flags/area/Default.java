@@ -34,6 +34,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 
 /**
@@ -98,8 +99,7 @@ public class Default extends Area {
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
 		// We are ignore parse here. We just want to override it.
-		final String message = Flags.getDataStore()
-				.read(dataHeader + world.getName() + "." + flag.getName() + messageFooter);
+		final String message = Flags.getDataStore().readMessage(this, flag);
 		return message != null ? message : flag.getDefaultAreaMessage();
 	}
 
@@ -115,22 +115,13 @@ public class Default extends Area {
 
 	@Override
 	public Set<String> getTrustList(Flag flag) {
-		final Set<String> trustedPlayers = Flags.getDataStore()
-				.readSet(dataHeader + world.getName() + "." + flag.getName() + trustFooter);
+		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this, flag);
 		return trustedPlayers != null ? trustedPlayers : new HashSet<String>();
 	}
 
 	@Override
 	public Boolean getValue(Flag flag, boolean absolute) {
-		Boolean value = null;
-		if (isArea()) {
-			final String path = dataHeader + world.getName() + "." + flag.getName() + valueFooter;
-
-			if (Flags.getDataStore().isSet(path)) {
-				value = Flags.getDataStore().readBoolean(path);
-			}
-		}
-
+		final Boolean value = super.getValue(flag, true);
 		if (absolute) {
 			return value;
 		}
@@ -155,5 +146,10 @@ public class Default extends Area {
 	@Override
 	public boolean isArea() {
 		return world != null;
+	}
+
+	@Override
+	public LandSystem getSystem() {
+		return null;
 	}
 }

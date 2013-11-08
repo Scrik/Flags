@@ -40,9 +40,8 @@ import alshain01.Flags.area.Area;
 
 final class BundleCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
-		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Flags.getDataStore().readBundle(bundleName);
+		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -50,15 +49,9 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 
-		for(String f : bundle) {
-        	flag = Flags.getRegistrar().getFlag(f);
-        	if (flag == null) {
-        		player.sendMessage("Invald bundle.yml entry: " + f);
-        		continue;
-        	}
-
+		for(Flag flag : bundle) {
     		player.sendMessage(Message.GetBundle.get()
-    				.replaceAll("\\{Bundle\\}", f)
+    				.replaceAll("\\{Bundle\\}", flag.getName())
     				.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false))));
 		}
 		return true;
@@ -66,9 +59,8 @@ final class BundleCmd extends Common {
 	
 	protected static boolean set(Player player, ECommandLocation location, String bundleName, Boolean value) {
 		boolean success = true;
-		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Flags.getDataStore().readBundle(bundleName);
+		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -76,13 +68,7 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 		
-		for(String f : bundle) {
-        	flag = Flags.getRegistrar().getFlag(f);
-        	if (flag == null) {
-            	success = false;
-            	player.sendMessage("Invald bundle.yml entry: " + f);
-        		continue;
-        	}
+		for(Flag flag : bundle) {
         	if(!area.setValue(flag, value, player)) { success = false; }
         }
         
@@ -95,9 +81,8 @@ final class BundleCmd extends Common {
 	
 	protected static boolean remove(Player player, ECommandLocation location, String bundleName) {
 		boolean success = true;
-		Flag flag;
 		Area area = getArea(player, location);
-		Set<String> bundle = Flags.getDataStore().readBundle(bundleName);
+		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 		
 		if(!Validate.isArea(player, area)
 				|| !Validate.isBundle(player, bundle, bundleName)
@@ -105,13 +90,7 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundlePermitted(player, bundleName))
 		{ return true; }
 		
-		for (String f : bundle) {
-        	flag = Flags.getRegistrar().getFlag(f);
-        	if (flag == null) {
-            	success = false;
-           		player.sendMessage("Invald bundle.yml entry: " + f);
-        		continue;
-        	}
+		for (Flag flag : bundle) {
     		if (!area.setValue(flag, null, player)) { success = false; }
 		}
 		
@@ -125,7 +104,7 @@ final class BundleCmd extends Common {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 	
 		Flag flag;
-		Set<String> bundle = Flags.getDataStore().readBundle(bundleName);
+		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 		
 		if(bundle == null) {
 			Permission perm = new Permission("flags.bundle." + bundleName, 
@@ -133,7 +112,7 @@ final class BundleCmd extends Common {
 			perm.addParent("flags.bundle", true);
 			Bukkit.getServer().getPluginManager().addPermission(perm);
 			
-			bundle = new HashSet<String>();
+			bundle = new HashSet<Flag>();
 		}
 		
 		for(String f : flags) {
@@ -142,7 +121,7 @@ final class BundleCmd extends Common {
         		sender.sendMessage(Message.AddBundleError.get());
         		return true;
        		}
-        	bundle.add(flag.getName());
+        	bundle.add(flag);
 		}
        	
 		Flags.getDataStore().writeBundle(bundleName, bundle);
@@ -155,18 +134,12 @@ final class BundleCmd extends Common {
 		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
 		
 		boolean success = true;
-		Flag flag;
-		Set<String> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
+		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
 		
 		if(!Validate.isBundle(sender, bundle, bundleName)) { return true; }
 
-		for(String f : bundle) {
-        	flag = Flags.getRegistrar().getFlagIgnoreCase(f);
-        	if (flag == null) {
-            	success = false;
-        		continue;
-        	}
-    		if (!bundle.remove(flag.getName())) { success = false; }
+		for(Flag flag : bundle) {
+    		if (!bundle.remove(flag)) { success = false; }
 		}
 		Flags.getDataStore().writeBundle(bundleName, bundle);
 		
@@ -243,19 +216,19 @@ final class BundleCmd extends Common {
 		
 		// Show the flags
 		for (; loop < bundles.size(); loop++) {
-			Set<String> flags = Flags.getDataStore().readBundle(bundleArray[loop]);
+			Set<Flag> flags = Flags.getDataStore().readBundle(bundleArray[loop]);
 			if (flags == null) { continue; }
 			StringBuilder description = new StringBuilder("");
 			boolean first = true;
 
-			for (String f : flags) {
+			for (Flag flag : flags) {
 				if(!first){
 					description.append(", ");
 				} else {
 					first = false;
 				}
 				
-				description.append(f);
+				description.append(flag.getName());
 			}
 			sender.sendMessage(Message.HelpTopic.get()
 					.replaceAll("\\{Topic\\}", bundleArray[loop])

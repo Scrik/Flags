@@ -28,28 +28,16 @@ import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import alshain01.Flags.Flag;
+import alshain01.Flags.area.Area;
 import alshain01.Flags.economy.EPurchaseType;
 
 public interface DataStore {
 	
 	// The old world order (to be phased out)
-	public String read(String path);
+	//public Set<String> readKeys(String path);
 
-	public boolean readBoolean(String path);
-
-	public Set<String> readKeys(String path);
-
-	public Set<String> readSet(String path);
-
-	public void write(String path, Set<String> set);
-
-	public void write(String path, String value);
-	
-	public void write(String path, Boolean value);
-	
 	// The new world order (transitioned to SQL capability)
-	public boolean isSet(String path);
-	
 	public boolean create(JavaPlugin plugin);
 
 	public boolean reload(JavaPlugin plugin);
@@ -60,13 +48,31 @@ public interface DataStore {
 	
 	public Set<String> readBundles();
 	
-	public Set<String> readBundle(String bundle);
+	public Set<Flag> readBundle(String bundleName);
 
-	public void writeBundle(String name, Set<String> flags);
+	public void writeBundle(String bundleName, Set<Flag> flags);
 	
-	public void deleteBundle(String name);
+	public void deleteBundle(String bundleName);
 	
-	public double readPrice(String flag, EPurchaseType type);
+	public double readPrice(Flag flag, EPurchaseType type);
 	
-	public void writePrice(String flag, EPurchaseType type, double price);
+	public void writePrice(Flag flag, EPurchaseType type, double price);
+	
+	public boolean isInheriting(Area area);
+	
+	public void setInheriting(Area area, boolean value);
+	
+	public Boolean readFlag(Area area, Flag flag);
+	
+	public void writeFlag(Area area, Flag flag, Boolean value);
+	
+	public String readMessage(Area area, Flag flag);
+	
+	public void writeMessage(Area area, Flag flag, String message);
+	
+	public void writeTrust(Area area, Flag flag, Set<String> players);
+	
+	public Set<String> readTrust(Area area, Flag flag);
+	
+	public void remove(Area area);
 }

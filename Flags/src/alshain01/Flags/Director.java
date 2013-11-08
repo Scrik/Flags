@@ -24,9 +24,6 @@
 
 package alshain01.Flags;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
@@ -128,7 +125,7 @@ public final class Director {
 			}
 			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
 					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = LandSystem.NONE;
+			Flags.currentSystem = LandSystem.WORLD;
 			return null;
 		case WORLDGUARD:
 			return new WorldGuardRegion(location);
@@ -176,7 +173,7 @@ public final class Director {
 			}
 			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
 					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = LandSystem.NONE;
+			Flags.currentSystem = LandSystem.WORLD;
 			return null;
 		case RESIDENCE:
 			return new ResidenceClaimedResidence(name);
@@ -220,11 +217,11 @@ public final class Director {
 		return area.isArea() ? area : new World(location);
 	}
 
-	/**
+/*	*//**
 	 * Gets a set of system specific area names stored in the database
 	 * 
 	 * @return A list containing all the area names.
-	 */
+	 *//*
 	public static Set<String> getAreaNames() {
 		Set<String> worlds, localAreas;
 		final Set<String> allAreas = new HashSet<String>();
@@ -274,7 +271,7 @@ public final class Director {
 		default:
 			return null;
 		}
-	}
+	}*/
 
 	/**
 	 * Gets a user friendly name of the area type of the configured system,

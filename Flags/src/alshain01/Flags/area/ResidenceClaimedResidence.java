@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 
 import com.bekvon.bukkit.residence.Residence;
@@ -93,10 +94,6 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 						: dataHeader + residence.getWorld() + "." +  getSystemID();
 	}
 
-	private String getInheritPath() {
-		return dataHeader + residence.getWorld() + "." + getSystemSubID() + "." + "InheritParent";
-	}
-
 	@Override
 	public Set<String> getOwners() {
 		return new HashSet<String>(Arrays.asList(getResidence().getOwner()));
@@ -132,11 +129,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 			return false;
 		}
 
-		final String value = Flags.getDataStore().read(getInheritPath());
-		if (value == null) {
-			return true;
-		}
-		return Boolean.valueOf(value);
+		return Flags.getDataStore().isInheriting(this);
 	}
 
 	@Override
@@ -149,7 +142,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 */
 	@Override
 	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String) null);
+		Flags.getDataStore().remove(this);
 	}
 
 	@Override
@@ -157,17 +150,17 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 		if (!isSubdivision()) {
 			return false;
 		}
-		final String storedValue = Flags.getDataStore().read(getInheritPath());
 
 		if (value == null) {
-			if (storedValue != null) {
-				value = !Boolean.valueOf(storedValue);
-			} else {
-				value = false;
-			}
+			value = !Flags.getDataStore().isInheriting(this);
 		}
 
-		Flags.getDataStore().write(getInheritPath(), String.valueOf(value));
+		Flags.getDataStore().setInheriting(this, value);
 		return true;
+	}
+
+	@Override
+	public LandSystem getSystem() {
+		return LandSystem.RESIDENCE;
 	}
 }

@@ -80,7 +80,7 @@ final class Validate {
 		return false;
 	}
 	
-	protected static boolean isBundle(CommandSender cs, Set<String> b, String n) {
+	protected static boolean isBundle(CommandSender cs, Set<Flag> b, String n) {
 		if (b != null && !b.isEmpty()) { return true; }
 		cs.sendMessage(Message.InvalidFlagError.get()
 				.replaceAll("\\{RequestedName\\}", n)

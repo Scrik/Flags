@@ -39,6 +39,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 import alshain01.Flags.economy.EBaseValue;
 import alshain01.Flags.economy.EPurchaseType;
@@ -132,8 +133,7 @@ public abstract class Area implements Comparable<Area> {
 		if (!isArea()) {
 			return null;
 		}
-		String message = Flags.getDataStore()
-				.read(getDataPath() + "." + flag.getName() + messageFooter);
+		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
 			message = new Default(getWorld()).getMessage(flag);
@@ -169,6 +169,13 @@ public abstract class Area implements Comparable<Area> {
 	 * @return the player name of the area owner.
 	 */
 	public abstract Set<String> getOwners();
+	
+	/**
+	 * Returns the system type that this object belongs to.
+	 * 
+	 * @return The LandSystem that created this object (null for Default)
+	 */
+	public abstract LandSystem getSystem();
 
 	/**
 	 * Gets the land system's ID for this area.
@@ -190,8 +197,7 @@ public abstract class Area implements Comparable<Area> {
 			return null;
 		}
 
-		Set<String> trustedPlayers = Flags.getDataStore()
-				.readSet(getDataPath() + "." + flag.getName() + trustFooter);
+		Set<String> trustedPlayers = Flags.getDataStore().readTrust(this, flag);
 		if (trustedPlayers == null) {
 			trustedPlayers = new HashSet<String>();
 		}
@@ -213,11 +219,7 @@ public abstract class Area implements Comparable<Area> {
 	public Boolean getValue(Flag flag, boolean absolute) {
 		Boolean value = null;
 		if (isArea()) {
-			final String path = getDataPath() + "." + flag.getName() + valueFooter;
-
-			if(Flags.getDataStore().isSet(path)) {
-				value = Flags.getDataStore().readBoolean(path);
-			}
+			value = Flags.getDataStore().readFlag(this, flag);
 		}
 
 		if (absolute) {
@@ -360,8 +362,7 @@ public abstract class Area implements Comparable<Area> {
 		if (message != null) {
 			message = message.replaceAll("§", "&");
 		}
-		Flags.getDataStore()
-			.write(getDataPath() + "." + flag.getName() + messageFooter, message);
+		Flags.getDataStore().writeMessage(this, flag, message);
 		return true;
 	}
 
@@ -384,8 +385,7 @@ public abstract class Area implements Comparable<Area> {
 			return false;
 		}
 
-		final String path = getDataPath() + "." + flag.getName() + trustFooter;
-		Set<String> trustList = Flags.getDataStore().readSet(path);
+		Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
 
 		// Set player to trusted.
 		if (trusted) {
@@ -406,7 +406,7 @@ public abstract class Area implements Comparable<Area> {
 			}
 
 			// Set the list
-			Flags.getDataStore().write(path, trustList);
+			Flags.getDataStore().writeTrust(this, flag, trustList);
 			return true;
 		}
 
@@ -422,7 +422,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		trustList.remove(trustee.toLowerCase());
-		Flags.getDataStore().write(path, trustList);
+		Flags.getDataStore().writeTrust(this, flag, trustList);
 		return true;
 	}
 
@@ -492,7 +492,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		Boolean val = (value == null) ? null : value;
-		Flags.getDataStore().write(getDataPath() + "." + flag.getName() + valueFooter, val);
+		Flags.getDataStore().writeFlag(this, flag, val);
 		return true;
 	}
 }

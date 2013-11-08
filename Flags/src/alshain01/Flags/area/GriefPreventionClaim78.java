@@ -118,11 +118,6 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 				: dataHeader + claim.getClaimWorldName() + "." + getSystemID();
 	}
 
-	private String getInheritPath() {
-		return dataHeader + claim.getClaimWorldName() + "." + getSystemID() + "." 
-				+ getSystemSubID() + "." + "InheritParent";
-	}
-
 	@Override
 	public String getSystemSubID() {
 		return isSubdivision() ? String.valueOf(getClaim().getSubClaimID())
@@ -140,11 +135,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 			return false;
 		}
 
-		final String value = Flags.getDataStore().read(getInheritPath());
-		if (value == null) {
-			return true;
-		}
-		return Boolean.valueOf(value);
+		return Flags.getDataStore().isInheriting(this);
 	}
 
 	@Override
@@ -157,17 +148,12 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		if (!isSubdivision()) {
 			return false;
 		}
-		final String storedValue = Flags.getDataStore().read(getInheritPath());
 
 		if (value == null) {
-			if (storedValue != null) {
-				value = !Boolean.valueOf(storedValue);
-			} else {
-				value = false;
-			}
+			value = !Flags.getDataStore().isInheriting(this);
 		}
 
-		Flags.getDataStore().write(getInheritPath(), String.valueOf(value));
+		Flags.getDataStore().setInheriting(this, value);
 		return true;
 	}
 }

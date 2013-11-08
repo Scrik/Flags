@@ -110,7 +110,7 @@ public class Flags extends JavaPlugin {
 	}
 
 	protected static CustomYML messageStore;
-	protected static LandSystem currentSystem = LandSystem.NONE;
+	protected static LandSystem currentSystem = LandSystem.WORLD;
 	private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
@@ -210,7 +210,7 @@ public class Flags extends JavaPlugin {
 				return LandSystem.getByName((String) o);
 			}
 		}
-		return LandSystem.NONE;
+		return LandSystem.WORLD;
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class Flags extends JavaPlugin {
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == LandSystem.NONE ? "No system detected. Only world flags will be available."
+		getLogger().info(currentSystem == LandSystem.WORLD ? "No system detected. Only world flags will be available."
 						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
 
 		// Check for older database and import as necessary.

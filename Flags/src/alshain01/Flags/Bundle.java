@@ -39,7 +39,7 @@ public final class Bundle {
 	 *            The bundle name to retrieve
 	 * @return A list containing the bundle. Null if it doesn't exist.
 	 */
-	public final static Set<String> getBundle(String bundle) {
+	public final static Set<Flag> getBundle(String bundle) {
 		return Flags.getDataStore().readBundle(bundle);
 	}
 
@@ -71,7 +71,7 @@ public final class Bundle {
 	 * @param flags
 	 *            A list of flags in the bundle. (does not verify validity)
 	 */
-	public final static void setBundle(String name, Set<String> flags) {
+	public final static void setBundle(String name, Set<Flag> flags) {
 		Flags.getDataStore().writeBundle(name, flags);
 	}
 

@@ -25,7 +25,7 @@
 package alshain01.Flags;
 
 public enum LandSystem {
-	NONE(null, null),
+	WORLD(null, null),
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention"),
 	WORLDGUARD("WorldGuard", "WorldGuard"),
 	RESIDENCE("Residence", "Residence"),
@@ -44,7 +44,7 @@ public enum LandSystem {
 				return p;
 			}
 		}
-		return LandSystem.NONE;
+		return LandSystem.WORLD;
 	}
 	
 	/**
@@ -69,8 +69,8 @@ public enum LandSystem {
 	 * @return The enumeration.
 	 */
 	public String getDataPath() {
-		if(this == NONE) { return "World"; }
-		return displayName + "Data";
+		if(this == WORLD) { return "World"; }
+		return pluginName + "Data";
 	}
 	
 	/**

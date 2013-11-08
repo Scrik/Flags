@@ -78,7 +78,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (LandSystem.getActive() == LandSystem.NONE && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (LandSystem.getActive() == LandSystem.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}
@@ -198,7 +198,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (LandSystem.getActive() == LandSystem.NONE && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (LandSystem.getActive() == LandSystem.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}

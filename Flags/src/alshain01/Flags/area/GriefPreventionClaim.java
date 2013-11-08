@@ -34,6 +34,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.Message;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege,
@@ -124,6 +125,11 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	public void remove() {
-		Flags.getDataStore().write(getDataPath(), (String) null);
+		Flags.getDataStore().remove(this);
+	}
+
+	@Override
+	public LandSystem getSystem() {
+		return LandSystem.GRIEF_PREVENTION;
 	}
 }
