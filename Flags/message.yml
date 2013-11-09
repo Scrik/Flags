@@ -44,6 +44,7 @@ Message:
   FlagPermError: '&cYou do not have permission to use that {Type}.'
   AreaPermError: '&cYou do not have permission to set a {Type} in &6{OwnerName}&c''s {AreaType}.'
   WorldPermError: '&cYou do not have permission to set a {Type} in the {AreaType}.'
+  EconomyError: '&cThere is no economy installed on this server.'
   
   # Command Messages
   GetFlag: '&bThe {AreaType} flag &e{Flag} &bis {Value}.'

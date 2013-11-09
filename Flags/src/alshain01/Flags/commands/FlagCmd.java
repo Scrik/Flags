@@ -281,7 +281,7 @@ final class FlagCmd extends Common {
 	 * Price Command Handlers
 	 */
 	protected static boolean getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
-		if(Flags.getEconomy() == null) { return false; }
+		if(!Validate.hasEconomy(sender)) { return true; }
 		
 		sender.sendMessage(Message.GetPrice.get()
 				.replaceAll("\\{PurchaseType\\}", type.getLocal().toLowerCase())
@@ -291,7 +291,7 @@ final class FlagCmd extends Common {
 	}
 	
 	protected static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
-		if(Flags.getEconomy() == null) { return false; }
+		if(!Validate.hasEconomy(sender)) { return true; }
 		if((sender instanceof Player) && !Validate.canEditPrice((Player)sender)) { return true; }
 
 		double p;

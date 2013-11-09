@@ -143,12 +143,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 			return false;
 		}
 
-		if (value == null) {
-			value = !Flags.getDataStore().readInheritance(this);
-		}
-
-		Flags.getDataStore().writeInheritance(this, value);
-		return true;
+		return Flags.getDataStore().writeInheritance(this, value);
 	}
 
 	@Override

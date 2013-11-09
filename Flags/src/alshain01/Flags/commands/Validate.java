@@ -31,6 +31,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Director;
 import alshain01.Flags.Flag;
+import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
@@ -111,6 +112,14 @@ final class Validate {
 			return false;
 		}
 		return false;
+	}
+	
+	protected static boolean hasEconomy(CommandSender cs) {
+		if(Flags.getEconomy() == null) {
+			cs.sendMessage(Message.EconomyError.get());
+			return false;
+		}
+		return true;
 	}
 	
 	protected static boolean isBundlePermitted(Permissible p, Object o) {

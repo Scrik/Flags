@@ -142,11 +142,6 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 			return false;
 		}
 
-		if (value == null) {
-			value = !Flags.getDataStore().readInheritance(this);
-		}
-
-		Flags.getDataStore().writeInheritance(this, value);
-		return true;
+		return Flags.getDataStore().writeInheritance(this, value);
 	}
 }

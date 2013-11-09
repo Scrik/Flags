@@ -189,8 +189,7 @@ public abstract class Area implements Comparable<Area> {
 			return null;
 		}
 
-		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,
-				flag);
+		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,	flag);
 		if (!(this instanceof Default || this instanceof World)) {
 			trustedPlayers.addAll(getOwners());
 		}
@@ -219,8 +218,7 @@ public abstract class Area implements Comparable<Area> {
 			return value;
 		}
 
-		return value != null ? value : new Default(getWorld()).getValue(flag,
-				false);
+		return value != null ? value : new Default(getWorld()).getValue(flag, false);
 	}
 
 	/**

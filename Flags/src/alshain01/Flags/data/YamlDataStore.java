@@ -97,7 +97,7 @@ public final class YamlDataStore implements DataStore {
 		}
 
 		if (!(area instanceof World || area instanceof Default)) {
-			path += area.getSystemID();
+			path += "." + area.getSystemID();
 		}
 
 		if (area instanceof Subdivision && !readInheritance(area)) {
@@ -150,23 +150,6 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public boolean readInheritance(Area area) {
-		if (!(area instanceof Subdivision)
-				|| ((Subdivision) area).isSubdivision()) {
-			return true;
-		}
-
-		final String path = area.getSystem().getDataPath() + "." + area.getSystemID() + "."
-				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
-		final FileConfiguration cYml = getYml(path).getConfig();
-		if (!cYml.isSet(path)) {
-			return true;
-		}
-
-		return cYml.getBoolean(path);
-	}
-
-	@Override
 	public String readMessage(Area area, Flag flag) {
 		final String path = getAreaPath(area) + "." + flag.getName()
 				+ ".Message";
@@ -182,7 +165,7 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public Set<String> readTrust(Area area, Flag flag) {
-		final String path = getAreaPath(area) + flag.getName() + ".Trust";
+		final String path = getAreaPath(area) + "." + flag.getName() + ".Trust";
 		final List<?> setData = getYml(path).getConfig().getList(path, new ArrayList<String>());
 		final Set<String> stringData = new HashSet<String>();
 		
@@ -199,8 +182,7 @@ public final class YamlDataStore implements DataStore {
 		if (!cYml.isSet("Default.Database.Version")) {
 			return new DBVersion(0, 0, 0);
 		}
-		final String[] ver = cYml.getString("Default.Database.Version").split(
-				"\\.");
+		final String[] ver = cYml.getString("Default.Database.Version").split("\\.");
 		return new DBVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]),
 				Integer.valueOf(ver[2]));
 	}
@@ -331,18 +313,44 @@ public final class YamlDataStore implements DataStore {
 		}
 		cYml.saveConfig();
 	}
-
+	
 	@Override
-	public void writeInheritance(Area area, boolean value) {
-		if (!(area instanceof Subdivision)
-				|| ((Subdivision) area).isSubdivision()) {
-			return;
+	public boolean readInheritance(Area area) {
+		if (!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+			return true;
 		}
 
-		final String path = area.getSystem().getDataPath() + area.getSystemID()
-				+ ((Subdivision) area).getSystemSubID() + ".Inherit";
+		final String path = area.getSystem().getDataPath() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+		
 		final FileConfiguration cYml = getYml(path).getConfig();
-		cYml.set(path, value);
+		if (!cYml.isSet(path)) {
+			return true;
+		}
+
+		return cYml.getBoolean(path);
+	}
+
+	@Override
+	public boolean writeInheritance(Area area, Boolean value) {
+		if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
+			return false;
+		}
+		
+		final String path = area.getSystem().getDataPath() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+		
+		final CustomYML cYml = getYml(path);
+		
+		if (value == null) {
+			if(cYml.getConfig().isSet(path)) {
+				value = !cYml.getConfig().getBoolean(path);
+			} else {
+				value = false;
+			}
+		}
+		
+		cYml.getConfig().set(path, value);
+		cYml.saveConfig();
+		return value;
 	}
 
 	@Override
@@ -364,7 +372,7 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public void writeTrust(Area area, Flag flag, Set<String> players) {
-		final String path = getAreaPath(area) + flag.getName() + ".Trust";
+		final String path = getAreaPath(area) + "." + flag.getName() + ".Trust";
 		final CustomYML cYml = getYml(path);
 
 		final List<String> list = new ArrayList<String>();

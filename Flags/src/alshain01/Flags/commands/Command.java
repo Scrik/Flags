@@ -65,6 +65,7 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) {
+			Flags.Debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -73,6 +74,7 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
+				Flags.Debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -154,7 +156,10 @@ public final class Command {
 				break;
 		}
 		
-		if(!success) { sender.sendMessage(command.getHelp()); }
+		if(!success) { 
+			Flags.Debug("Command Unsuccessful");
+			sender.sendMessage(command.getHelp());
+		}
 		return true;
 	}
 	
@@ -179,6 +184,7 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
+			Flags.Debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -187,6 +193,7 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
+				Flags.Debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -240,7 +247,10 @@ public final class Command {
 				break;
 		}
 		
-		if(!success) { sender.sendMessage(command.getHelp()); }
+		if(!success) {
+			Flags.Debug("Command Unsuccessful");
+			sender.sendMessage(command.getHelp());
+		}
 		return true;
 	}
 	

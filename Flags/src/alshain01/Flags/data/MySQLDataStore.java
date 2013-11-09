@@ -277,12 +277,6 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	@Override
-	public void writeInheritance(Area area, boolean value) {
-		// TODO Auto-generated method stub
-		return;
-	}
-
-	@Override
 	public String readMessage(Area area, Flag flag) {
 		// TODO Auto-generated method stub
 		return null;
@@ -310,5 +304,11 @@ public final class MySQLDataStore implements SQLDataStore {
 	public Set<String> readTrust(Area area, Flag flag) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean writeInheritance(Area area, Boolean value) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

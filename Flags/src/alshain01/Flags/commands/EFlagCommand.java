@@ -45,6 +45,7 @@ enum EFlagCommand {
 	Boolean requiresFlag; // null if flag isn't even an optional arg.
 	String help;
 	
+	//Note: requiredArgs INCLUDES the command action
 	EFlagCommand(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
 		this.alias = alias;
 		this.requiredArgs = requiredArgs;
