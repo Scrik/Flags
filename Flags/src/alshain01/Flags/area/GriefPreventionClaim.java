@@ -68,8 +68,11 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return a instanceof GriefPreventionClaim
-				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
+		if(!(a instanceof GriefPreventionClaim)) {
+			return 3;
+		}
+		
+		return (claim == ((GriefPreventionClaim)a).getClaim()) ? 0 : 3;
 	}
 
 	@Override
@@ -83,15 +86,15 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(getClaim().getOwnerName()));
+		return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
 	}
 
 	@Override
 	public String getSystemID() {
-		if (isArea() && getClaim().parent != null) {
-			return String.valueOf(getClaim().parent.getID());
+		if (isArea() && claim.parent != null) {
+			return String.valueOf(claim.parent.getID());
 		} else if (isArea()) {
-			return String.valueOf(getClaim().getID());
+			return String.valueOf(claim.getID());
 		} else {
 			return null;
 		}
@@ -99,22 +102,22 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	public org.bukkit.World getWorld() {
-		return getClaim().getGreaterBoundaryCorner().getWorld();
+		return claim.getGreaterBoundaryCorner().getWorld();
 	}
 
 	@Override
 	public boolean isAdminArea() {
-		return getClaim().isAdminClaim();
+		return claim.isAdminClaim();
 	}
 
 	@Override
 	public boolean isArea() {
-		return getClaim() != null;
+		return claim != null;
 	}
 
 	@Override
 	public boolean isUnderSiege() {
-		return !(getClaim() == null || getClaim().siegeData == null);
+		return !(claim == null || claim.siegeData == null);
 	}
 
 	@Override

@@ -393,8 +393,8 @@ public abstract class Area implements Comparable<Area> {
 			}
 			trustList.add(trustee.toLowerCase());
 
-			final TrustChangedEvent event = new TrustChangedEvent(this, flag,
-					trustee, true, sender);
+			final TrustChangedEvent event = 
+					new TrustChangedEvent(this, flag, trustee, true, sender);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;
@@ -410,8 +410,8 @@ public abstract class Area implements Comparable<Area> {
 			return false;
 		}
 
-		final TrustChangedEvent event = new TrustChangedEvent(this, flag,
-				trustee, false, sender);
+		final TrustChangedEvent event = 
+				new TrustChangedEvent(this, flag, trustee, false, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;

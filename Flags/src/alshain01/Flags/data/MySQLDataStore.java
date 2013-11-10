@@ -39,7 +39,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
+import alshain01.Flags.LandSystem;
 import alshain01.Flags.area.Area;
+import alshain01.Flags.area.Default;
+import alshain01.Flags.area.Subdivision;
+import alshain01.Flags.area.World;
 import alshain01.Flags.economy.EPurchaseType;
 
 public final class MySQLDataStore implements SQLDataStore {
@@ -128,21 +132,33 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public boolean create(JavaPlugin plugin) {
-		if(!exists(plugin)) {
-			executeStatement("CREATE TABLE Version (Major INT, Minor INT, Build INT);");
+		if(!exists()) {
+			executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
 			executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
 			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
 			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE), CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType);");
 			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Data (id VARCHAR(100), flag VARCHAR(25), value BOOL);");
+			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
 		}
 		return true;
 	}
 	
-	public boolean exists(JavaPlugin plugin) {
-		ResultSet results = executeQuery("SHOW TABLES LIKE 'Version';");
+	public void createDataTable(JavaPlugin plugin) {
+		
+	}
 	
+	public boolean exists() {
+		// We need to create the system specific table 
+		// in case it changed since the database was created.
+		executeStatement("CREATE TABLE IF NOT EXISTS " + LandSystem.getActive() 
+				+ "(WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+				+ "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
+				+ "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName);");
+		
+		ResultSet results = 
+				executeQuery("SELECT * FROM information_schema.tables "
+						+ "WHERE table_schema = 'FlagsData' AND table_name = 'Version' LIMIT 1;");
+		
 		try {
 			return results.next();
 		} catch (SQLException e) {
@@ -183,7 +199,7 @@ public final class MySQLDataStore implements SQLDataStore {
 			}
 		} catch (SQLException ex){
 			SqlError(ex.getMessage());
-			return null;
+			return new HashSet<String>();
 		}
 		return bundles;
 	}
@@ -202,7 +218,7 @@ public final class MySQLDataStore implements SQLDataStore {
 			}
 		} catch (SQLException ex){
 			SqlError(ex.getMessage());
-			return null;
+			return new HashSet<Flag>();
 		}
 		return flags;
 	}
@@ -260,22 +276,79 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public Boolean readFlag(Area area, Flag flag) {
-		// TODO Auto-generated method stub
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
+		
+		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
+		if(!(area instanceof Default || area instanceof World)) {
+				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
+		}
+		queryString += " AND FlagName=" + flag.getName() + ";";
+		
+		ResultSet results = executeQuery(queryString); 
+		
+		try {
+			if(results.next()) {
+				return results.getBoolean("FlagValue");
+			}
+			return null;
+		} catch (SQLException ex){
+			SqlError(ex.getMessage());
+		}
 		return null;
 	}
 
 	@Override
 	public void writeFlag(Area area, Flag flag, Boolean value) {
-		// TODO Auto-generated method stub
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
 		
+		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagValue) VALUES ('" 
+				+ area.getWorld().getName() + "','" + area.getSystemID() + "'," + subID + ",'" + flag.getName() + "'," + value + ")"	
+				+ "ON DUPLICATE KEY UPDATE FlagValue=" + value + ";");
 	}
 
 	@Override
 	public boolean readInheritance(Area area) {
-		// TODO Auto-generated method stub
-		return false;
+		if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
+			return false;
+		}
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
+		
+		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
+		if(!(area instanceof Default || area instanceof World)) {
+				queryString += " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
+		}
+		queryString += " AND FlagName='InheritParent';";
+		
+		ResultSet results = executeQuery(queryString); 
+		
+		try {
+			if(results.next()) {
+				return results.getBoolean("FlagValue");
+			}
+			return true;
+		} catch (SQLException ex){
+			SqlError(ex.getMessage());
+		}
+		return true;
 	}
 
+	@Override
+	public void writeInheritance(Area area, Boolean value) {
+		if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+			return;
+		}
+		String subID = "'" + ((Subdivision)area).getSystemSubID() + "'";
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
+		
+		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagValue) VALUES ('" 
+				+ area.getWorld().getName() + "','" + area.getSystemID() + "','" + subID + "','InheritParent'," + value + ")"	
+				+ "ON DUPLICATE KEY UPDATE FlagValue=" + value + ";");
+		return;
+	}
+	
 	@Override
 	public String readMessage(Area area, Flag flag) {
 		// TODO Auto-generated method stub
@@ -304,11 +377,5 @@ public final class MySQLDataStore implements SQLDataStore {
 	public Set<String> readTrust(Area area, Flag flag) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean writeInheritance(Area area, Boolean value) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

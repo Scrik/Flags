@@ -24,6 +24,8 @@
 
 package alshain01.Flags.area;
 
+import me.ryanhamshire.GriefPrevention.Claim;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -66,9 +68,10 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 	}
 
 	/**
-	 * 0 if the the claims are the same -1 if the claim is a subdivision of the
-	 * provided claim. 1 if the claim is a parent of the provided claim. 2 if
-	 * they are "sister" subdivisions. 3 if they are completely unrelated.
+	 * 0 if the the claims are the same 
+	 * -1 if the claim is a subdivision of the provided claim. 
+	 * 1 if the claim is a parent of the provided claim.
+	 * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
 	 * 
 	 * @return The value of the comparison.
 	 */
@@ -77,54 +80,33 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		if (!(a instanceof GriefPreventionClaim78)) {
 			return 3;
 		}
-
-		if (a.getSystemID().equals(getSystemID())) {
-			// They are related somehow. We need to figure out how.
-			// (We can safely assume instance of subdivision because of the
-			// first line)
-
-			if (((Subdivision) a).getSystemSubID() == null
-					&& getSystemSubID() != null) {
-				// a is the parent
-				return -1;
-			}
-
-			if (((Subdivision) a).getSystemSubID() != null
-					&& getSystemSubID() == null) {
-				// this is the parent
-				return 1;
-			}
-
-			if (((Subdivision) a).getSystemSubID() != null
-					&& getSystemSubID() != null) {
-				// neither are the parent, but the parent ID is the same
-				return 2;
-			}
-
-			if (((Subdivision) a).getSystemSubID() == null
-					&& getSystemSubID() == null
-					|| ((Subdivision) a).getSystemSubID().equals(getSystemSubID())) {
-				// They are the same claim
-				return 0;
-			}
+		
+		Claim testClaim = ((GriefPreventionClaim78)a).getClaim();
+		if(claim == testClaim) {
+			return 0;
+		} else if (claim.parent == testClaim) {
+			return -1;
+		} else if (testClaim.parent == claim) {
+			return 1;
+		} else if (claim.parent != null && claim.parent == testClaim.parent) {
+			return 2;
 		}
 		return 3;
 	}
 
 	@Override
 	public String getSystemSubID() {
-		return isSubdivision() ? String.valueOf(getClaim().getSubClaimID())
-				: null;
+		return claim != null && claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
 	}
 
 	@Override
 	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(getClaim().getClaimWorldName());
+		return Bukkit.getServer().getWorld(claim.getClaimWorldName());
 	}
 
 	@Override
 	public boolean isInherited() {
-		if (!isSubdivision()) {
+		if (claim == null || claim.parent == null) {
 			return false;
 		}
 
@@ -133,15 +115,31 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 
 	@Override
 	public boolean isSubdivision() {
-		return isArea() && getClaim().parent != null;
+		return claim != null && claim.parent != null;
 	}
 
 	@Override
-	public boolean setInherited(Boolean value) {
-		if (!isSubdivision()) {
+	public void setInherited(Boolean value) {
+		if (claim == null || claim.parent == null) {
+			return;
+		}
+
+		Flags.getDataStore().writeInheritance(this, value);
+	}
+
+	@Override
+	public boolean isParent(Area area) {
+		if(!(area instanceof GriefPreventionClaim78) || claim.parent == null) {
 			return false;
 		}
 
-		return Flags.getDataStore().writeInheritance(this, value);
+		if(claim.parent == ((GriefPreventionClaim78)area).getClaim()) { return true; }
+		return false;
+	}
+
+	@Override
+	public Area getParent() {
+		if(claim.parent == null) { return null; }
+		return new GriefPreventionClaim78(claim.getID());
 	}
 }

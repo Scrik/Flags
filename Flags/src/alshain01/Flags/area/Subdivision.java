@@ -59,5 +59,9 @@ public interface Subdivision {
 	 *            True if the area should inherit from the parent area.
 	 * @return True if successfully set.
 	 */
-	public boolean setInherited(Boolean value);
+	public void setInherited(Boolean value);
+	
+	public boolean isParent(Area area);
+	
+	public Area getParent();
 }
