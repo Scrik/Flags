@@ -39,7 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
@@ -82,19 +82,12 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	private boolean exists(JavaPlugin plugin) {
-		final File fileObject = new File(plugin.getDataFolder()
-				+ "\\default.yml");
+		final File fileObject = new File(plugin.getDataFolder()	+ "\\default.yml");
 		return fileObject.exists();
 	}
 
 	private String getAreaPath(Area area) {
-		String path;
-		if (area.getSystem() == null) {
-			path = "Default." + area.getWorld().getName();
-		} else {
-			path = area.getSystem().getDataPath() + "."
-					+ area.getWorld().getName();
-		}
+		String path = area.getType().toString() + "." + area.getWorld().getName();
 
 		if (!(area instanceof World || area instanceof Default)) {
 			path += "." + area.getSystemID();
@@ -151,16 +144,14 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public String readMessage(Area area, Flag flag) {
-		final String path = getAreaPath(area) + "." + flag.getName()
-				+ ".Message";
+		final String path = getAreaPath(area) + "." + flag.getName() + ".Message";
 		return getYml(path).getConfig().getString(path);
 	}
 
 	@Override
 	public double readPrice(Flag flag, EPurchaseType type) {
 		final String path = "Price." + type.toString() + "." + flag.getName();
-		return getYml(path).getConfig().isSet(path) ? getYml(path).getConfig()
-				.getDouble(path) : 0;
+		return getYml(path).getConfig().isSet(path) ? getYml(path).getConfig().getDouble(path) : 0;
 	}
 
 	@Override
@@ -209,14 +200,10 @@ public final class YamlDataStore implements DataStore {
 		if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
-			if (LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
-				cSec = cYml.getConfig().getConfigurationSection(
-						"GriefPreventionData");
-			} else if (LandSystem.getActive() == LandSystem.RESIDENCE) {
-				cSec = cYml.getConfig()
-						.getConfigurationSection("ResidenceData");
-			}
-			if (cSec != null) {
+			AreaType system = AreaType.getActive();
+			
+			if (system == AreaType.GRIEF_PREVENTION || AreaType.getActive() == AreaType.RESIDENCE) {
+				cSec = cYml.getConfig().getConfigurationSection(AreaType.getActive().toString() + "Data");
 				final Set<String> keys = cSec.getKeys(true);
 				for (final String k : keys) {
 
@@ -226,7 +213,7 @@ public final class YamlDataStore implements DataStore {
 						final String id = k.split("\\.")[0];
 						String world;
 
-						if (LandSystem.getActive() == LandSystem.GRIEF_PREVENTION) {
+						if (AreaType.getActive() == AreaType.GRIEF_PREVENTION) {
 							world = GriefPrevention.instance.dataStore
 									.getClaim(Long.valueOf(id))
 									.getGreaterBoundaryCorner().getWorld()
@@ -249,35 +236,26 @@ public final class YamlDataStore implements DataStore {
 
 			}
 
-			Set<String> keys = cYml.getConfig().getKeys(true);
-			for (final String k : keys) {
-				if (k.contains("Value")) {
-					cYml.getConfig().set(k,
-							Boolean.valueOf(cYml.getConfig().getString(k)));
+			//Convert values to boolean instead of string
+			final String[] fileArray = {"data", "default", "world"};
+			for(final String s : fileArray) {
+				cYml = getYml(s);
+				Set<String> keys = cYml.getConfig().getKeys(true);
+				for (final String k : keys) {
+					if (k.contains("Value")) {
+						cYml.getConfig().set(k,
+								Boolean.valueOf(cYml.getConfig().getString(k)));
+					}
 				}
 			}
-			cYml.saveConfig();
-
-			cYml = getYml("default");
-			keys = cYml.getConfig().getKeys(true);
-			for (final String k : keys) {
-				if (k.contains("Value")) {
-					cYml.getConfig().set(k,
-							Boolean.valueOf(cYml.getConfig().getString(k)));
-				}
+			
+			//Remove "Data" from the root heading.
+			if(system != AreaType.WORLD) {
+				FileConfiguration fConfig = cYml.getConfig(); 
+				fConfig.set(AreaType.getActive().toString(), fConfig.get(AreaType.getActive().toString() + "Data"));
 			}
+			
 			cYml.saveConfig();
-
-			cYml = getYml("world");
-			keys = cYml.getConfig().getKeys(true);
-			for (final String k : keys) {
-				if (k.contains("Value")) {
-					cYml.getConfig().set(k,
-							Boolean.valueOf(cYml.getConfig().getString(k)));
-				}
-			}
-			cYml.saveConfig();
-
 			writeVersion(new DBVersion(1, 2, 2));
 		}
 
@@ -320,7 +298,7 @@ public final class YamlDataStore implements DataStore {
 			return true;
 		}
 
-		final String path = area.getSystem().getDataPath() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+		final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 		
 		final FileConfiguration cYml = getYml(path).getConfig();
 		if (!cYml.isSet(path)) {
@@ -336,7 +314,7 @@ public final class YamlDataStore implements DataStore {
 			return;
 		}
 		
-		final String path = area.getSystem().getDataPath() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+		final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 		
 		final CustomYML cYml = getYml(path);
 		

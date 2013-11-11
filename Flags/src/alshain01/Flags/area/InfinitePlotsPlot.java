@@ -35,7 +35,7 @@ import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.Message;
 
 public class InfinitePlotsPlot extends Area implements Removable {
@@ -113,7 +113,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	}
 
 	@Override
-	public LandSystem getSystem() {
-		return LandSystem.INFINITEPLOTS;
+	public AreaType getType() {
+		return AreaType.INFINITEPLOTS;
 	}
 }

@@ -30,7 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.Message;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
@@ -113,7 +113,7 @@ public class WorldGuardRegion extends Area implements Removable {
 	}
 
 	@Override
-	public LandSystem getSystem() {
-		return LandSystem.WORLDGUARD;
+	public AreaType getType() {
+		return AreaType.WORLDGUARD;
 	}
 }

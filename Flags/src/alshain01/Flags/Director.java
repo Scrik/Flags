@@ -91,9 +91,9 @@ public final class Director {
 	 * Database cleanup monitors
 	 */
 	protected static void enableMrClean(PluginManager pm) {
-		switch (LandSystem.getActive()) {
+		switch (AreaType.getActive()) {
 		case GRIEF_PREVENTION:
-			if (Float.valueOf(pm.getPlugin(LandSystem.getActive().toString())
+			if (Float.valueOf(pm.getPlugin(AreaType.getActive().toString())
 					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
 				pm.registerEvents(new GriefPreventionCleaner(),	Flags.getInstance());
@@ -114,7 +114,7 @@ public final class Director {
 	 * Gets the area at a specific location if one exists, otherwise null
 	 */
 	private static Area getArea(Location location) {
-		switch (LandSystem.getActive()) {
+		switch (AreaType.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
 					.getPluginManager().getPlugin("GriefPrevention");
@@ -125,7 +125,7 @@ public final class Director {
 			}
 			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
 					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = LandSystem.WORLD;
+			Flags.currentSystem = AreaType.WORLD;
 			return null;
 		case WORLDGUARD:
 			return new WorldGuardRegion(location);
@@ -160,7 +160,7 @@ public final class Director {
 	 */
 	public static Area getArea(String name) {
 		String[] path;
-		switch (LandSystem.getActive()) {
+		switch (AreaType.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
 					.getPluginManager().getPlugin("GriefPrevention");
@@ -173,7 +173,7 @@ public final class Director {
 			}
 			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
 					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = LandSystem.WORLD;
+			Flags.currentSystem = AreaType.WORLD;
 			return null;
 		case RESIDENCE:
 			return new ResidenceClaimedResidence(name);
@@ -282,7 +282,7 @@ public final class Director {
 	 * @return The user friendly name.
 	 */
 	public static String getSystemAreaType() {
-		switch (LandSystem.getActive()) {
+		switch (AreaType.getActive()) {
 		case GRIEF_PREVENTION:
 			return Message.GriefPrevention.get();
 		case WORLDGUARD:
@@ -304,7 +304,7 @@ public final class Director {
 	 * Performs a fast check to see if an area is defined at a location
 	 */
 	private static boolean hasArea(Location location) {
-		switch (LandSystem.getActive()) {
+		switch (AreaType.getActive()) {
 		case GRIEF_PREVENTION:
 			return GriefPrevention.instance.dataStore.getClaimAt(location,
 					false) != null;
@@ -334,7 +334,7 @@ public final class Director {
 	 *         unsupported.
 	 */
 	public static boolean inPvpCombat(Player player) {
-		return LandSystem.getActive() != LandSystem.GRIEF_PREVENTION ? false
+		return AreaType.getActive() != AreaType.GRIEF_PREVENTION ? false
 				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 

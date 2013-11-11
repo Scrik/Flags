@@ -32,7 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.Message;
 
 import com.bekvon.bukkit.residence.Residence;
@@ -158,8 +158,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	}
 
 	@Override
-	public LandSystem getSystem() {
-		return LandSystem.RESIDENCE;
+	public AreaType getType() {
+		return AreaType.RESIDENCE;
 	}
 
 	@Override

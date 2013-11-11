@@ -34,7 +34,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.Message;
 
 /**
@@ -137,7 +137,7 @@ public class Default extends Area {
 	}
 
 	@Override
-	public LandSystem getSystem() {
-		return null;
+	public AreaType getType() {
+		return AreaType.DEFAULT;
 	}
 }

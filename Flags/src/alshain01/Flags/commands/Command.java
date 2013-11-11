@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.LandSystem;
+import alshain01.Flags.AreaType;
 import alshain01.Flags.Message;
 import alshain01.Flags.economy.EPurchaseType;
 
@@ -80,7 +80,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (LandSystem.getActive() == LandSystem.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (AreaType.getActive() == AreaType.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}
@@ -205,7 +205,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (LandSystem.getActive() == LandSystem.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (AreaType.getActive() == AreaType.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}

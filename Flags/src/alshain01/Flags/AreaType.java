@@ -24,8 +24,9 @@
 
 package alshain01.Flags;
 
-public enum LandSystem {
-	WORLD(null, null),
+public enum AreaType {
+	DEFAULT("Default", "Default"),
+	WORLD("World", "World"),
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention"),
 	WORLDGUARD("WorldGuard", "WorldGuard"),
 	RESIDENCE("Residence", "Residence"),
@@ -38,13 +39,13 @@ public enum LandSystem {
 	 * 
 	 * @return The enumeration. LandSystem.NONE if no matches found.
 	 */
-	public static LandSystem getByName(String name) {
-		for (final LandSystem p : LandSystem.values()) {
+	public static AreaType getByName(String name) {
+		for (final AreaType p : AreaType.values()) {
 			if (name.equals(p.pluginName)) {
 				return p;
 			}
 		}
-		return LandSystem.WORLD;
+		return AreaType.WORLD;
 	}
 	
 	/**
@@ -52,25 +53,15 @@ public enum LandSystem {
 	 * 
 	 * @return The enumeration.
 	 */
-	public static LandSystem getActive() {
+	public static AreaType getActive() {
 		return Flags.currentSystem;
 	}
 
 	private String pluginName = null, displayName = null;
 
-	private LandSystem(String name, String displayName) {
+	private AreaType(String name, String displayName) {
 		pluginName = name;
 		this.displayName = displayName;
-	}
-
-	/**
-	 * Gets the data header of the land system as stored in the database.
-	 * 
-	 * @return The enumeration.
-	 */
-	public String getDataPath() {
-		if(this == WORLD) { return "World"; }
-		return pluginName + "Data";
 	}
 	
 	/**
