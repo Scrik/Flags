@@ -111,13 +111,13 @@ public class Flags extends JavaPlugin {
 
 	protected static CustomYML messageStore;
 	protected static SystemType currentSystem = SystemType.WORLD;
-	private static Flags instance;
+	//private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
-	private static Boolean debug = false;
+	private static boolean debug = false;
 
-	private static final Registrar flagRegistrar = new Registrar();
+	private static Registrar flagRegistrar = new Registrar();
 
 	private static boolean borderPatrol = false;
 
@@ -148,7 +148,7 @@ public class Flags extends JavaPlugin {
 	 */
 	public static final void Debug(String message) {
 		if (debug) {
-			instance.getLogger().info("DEBUG: " + message);
+			getInstance().getLogger().info("DEBUG: " + message);
 		}
 	}
 
@@ -187,7 +187,7 @@ public class Flags extends JavaPlugin {
 	 * @return The vault economy.
 	 */
 	public static Flags getInstance() {
-		return instance;
+		return (Flags)Bukkit.getPluginManager().getPlugin("Flags");
 	}
 
 	/**
@@ -247,6 +247,11 @@ public class Flags extends JavaPlugin {
 	public void onDisable() {
 		// if(dataStore instanceof SQLDataStore) {
 		// ((SQLDataStore)dataStore).close(); }
+		economy = null;
+		dataStore = null;
+		updater = null;
+		messageStore = null;
+		flagRegistrar = null;
 		getLogger().info("Flags Has Been Disabled.");
 	}
 
@@ -255,7 +260,7 @@ public class Flags extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-		instance = this;
+		//instance = this;
 
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
