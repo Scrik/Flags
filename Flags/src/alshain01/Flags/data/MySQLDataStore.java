@@ -351,20 +351,41 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public String readMessage(Area area, Flag flag) {
-		// TODO Auto-generated method stub
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
+		
+		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
+		if(!(area instanceof Default || area instanceof World)) {
+				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
+		}
+		queryString += " AND FlagName=" + flag.getName() + ";";
+		
+		ResultSet results = executeQuery(queryString); 
+		
+		try {
+			if(results.next()) {
+				return results.getString("FlagMessage");
+			}
+			return null;
+		} catch (SQLException ex){
+			SqlError(ex.getMessage());
+		}
 		return null;
 	}
 
 	@Override
 	public void writeMessage(Area area, Flag flag, String message) {
-		// TODO Auto-generated method stub
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String tableName = (area instanceof Default) ? "Default" : area.getSystem().getDataPath();
 		
+		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('" 
+				+ area.getWorld().getName() + "','" + area.getSystemID() + "'," + subID + ",'" + flag.getName() + "','" + message + "')"	
+				+ "ON DUPLICATE KEY UPDATE FlagMessage='" + message + "';");
 	}
 
 	@Override
 	public void remove(Area area) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
