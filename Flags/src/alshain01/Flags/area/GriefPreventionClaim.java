@@ -34,8 +34,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
-import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 
 public class GriefPreventionClaim extends Area implements Removable, Siege,
 		Administrator {
@@ -77,7 +76,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	public String getAreaType() {
-		return Message.GriefPrevention.get();
+		return SystemType.GRIEF_PREVENTION.getAreaType();
 	}
 
 	public Claim getClaim() {
@@ -126,7 +125,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	}
 
 	@Override
-	public AreaType getType() {
-		return AreaType.GRIEF_PREVENTION;
+	public SystemType getType() {
+		return SystemType.GRIEF_PREVENTION;
 	}
 }

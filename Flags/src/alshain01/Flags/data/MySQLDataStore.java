@@ -39,7 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
+import alshain01.Flags.SystemType;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
@@ -152,11 +152,11 @@ public final class MySQLDataStore implements SQLDataStore {
 	public boolean exists() {
 		// We need to create the system specific table 
 		// in case it changed since the database was created.
-		executeStatement("CREATE TABLE IF NOT EXISTS " + AreaType.getActive().toString() 
+		executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() 
 				+ "(WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
 				+ "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
 				+ "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName);");
-		executeStatement("CREATE TABLE IF NOT EXISTS " + AreaType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
+		executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
 				+ "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) "
 				+ "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 		
@@ -390,7 +390,7 @@ public final class MySQLDataStore implements SQLDataStore {
 
 	@Override
 	public Set<String> readTrust(Area area, Flag flag) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+/*		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
 		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
 		tableName += "Trust";
 		
@@ -398,7 +398,7 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!(area instanceof Default || area instanceof World)) {
 				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
 		}
-		queryString += " AND FlagName=" + flag.getName() + ";";
+		queryString += " AND FlagName=" + flag.getName() + ";";*/
 		// TODO Auto-generated method stub
 		return null;
 	}

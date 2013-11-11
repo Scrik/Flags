@@ -42,8 +42,6 @@ public enum Message {
 	SetFlag, GetFlag, RemoveFlag, InheritedFlag, SetTrust, GetTrust, RemoveTrust,
 	GetAllFlags, RemoveAllFlags, GetBundle, SetBundle, RemoveBundle, UpdateBundle,
 	EraseBundle, SetInherited,
-	// Areas
-	Default, World, GriefPrevention, WorldGuard, Residence, InfinitePlots, Factions, PlotMe,
 	// Help
 	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError,
 	GroupHelpDescription, GroupHelpInfo,

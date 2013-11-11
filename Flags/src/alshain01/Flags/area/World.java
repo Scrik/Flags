@@ -34,8 +34,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
-import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 
 public class World extends Area {
 	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
@@ -73,7 +72,7 @@ public class World extends Area {
 
 	@Override
 	public String getAreaType() {
-		return Message.World.get();
+		return SystemType.WORLD.getAreaType();
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class World extends Area {
 
 		if (parse) {
 			message = message
-					.replaceAll("\\{AreaType\\}", Message.World.get().toLowerCase())
+					.replaceAll("\\{AreaType\\}", SystemType.WORLD.getAreaType().toLowerCase())
 					.replaceAll("\\{World\\}", world.getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
@@ -133,7 +132,7 @@ public class World extends Area {
 	}
 
 	@Override
-	public AreaType getType() {
-		return AreaType.WORLD;
+	public SystemType getType() {
+		return SystemType.WORLD;
 	}
 }

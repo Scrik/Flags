@@ -33,8 +33,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
-import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
@@ -77,7 +76,7 @@ public class PlotMePlot extends Area implements Removable {
 
 	@Override
 	public String getAreaType() {
-		return Message.PlotMe.get();
+		return SystemType.PLOTME.getAreaType();
 	}
 
 	@Override
@@ -110,7 +109,7 @@ public class PlotMePlot extends Area implements Removable {
 	}
 
 	@Override
-	public AreaType getType() {
-		return AreaType.PLOTME;
+	public SystemType getType() {
+		return SystemType.PLOTME;
 	}
 }

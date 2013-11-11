@@ -24,7 +24,9 @@
 
 package alshain01.Flags;
 
-public enum AreaType {
+import org.bukkit.ChatColor;
+
+public enum SystemType {
 	DEFAULT("Default", "Default"),
 	WORLD("World", "World"),
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention"),
@@ -39,27 +41,27 @@ public enum AreaType {
 	 * 
 	 * @return The enumeration. LandSystem.NONE if no matches found.
 	 */
-	public static AreaType getByName(String name) {
-		for (final AreaType p : AreaType.values()) {
+	public static SystemType getByName(String name) {
+		for (final SystemType p : SystemType.values()) {
 			if (name.equals(p.pluginName)) {
 				return p;
 			}
 		}
-		return AreaType.WORLD;
+		return SystemType.WORLD;
 	}
 	
 	/**
-	 * Gets the enumeration of the land system that flags is currently using.
+	 * Gets the area type enumeration of the land system that flags is currently using.
 	 * 
 	 * @return The enumeration.
 	 */
-	public static AreaType getActive() {
+	public static SystemType getActive() {
 		return Flags.currentSystem;
 	}
 
 	private String pluginName = null, displayName = null;
 
-	private AreaType(String name, String displayName) {
+	private SystemType(String name, String displayName) {
 		pluginName = name;
 		this.displayName = displayName;
 	}
@@ -71,6 +73,15 @@ public enum AreaType {
 	 */
 	public String getDisplayName() {
 		return displayName;
+	}
+	
+	public String getAreaType() {
+		final String message = Flags.messageStore.getConfig().getString("Message." + toString());
+		if (message == null) {
+			Flags.getInstance().getLogger().warning("ERROR: Invalid message.yml Message for " + toString());
+			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
+		}
+		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 
 	/**

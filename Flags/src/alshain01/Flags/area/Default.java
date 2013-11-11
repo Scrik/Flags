@@ -34,8 +34,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
-import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 
 /**
  * Class for creating areas to manage server defaults.
@@ -78,7 +77,7 @@ public class Default extends Area {
 
 	@Override
 	public String getAreaType() {
-		return Message.Default.get();
+		return SystemType.DEFAULT.getAreaType();
 	}
 
 	/**
@@ -137,7 +136,7 @@ public class Default extends Area {
 	}
 
 	@Override
-	public AreaType getType() {
-		return AreaType.DEFAULT;
+	public SystemType getType() {
+		return SystemType.DEFAULT;
 	}
 }

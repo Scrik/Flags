@@ -32,8 +32,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
-import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 
 import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
@@ -87,7 +86,7 @@ public class FactionsTerritory extends Area implements Removable {
 
 	@Override
 	public String getAreaType() {
-		return Message.Factions.get();
+		return SystemType.FACTIONS.getAreaType();
 	}
 
 	public Faction getFaction() {
@@ -120,7 +119,7 @@ public class FactionsTerritory extends Area implements Removable {
 	}
 
 	@Override
-	public AreaType getType() {
-		return AreaType.FACTIONS;
+	public SystemType getType() {
+		return SystemType.FACTIONS;
 	}
 }

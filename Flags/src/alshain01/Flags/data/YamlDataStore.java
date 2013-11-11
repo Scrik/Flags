@@ -39,7 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
+import alshain01.Flags.SystemType;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
@@ -200,10 +200,10 @@ public final class YamlDataStore implements DataStore {
 		if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
-			AreaType system = AreaType.getActive();
+			SystemType system = SystemType.getActive();
 			
-			if (system == AreaType.GRIEF_PREVENTION || AreaType.getActive() == AreaType.RESIDENCE) {
-				cSec = cYml.getConfig().getConfigurationSection(AreaType.getActive().toString() + "Data");
+			if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
+				cSec = cYml.getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
 				final Set<String> keys = cSec.getKeys(true);
 				for (final String k : keys) {
 
@@ -213,7 +213,7 @@ public final class YamlDataStore implements DataStore {
 						final String id = k.split("\\.")[0];
 						String world;
 
-						if (AreaType.getActive() == AreaType.GRIEF_PREVENTION) {
+						if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
 							world = GriefPrevention.instance.dataStore
 									.getClaim(Long.valueOf(id))
 									.getGreaterBoundaryCorner().getWorld()
@@ -250,9 +250,9 @@ public final class YamlDataStore implements DataStore {
 			}
 			
 			//Remove "Data" from the root heading.
-			if(system != AreaType.WORLD) {
+			if(system != SystemType.WORLD) {
 				FileConfiguration fConfig = cYml.getConfig(); 
-				fConfig.set(AreaType.getActive().toString(), fConfig.get(AreaType.getActive().toString() + "Data"));
+				fConfig.set(SystemType.getActive().toString(), fConfig.get(SystemType.getActive().toString() + "Data"));
 			}
 			
 			cYml.saveConfig();

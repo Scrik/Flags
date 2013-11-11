@@ -37,7 +37,7 @@ import org.bukkit.permissions.Permissible;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.AreaType;
+import alshain01.Flags.SystemType;
 import alshain01.Flags.Message;
 import alshain01.Flags.economy.EBaseValue;
 import alshain01.Flags.economy.EPurchaseType;
@@ -167,7 +167,7 @@ public abstract class Area implements Comparable<Area> {
 	 * 
 	 * @return The LandSystem that created this object (null for Default)
 	 */
-	public abstract AreaType getType();
+	public abstract SystemType getType();
 
 	/**
 	 * Gets the land system's ID for this area.

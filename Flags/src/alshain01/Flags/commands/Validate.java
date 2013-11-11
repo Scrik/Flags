@@ -29,10 +29,10 @@ import java.util.Set;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permissible;
 
-import alshain01.Flags.Director;
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.Subdivision;
@@ -44,7 +44,7 @@ final class Validate {
 	protected static boolean isArea(CommandSender cs, Area a) {
 		if(a == null || !a.isArea()) {
 			cs.sendMessage(Message.NoAreaError.get()
-					.replaceAll("\\{AreaType\\}", Director.getSystemAreaType().toLowerCase()));
+					.replaceAll("\\{AreaType\\}", SystemType.getActive().getAreaType()));
 			return false;
 		}
 		return true;

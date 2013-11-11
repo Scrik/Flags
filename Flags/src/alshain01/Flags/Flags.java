@@ -110,7 +110,7 @@ public class Flags extends JavaPlugin {
 	}
 
 	protected static CustomYML messageStore;
-	protected static AreaType currentSystem = AreaType.WORLD;
+	protected static SystemType currentSystem = SystemType.WORLD;
 	private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
@@ -202,15 +202,15 @@ public class Flags extends JavaPlugin {
 	/*
 	 * Acquires the land management plugin.
 	 */
-	private AreaType findSystem(PluginManager pm) {
+	private SystemType findSystem(PluginManager pm) {
 		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
 			if (pm.isPluginEnabled((String) o)) {
-				return AreaType.getByName((String) o);
+				return SystemType.getByName((String) o);
 			}
 		}
-		return AreaType.WORLD;
+		return SystemType.WORLD;
 	}
 
 	/**
@@ -278,11 +278,11 @@ public class Flags extends JavaPlugin {
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == AreaType.WORLD ? "No system detected. Only world flags will be available."
+		getLogger().info(currentSystem == SystemType.WORLD ? "No system detected. Only world flags will be available."
 						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
 
 		// Check for older database and import as necessary.
-		if (currentSystem == AreaType.GRIEF_PREVENTION
+		if (currentSystem == SystemType.GRIEF_PREVENTION
 				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
 		}
