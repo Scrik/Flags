@@ -65,7 +65,7 @@ public class FactionsTerritory extends Area implements Removable {
 	 * 
 	 * @param factionID
 	 *            The faction ID
-	 * @param worldName
+	 * @param world
 	 *            The Bukkit world
 	 */
 	public FactionsTerritory(World world, String factionID) {

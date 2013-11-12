@@ -55,8 +55,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 * Creates an instance of ResidenceClaimedResidence based on a residence
 	 * name
 	 * 
-	 * @param ID
-	 *            The claim ID
+	 * @param name
+	 *            The residence name
 	 */
 	public ResidenceClaimedResidence(String name) {
 		residence = Residence.getResidenceManager().getByName(name);

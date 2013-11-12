@@ -54,9 +54,9 @@ public class PlotMePlot extends Area implements Removable {
 	/**
 	 * Creates an instance of PlotMePlot based on a plot ID and Bukkit world
 	 * 
-	 * @param ID
-	 *            The claim ID
-	 * @param worldName
+	 * @param plotID
+	 *            The plot ID
+	 * @param world
 	 *            The Bukkit world
 	 */
 	public PlotMePlot(World world, String plotID) {

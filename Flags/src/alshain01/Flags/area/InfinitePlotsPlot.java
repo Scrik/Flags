@@ -55,10 +55,12 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	 * Creates an instance of InfinitePlotsPlot based on a Bukkit world and Plot
 	 * Location
 	 * 
-	 * @param worldName
-	 *            The Bukkit world name
-	 * @param ID
-	 *            The Plot Location (not Bukkit location)
+	 * @param world
+	 *            The Bukkit world
+	 * @param X
+	 *            The Plot X Location (not Bukkit location)
+	 * @param Z
+	 *			  The Plot Z Location (not Bukkit location)
 	 */
 	public InfinitePlotsPlot(World world, int X, int Z) {
 		plot = InfinitePlots.getInstance().getPlotManager()

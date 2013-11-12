@@ -146,7 +146,7 @@ public abstract class Area implements Comparable<Area> {
 	 * 
 	 * @param flag
 	 *            The flag to retrieve the message for.
-	 * @param player
+	 * @param playerName
 	 *            The player name to insert into the messsage.
 	 * @return The message associated with the flag.
 	 */
