@@ -293,7 +293,7 @@ public final class Director {
 	private static boolean hasArea(Location location) {
 		switch (SystemType.getActive()) {
 		case GRIEF_PREVENTION:
-			return GriefPrevention.instance.dataStore.getClaimAt(location, false) != null;
+			return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
 		case WORLDGUARD:
 			return WGBukkit.getRegionManager(location.getWorld())
 					.getApplicableRegions(location).size() != 0;
