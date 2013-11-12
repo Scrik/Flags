@@ -201,76 +201,79 @@ public final class YamlDataStore implements DataStore {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec = null;
 			SystemType system = SystemType.getActive();
-			
-			if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
-				cSec = cYml.getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
-				Flags.Debug("Updating World Names " + cSec.getCurrentPath());
-				final Set<String> keys = cSec.getKeys(true);
-				for (final String k : keys) {
-
-					if (k.contains("Value") || k.contains("Message")
-							|| k.contains("Trust") || k.contains("Inherit")) {
-
-						final String id = k.split("\\.")[0];
-						String world;
-
-						if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
-							world = GriefPrevention.instance.dataStore
-									.getClaim(Long.valueOf(id))
-									.getGreaterBoundaryCorner().getWorld()
-									.getName();
-						} else {
-							world = Residence.getResidenceManager()
-									.getByName(id).getWorld();
+			if(cYml.getConfig().isConfigurationSection(SystemType.getActive().toString() + "Data")) { 
+				if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
+					cSec = cYml.getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
+					
+					Flags.Debug("Updating World Names " + cSec.getCurrentPath());
+					final Set<String> keys = cSec.getKeys(true);
+					for (final String k : keys) {
+	
+						if (k.contains("Value") || k.contains("Message")
+								|| k.contains("Trust") || k.contains("InheritParent")) {
+	
+							final String id = k.split("\\.")[0];
+							String world;
+	
+							if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
+								world = GriefPrevention.instance.dataStore
+										.getClaim(Long.valueOf(id))
+										.getGreaterBoundaryCorner().getWorld()
+										.getName();
+							} else {
+								world = Residence.getResidenceManager()
+										.getByName(id).getWorld();
+							}
+	
+							cSec.set(world + "." + k, cSec.get(k));
 						}
-
-						cSec.set(world + "." + k, cSec.get(k));
+						cYml.saveConfig();
 					}
-					cYml.saveConfig();
+					// Remove the old
+					for (final String k : keys) {
+						if (k.split("\\.").length == 1
+								&& Bukkit.getWorld(k.split("\\.")[0]) == null) {
+							cSec.set(k, null);
+							cYml.saveConfig();
+						}
+					}
+	
 				}
-				// Remove the old
+	
+				//Convert values to boolean instead of string
+				final String[] fileArray = {"data", "default", "world"};
+				for(final String s : fileArray) {
+					cYml = getYml(s);
+					Flags.Debug("Updating Boolean " + cYml.getConfig().getCurrentPath());
+					Set<String> keys = cYml.getConfig().getKeys(true);
+					for (final String k : keys) {
+						if (k.contains("Value") || k.contains("InheritParent")) {
+							cYml.getConfig().set(k,	Boolean.valueOf(cYml.getConfig().getString(k)));
+							cYml.saveConfig();
+						}
+					}
+				}
+				
+				//Remove "Data" from the root heading.
+				Flags.Debug(SystemType.getActive().toString() + "Data");
+				cYml = getYml("data");
+				cSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
+				getYml("data").getConfig().createSection(SystemType.getActive().toString());
+				ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString());
+				Flags.Debug("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath());
+				Set<String> keys = cSec.getKeys(true);
 				for (final String k : keys) {
-					if (k.split("\\.").length == 1
-							&& Bukkit.getWorld(k.split("\\.")[0]) == null) {
-						cSec.set(k, null);
-						cYml.saveConfig();
+					if (k.contains("Value") || k.contains("Message")
+							|| k.contains("Trust") || k.contains("InheritParent")) {
+							Flags.Debug("Moving " + k);
+							newCSec.set(k , cSec.get(k));
+							cSec.set(k, null);
+							cYml.saveConfig();
 					}
 				}
-
+				cYml.getConfig().set(SystemType.getActive().toString() + "Data", null);
+				cYml.saveConfig();
 			}
-
-			//Convert values to boolean instead of string
-			final String[] fileArray = {"data", "default", "world"};
-			for(final String s : fileArray) {
-				cYml = getYml(s);
-				Flags.Debug("Updating Boolean " + cYml.getConfig().getCurrentPath());
-				Set<String> keys = cYml.getConfig().getKeys(true);
-				for (final String k : keys) {
-					if (k.contains("Value")) {
-						cYml.getConfig().set(k,	Boolean.valueOf(cYml.getConfig().getString(k)));
-						cYml.saveConfig();
-					}
-				}
-			}
-			
-			//Remove "Data" from the root heading.
-			Flags.Debug(SystemType.getActive().toString() + "Data");
-			cYml = getYml("data");
-			cSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
-			getYml("data").getConfig().createSection(SystemType.getActive().toString());
-			ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString());
-			Flags.Debug("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath());
-			final Set<String> keys = cSec.getKeys(true);
-			for (final String k : keys) {
-				if (k.contains("Value") || k.contains("Message")
-						|| k.contains("Trust") || k.contains("Inherit")) {
-						Flags.Debug("Moving " + k);
-						newCSec.set(k , cSec.get(k));
-						cSec.set(k, null);
-						cYml.saveConfig();
-				}
-			}
-			cYml.getConfig().set(SystemType.getActive().toString() + "Data", null);
 			writeVersion(new DBVersion(1, 2, 2));
 		}
 
