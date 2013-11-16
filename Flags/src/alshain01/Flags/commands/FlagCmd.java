@@ -320,7 +320,7 @@ final class FlagCmd extends Common {
 		while(flagNames.hasMoreElements()) {
 			Flag flag = registrar.getFlag(flagNames.nextElement());
 			// Add flags for the requested group only
-			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
+			if(group == null || group.equalsIgnoreCase(flag.getGroup()) || flag.getName().equalsIgnoreCase(group)) {
 				// Only show flags that can be used.
 				if(((Player)sender).hasPermission(flag.getPermission())){
 					allowedFlagNames.add(flag.getName());
