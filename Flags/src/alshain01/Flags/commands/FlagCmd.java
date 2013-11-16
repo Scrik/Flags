@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -335,7 +336,7 @@ final class FlagCmd extends Common {
 		List<String> combinedHelp = new ArrayList<String>();
 		if(allowedFlagNames.size() == 0) { 
 			sender.sendMessage(Message.NoFlagFound.get()
-					.replaceAll("{Type}", Message.Flag.get().toLowerCase()));
+					.replaceAll(Pattern.quote("{Type}"), Message.Flag.get().toLowerCase()));
 			return true;
 		}
 		
